@@ -17,7 +17,7 @@ function _connectDB(callback){
 // 插入数据
 exports.insertOne = function(collectionName, json, callback){
     _connectDB(function(err, db){
-        db.connect(collectionName).insertOne(json, function(err, result){
+        db.collection(collectionName).insertOne(json, function(err, result){
             callback(err, result);
             db.close(); // 关闭数据库，因为每一条连接对数据库造成一定的压力，如果不释放这些空闲的压力，数据库将会很卡
         })

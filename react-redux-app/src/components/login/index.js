@@ -3,6 +3,8 @@ import React from 'react';
 import {
   Form, Icon, Input, Button, Checkbox,
 } from 'antd';
+import axios from 'axios';
+import Qs from 'qs';
 import Register from '../register/index';
 import ModelContent from '../modal/index';
 import WrappedChangePasswordForm from '../changePassword/index';
@@ -15,7 +17,12 @@ class NormalLoginForm extends React.Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
+        console.log('Received values of form: ', Qs.stringify(values));
+        axios.post('http://localhost:3000/doLogin', Qs.stringify(values), {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }).then(function (res) {
+          console.log(res);
+        });
       }
     });
   }
@@ -25,7 +32,7 @@ class NormalLoginForm extends React.Component {
     return (
       <Form onSubmit={this.handleSubmit} className="login-form">
         <FormItem>
-          {getFieldDecorator('userName', {
+          {getFieldDecorator('username', {
             rules: [{ required: true, message: '请输入用户名!' }],
           })(
             <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Username" />

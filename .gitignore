@@ -3,6 +3,7 @@
 # dependencies
 /react-redux-app/node_modules
 /express-app/node_modules
+/EJblog/node_modules
 /.pnp
 .pnp.js
 

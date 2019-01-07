@@ -2,6 +2,9 @@ import React from 'react';
 import {
   Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete,
 } from 'antd';
+import { ENGINE_METHOD_NONE } from 'constants';
+import axios from 'axios';
+import Qs from 'qs';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -42,6 +45,11 @@ class RegistrationForm extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
+        axios.post('http://localhost:3000/doRegister', Qs.stringify(values), {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }).then(function (res) {
+          console.log(res);
+        })
       }
     });
   }
@@ -68,15 +76,15 @@ class RegistrationForm extends React.Component {
     callback();
   }
 
-  handleWebsiteChange = (value) => {
-    let autoCompleteResult;
-    if (!value) {
-      autoCompleteResult = [];
-    } else {
-      autoCompleteResult = ['.com', '.org', '.net'].map(domain => `${value}${domain}`);
-    }
-    this.setState({ autoCompleteResult });
-  }
+  // handleWebsiteChange = (value) => {
+  //   let autoCompleteResult;
+  //   if (!value) {
+  //     autoCompleteResult = [];
+  //   } else {
+  //     autoCompleteResult = ['.com', '.org', '.net'].map(domain => `${value}${domain}`);
+  //   }
+  //   this.setState({ autoCompleteResult });
+  // }
 
   render() {
     const { getFieldDecorator } = this.props.form;
@@ -127,7 +135,7 @@ class RegistrationForm extends React.Component {
             </span>
           )}
         >
-          {getFieldDecorator('nickname', {
+          {getFieldDecorator('username', {
             rules: [{ required: true, message: '请输入用户名!', whitespace: true }],
           })(
             <Input />

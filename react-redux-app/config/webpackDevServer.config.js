@@ -82,6 +82,13 @@ module.exports = function(proxy, allowedHost) {
       disableDotRule: true,
     },
     public: allowedHost,
+    // proxy: {
+    //   '/api': {
+    //     target: 'http://localhost:3000/',
+    //     changeOrigin: true,
+    //     secure: false,
+    //   },
+    // },
     proxy,
     before(app, server) {
       if (fs.existsSync(paths.proxySetup)) {

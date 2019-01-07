@@ -1,7 +1,7 @@
 
 var formidable = require('formidable'); // 对表单内容接收处理
-var db = require('../model/db.js');
-var md5 = require('../model/md5.js');
+var db = require('../modal/db.js');
+var md5 = require('../modal/md5.js');
 var fs = require('fs');  // 文件管理
 var moment = require('moment');
 
@@ -79,7 +79,7 @@ exports.doRecording = function(req, res, next){
     form.parse(req, function(err, fields){
         db.getAllCount('article', function(count){
             var allCount = count.toString();
-            var date = moment(new Date()). formate('YYYY-MM-DD HH:mm:ss');
+            var date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
             // 写入数据库
             db.insertOne('article', {
                 'ID': parseInt(allCount)+1,
@@ -157,4 +157,21 @@ exports.getJavascript = function(req, res, next){
         };
         res.json(obj);
     })
+}
+
+// 5.获取文章
+exports.getArticle = function(req, res, next){
+    var page = req.query.page;
+    db.find('article', {}, 
+        {
+            'pagemount':10, 
+            'page': page, 
+            'sort': 
+                {'date':-1}
+        }, 
+        function(err, result){
+            var obj = {'allResult': result};
+            res.json(obj);
+        }
+    )
 }
