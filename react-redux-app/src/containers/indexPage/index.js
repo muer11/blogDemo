@@ -24,8 +24,8 @@ class IndexPage extends React.Component {
                         {/* <ContentList /> */}
                     </Content>
                     <Sider>
-                        <WrappedNormalLoginForm />
-                        {/* <PersonalTips/> */}
+                        {/* <WrappedNormalLoginForm /> */}
+                        <PersonalTips/>
                     </Sider>
                 </Layout>
                 {/* <Footer>Footer</Footer> */}

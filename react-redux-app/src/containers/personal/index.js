@@ -2,7 +2,7 @@ import React from 'react';
 import AdminMenu from '../../components/menu/index';
 import ManageList from '../../components/contentList/manageList';
 import EditableTagGroup from '../../components/tag/index';
-import Ueditor from '../../components/ueditor/index';
+import AddArticle from '../../components/ueditor/index';
 import './index.scss';
 
 class Personal extends React.Component{
@@ -21,6 +21,8 @@ class Personal extends React.Component{
                 return <EditableTagGroup/>;
             case 'comment':
                 return <EditableTagGroup/>;
+            case 'addArticle':
+                return <AddArticle/>;
             default:
                 return null;
         }

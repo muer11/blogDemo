@@ -3,20 +3,41 @@
     width: 100%;
     .bee-richtext{
         width: 100%;
-        height: 90%;
         .edui-default{
-            height: 100%;
+            // height: 100%;
             .edui-editor{
                 min-width: 640px;
                 max-width: 1200px;
+                width: 80% !important;
                 z-index: 999;
-                margin: 50px 100px;
+                margin: 20px 100px;
                 .edui-editor-iframeholder{
                     width: 100%;
                     min-height: 500px;
                     max-height: 700px;
                 }
             }
+        }
+    }
+}
+.contentRight{
+    min-width: 640px;
+    max-width: 1200px;
+    width: 80% !important;
+    z-index: 999;
+    margin: 0px 100px;
+    .title{
+        margin-top: 50px;
+    }
+    .right{
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        button{
+            margin: 22px;
+        }
+        button:last-child{
+            margin: 22px 0;
         }
     }
 }

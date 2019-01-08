@@ -22,9 +22,30 @@ class NormalLoginForm extends React.Component {
           'Content-Type': 'application/x-www-form-urlencoded'
         }).then(function (res) {
           console.log(res);
+          // changeNameInfo(rule, res.data, callback);
+          switch (res.data) {
+            case 1:
+              this.changeNameInfo('登录成功');
+              break;
+            case -1:
+              this.changeNameInfo('该账号未注册');
+              break;
+            case -2:
+              this.changeNameInfo('用户名或密码错误');
+              break;
+            case -3:
+              this.changeNameInfo('服务器错误');
+              break;
+            default:
+              this.changeNameInfo();
+          }
         });
       }
     });
+  }
+
+  changeNameInfo (rule, value, callback) {
+    callback(value);
   }
 
   render() {
@@ -35,14 +56,14 @@ class NormalLoginForm extends React.Component {
           {getFieldDecorator('username', {
             rules: [{ required: true, message: '请输入用户名!' }],
           })(
-            <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Username" />
+            <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="用户名" />
           )}
         </FormItem>
         <FormItem>
           {getFieldDecorator('password', {
             rules: [{ required: true, message: '请输入密码!' }],
           })(
-            <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="Password" />
+            <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="密码" />
           )}
         </FormItem>
         <FormItem>

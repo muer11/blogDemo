@@ -17,23 +17,25 @@ exports.showRecording = function (req, res, next) {
     }
 };
 exports.doRecording = function (req, res, next) {
-    
+    // console.log(req);
     var form = new formidable.IncomingForm();
-
     form.parse(req, function (err, fields) {
+        console.log(fields);
+        // res.send("发表成功");
         db.getAllCount("article", function (count) {
             var allCount = count.toString();
             var date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
             //写入数据库
             db.insertOne("article", {
                 "ID" : parseInt(allCount) + 1,
-                "topic" : fields.topic,
-                "publisher" : fields.publisher,
-                "classify" : fields.classify,
-                "content" : fields.content,
+                "publisher": fields.userId,
+                "type": fields.type, // 文章分类
+                "content" : fields.content, // 文章正文
+                "title": fields.title, // 文章标题
                 "date" : date,
-                "thumbsUp": 0,
-                "visitNum" : 0
+                "isPublished": fields.isPublished, // 已发布或草稿箱
+                "visitNum" : 0, //浏览数
+                "goodNum" : 0 //点赞数
             },function (err, result) {
                 if(err){
                     res.send("-1");
@@ -46,11 +48,12 @@ exports.doRecording = function (req, res, next) {
 };
 //取得文章
 exports.getArticle = function (req, res, next) {
-    var page = req.query.page;
-    db.find("article",{},{"pageamount":10,"page":page,"sort":{"date":-1}}, function (err, result) {
-        var obj = {"allResult" : result};
-        res.json(obj);
-    });
+    console.log(req);
+    // var page = req.query.page;
+    // db.find("article",{},{"pageamount":10,"page":page,"sort":{"date":-1}}, function (err, result) {
+    //     var obj = {"allResult" : result};
+    //     res.json(obj);
+    // });
 };
 
 //取得总页数
