@@ -64,7 +64,7 @@ app.get("/recording", router.showRecording);
 app.post("/doRecording", router.doRecording);
 
 //取得文章
-app.post("/getArticle", router.getArticle);
+app.get("/getArticle", router.getArticle);
 //取得总页数
 app.post("/getAllAmount", router.getAllAmount);
 //文章页面

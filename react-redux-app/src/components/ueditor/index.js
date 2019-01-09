@@ -27,7 +27,8 @@ class Ueditor extends React.Component {
         })
     }
 
-    handleInputChange = (value) => {
+    handleInputChange = (e) => {
+        var value = e.currentTarget.value;
         this.setState({
             title: value
         })
@@ -50,6 +51,7 @@ class Ueditor extends React.Component {
     publishArticle = () => {
         axios.post('http://localhost:3000/doRecording', Qs.stringify({
             "content": this.state.articleContent,
+            "title": this.state.title,
             "userId": 1,
             "type": this.state.type,
             "isPublished": true,
