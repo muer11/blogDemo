@@ -52,7 +52,7 @@ class Ueditor extends React.Component {
         axios.post('http://localhost:3000/doRecording', Qs.stringify({
             "content": this.state.articleContent,
             "title": this.state.title,
-            "userId": 1,
+            "userId": 2,
             "type": this.state.type,
             "isPublished": true,
         })).then(function (res) {

@@ -22,35 +22,37 @@ class ManageList extends React.Component{
         page: 1,
         type: 'all', // 分类
         sort: 'date', // 排序
+        userId: 1, 
     }
 
     handleTypeChange = (value) => {
         console.log(`selected ${value}`);
         this.setState({
             type: value
+        },()=>{
+            this.showListData();
         });
-        // this.showListData();
     }
     handleSortChange = (value) => {
         console.log(`selected ${value}`);
         this.setState({
             sort: value
+        }, () => {
+            this.showListData();
         });
-        // this.showListData();
     }
 
-    // shouldComponentUpdate(nextProps, nextState){
-    //     if(this.state.type !== nextState.type || this.state.sort !== nextState.sort){
-    //         this.showListData();
-    //         return true;
-    //     }else{
-    //         return false;
-    //     }
-    // }
+    shouldComponentUpdate(nextProps, nextState){
+        if (this.state.type !== nextState.type || this.state.sort !== nextState.sort || this.state.listData !== nextState.listData) {
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     showListData = () => {
-        const tar = this;
-        axios.get("http://localhost:3000/getArticle?userId=1&isPublished=true&page=1&type=" + tar.state.type + "&sort=" + tar.state.sort).then(function (res) {
+        const _this = this;
+        axios.get("http://localhost:3000/getArticle?userId=" + _this.state.userId + "&isPublished=true&page=0&type=" + _this.state.type + "&sort=" + _this.state.sort).then(function (res) {
             console.log(res);
             let data = res.data.allResult;
             let listInfo = [];
@@ -60,26 +62,25 @@ class ManageList extends React.Component{
                 listInfo.push({
                     href: 'http://ant.design',
                     title: data[i].title,
-                    like: data[i].goodNum,
+                    goodNum: data[i].goodNum,
+                    visitNum: data[i].visitNum,
                     type: data[i].type,
                     date: data[i].date,
                     userid: data[i].ID,
                     // content: data[i].content,
                 });
             }
-            tar.setState({
+            _this.setState({
                 listData: listInfo
             });
         });
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this.showListData();  // 二次渲染导致页面有颤抖？？？
     }
 
     render(){
-        console.log(this.state.listData);
-
         return (
             <div className="manageList">
                 <div className="selectItem content">
@@ -111,8 +112,8 @@ class ManageList extends React.Component{
                         filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                     >
                         <Option value="date">时间</Option>
-                        {/* <Option value="阅读量">阅读量</Option> */}
-                        <Option value="like">点赞量</Option>
+                        <Option value="visitNum">浏览量</Option>
+                        <Option value="goodNum">点赞量</Option>
                     </Select> 
                 </div>
                 <List
@@ -131,7 +132,7 @@ class ManageList extends React.Component{
                     <List.Item
                         key={item.title}
                         //<IconText type="star-o" text="156" />,<IconText type="message" text="2" />,
-                        actions={[<IconText type="" text={item.type} />,<IconText type="like-o" text={item.like} />, <IconText type="time" text={item.date} />, <a>编辑</a>, <a>删除</a>, <a>查看</a>]}
+                        actions={[<IconText type="" text={item.type} />,<IconText type="like-o" text={item.goodNum} />, <IconText type="time" text={item.date} />, <a>编辑</a>, <a>删除</a>, <a>查看</a>]}
                     >
                         <List.Item.Meta
                             title={<a href={item.href}>{item.title}</a>}

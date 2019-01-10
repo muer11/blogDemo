@@ -49,49 +49,48 @@ exports.doRecording = function (req, res, next) {
 //取得文章
 exports.getArticle = function (req, res, next) {
     var info = req.query;
-    var isPublished = info.isPublished;
     var userId = info.userId;
+    var type = ((info.type && info.type !== "all") ? info.type : {
+        $ne: null
+    });
+    var isPublished = info.isPublished;
     var page = info.page;
-    var type = info.type;
-    console.log(info);
-    console.log(type);
-    // res.send('请求成功');
-    // db.find("article", {}, {
-    //     // "pageamount": 10,
-    //     "isPublished": isPublished,
-    //     "page": page,
-    //     "type": type,
-    //     "ID": userId,
-    //     "sort": {
-    //         "date": -1,
-    //     }
-    // }, function (err, result) {
-    //     var obj = {
-    //         "allResult": result
-    //     };
-    //     console.log(result);
-    //     res.json(obj);
-    // });
-    var MongoClient = require('mongodb').MongoClient;
-    var settings = require("../model/setting.js");
-    MongoClient.connect(settings.dburl, function(err, db){
-
-        db.collection('article').find(
-            {
-                // "pageamount": 10,
-                "isPublished": isPublished,
-                "page": page,
-                "type": type,
-                "ID": userId,
-                "sort": {
-                    "date": -1,
-                }
+    var sortQuery = {};
+    switch (info.sort) {
+        case "visitNum":
+            sortQuery = {
+                "visitNum": -1
             }
-        ).toArray(function(err, result){
-            console.log(result);
-            db.close();
-        })
-    })
+            break;
+        case "goodNum":
+            sortQuery = {
+                "goodNum": -1
+            }
+            break;
+        default:
+            sortQuery = {
+                "date": -1
+            }
+        break;
+    }
+    console.log(info);
+    console.log(sortQuery);
+    // res.send('请求成功');
+    db.find("article", { 
+        "publisher": userId,
+        "type": type,
+        "isPublished": isPublished,
+    }, {
+        "pageamount": 10,
+        "page": page,
+        "sort": sortQuery,
+    }, function (err, result) {
+        var obj = {
+            "allResult": result
+        };
+        console.log(result);
+        res.json(obj);
+    });
 };
 
 //取得总页数
