@@ -4,7 +4,7 @@ import React from 'react';
 import { List, Avatar, Icon, Button, Select } from 'antd';
 import axios from 'axios';
 import Qs from 'qs';
-import './manageList.scss';
+import '../contentList/manageList.scss';
 
 
 const Option = Select.Option;
@@ -16,7 +16,7 @@ const IconText = ({ type, text }) => (
   </span>
 );
 
-class ManageList extends React.Component{
+class Drafts extends React.Component{
     state = {
         listData: [], // 文章数据
         page: 1,
@@ -52,8 +52,8 @@ class ManageList extends React.Component{
 
     showListData = () => {
         const _this = this;
-        axios.get("http://localhost:3000/getArticle?userId=" + _this.state.userId + "&isPublished=true&page=0&type=" + _this.state.type + "&sort=" + _this.state.sort).then(function (res) {
-            // console.log(res);
+        axios.get("http://localhost:3000/getArticle?userId=" + _this.state.userId + "&isPublished=false&page=0&type=" + _this.state.type + "&sort=" + _this.state.sort).then(function (res) {
+            console.log(res);
             let data = res.data.allResult;
             let listInfo = [];
             const length = data.length;
@@ -112,8 +112,6 @@ class ManageList extends React.Component{
                         filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                     >
                         <Option value="date">时间</Option>
-                        <Option value="visitNum">浏览量</Option>
-                        <Option value="goodNum">点赞量</Option>
                     </Select> 
                 </div>
                 <List
@@ -132,7 +130,7 @@ class ManageList extends React.Component{
                     <List.Item
                         key={item.title}
                         //<IconText type="star-o" text="156" />,<IconText type="message" text="2" />,
-                        actions={[<IconText type="" text={item.type} />,<IconText type="like-o" text={item.goodNum} />, <IconText type="time" text={item.date} />, <a>编辑</a>, <a>删除</a>, <a>查看</a>]}
+                        actions={[<IconText type="" text={item.type} />, <IconText type="time" text={item.date} />, <a >编辑</a>, <a>删除</a>]}
                     >
                         <List.Item.Meta
                             title={<a href={item.href}>{item.title}</a>}
@@ -146,4 +144,4 @@ class ManageList extends React.Component{
     }
 }
 
-export default ManageList;
+export default Drafts;

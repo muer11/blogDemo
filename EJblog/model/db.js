@@ -15,7 +15,7 @@ function _connectDB(callback) {
     });
 }
 
-//插入数据
+//插入数据 (指定不可重复的字段：tag-name???)
 exports.insertOne = function (collectionName, json, callback) {
     _connectDB(function (err, db) {
         db.collection(collectionName).insertOne(json, function (err, result) {
@@ -103,3 +103,22 @@ exports.getAllCount = function (collectionName,callback) {
         });
     })
 };
+
+exports.updateOne = function (collectionName, json, callback) {
+    var _this = this;
+    _connectDB(function (err, db) {
+        db.collection(collectionName).updateOne(
+            json,
+            {
+                $inc: {
+                    "sequence_value": 1
+                }
+            },
+            function (err, res) {
+                if(err) throw err;
+                callback("success");
+                db.close();
+            }
+        );
+    })
+}

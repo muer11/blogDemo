@@ -72,6 +72,13 @@ app.get("/article", router.showArticle);
 //删除文章
 app.post("/delArticle", router.delArticle);
 
+//显示标签
+app.get("/showTags", router.showTags);
+//添加标签
+app.post("/addTag", router.addTag);
+//删除标签
+app.post("/delTag", router.delTag);
+
 //注册页面
 app.get("/register", router.showRegister);
 app.post("/doRegister",router.doRegister);

@@ -3,6 +3,7 @@ import AdminMenu from '../../components/menu/index';
 import ManageList from '../../components/contentList/manageList';
 import EditableTagGroup from '../../components/tag/index';
 import AddArticle from '../../components/ueditor/index';
+import Drafts from '../../components/drafts/index';
 import './index.scss';
 
 class Personal extends React.Component{
@@ -14,15 +15,18 @@ class Personal extends React.Component{
     }
     
     renderContent(itemName) {
+        // console.log("itemName:" + itemName);
         switch (itemName) {
-            case 'article':
+            case 'article': // 已发表
                 return <ManageList className = 'list' /> ;
-            case 'tag':
-                return <EditableTagGroup/>;
-            case 'comment':
-                return <EditableTagGroup/>;
-            case 'addArticle':
+            case 'unpublishArticle': // 草稿箱
+                return <Drafts/>;
+            case 'addArticle': // 写文章
                 return <AddArticle/>;
+            case 'tag': // 标签管理
+                return <EditableTagGroup/>;
+            case 'comment': // 评论管理
+                return <EditableTagGroup/>;
             default:
                 return null;
         }

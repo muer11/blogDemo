@@ -18,7 +18,7 @@ class AdminMenu extends React.Component {
   }
 
   callback = (item) => {
-    console.log(item);
+    // console.log(item);
     let itemName = '';
     switch (item.key) {
       case 'addArticle':
@@ -26,6 +26,9 @@ class AdminMenu extends React.Component {
         break;
       case 'publishedArticle':
         itemName = 'article';
+        break;
+      case 'unpublishArticle':
+        itemName = 'unpublishArticle';
         break;
       case 'tag':
         itemName = 'tag';

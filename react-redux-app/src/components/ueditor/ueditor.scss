@@ -12,7 +12,7 @@
                 z-index: 999;
                 margin: 20px 100px;
                 .edui-editor-iframeholder{
-                    width: 100%;
+                    width: 100% !important;
                     min-height: 500px;
                     max-height: 700px;
                 }

@@ -3,7 +3,23 @@ var db = require("../model/db.js");
 var md5 = require("../model/md5.js");
 var fs = require("fs");
 var moment = require('moment');
-var MongoClient = require('mongodb').MongoClient, test = require('assert');
+// var MongoClient = require('mongodb').MongoClient, test = require('assert');
+
+// getNextSequenceValue = function(sequenceName) {
+//     var sequenceDocument = db.counters.findAndModify({
+//         query: {
+//             _id: sequenceName
+//         },
+//         update: {
+//             $inc: {
+//                 sequence_value: 1
+//             }
+//         },
+//         "new": true
+//     });
+//     return sequenceDocument.sequence_value;
+// }
+
 //首页
 exports.showIndex = function (req,res,next) {
     res.render("index");
@@ -73,9 +89,6 @@ exports.getArticle = function (req, res, next) {
             }
         break;
     }
-    console.log(info);
-    console.log(sortQuery);
-    // res.send('请求成功');
     db.find("article", { 
         "publisher": userId,
         "type": type,
@@ -88,10 +101,12 @@ exports.getArticle = function (req, res, next) {
         var obj = {
             "allResult": result
         };
-        console.log(result);
+        // console.log(result);
         res.json(obj);
     });
 };
+
+
 
 //取得总页数
 exports.getAllAmount = function (req, res, next) {
@@ -132,6 +147,72 @@ exports.delArticle =function (req, res, result) {
     });
 };
 
+
+// 显示标签
+exports.showTags = function (req, res, next) {
+    var userId = req.query.userId;
+    console.log(userId);
+    db.find("tag", {
+        "publisher": parseInt(userId),
+    }, {
+        "pageamount": 200,
+        "page": 0,
+        "sort": {
+            "ID": -1
+        }
+    }, function (err, result) {
+        if (err) {
+            console.log("查找标签错误：" + err);
+            return;
+        }
+        var allTags = {
+            "allTags": result
+        };
+        res.json(allTags);
+    });
+}
+// 添加标签
+exports.addTag = function(req, res, next){
+    var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields) {
+        var date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+        // mongodb非关系型数据库，counters中记录了每张表的id
+        db.updateOne("counters", {"_id":"tagid"}, function (result) {
+            if (result !== "success") return;
+            db.find("counters", {"_id":"tagid"}, function (err, result){
+                var id = result[0].sequence_value;
+                db.insertOne("tag", {
+                    "ID": id,
+                    "publisher": parseInt(fields.userId),
+                    "name": fields.name, // 文章分类
+                    "date": date
+                }, function (err, result) {
+                    if (err) {
+                        res.send("-1");
+                        return;
+                    }
+                    res.send("1");
+                });
+            });
+        });
+    });
+}
+// 删除标签
+exports.delTag = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+        var name = fields.name;
+        db.deleteMany("tag", {
+            "name": name
+        }, function (err, results) {
+            if (err) {
+                console.log("删除标签错误:" + err);
+                return
+            }
+            res.send("1");
+        });
+    });
+}
 
 //注册页面
 exports.showRegister = function (req, res ,result) {
