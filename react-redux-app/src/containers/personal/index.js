@@ -10,19 +10,34 @@ class Personal extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            itemName: 'article'
+            itemName: 'article',
+            id: ''
         }
+    }
+    // getChildContext() {
+    //     return {
+    //         value : this.state.value
+    //     }
+    // }
+    editArticle = (id)=>{
+        // console.log(111);
+        console.log(id);
+        this.setState({
+            "id": id,
+            "itemName": "addArticle"
+        });
+        // this.renderContent("addArticle");
     }
     
     renderContent(itemName) {
         // console.log("itemName:" + itemName);
         switch (itemName) {
             case 'article': // 已发表
-                return <ManageList className = 'list' /> ;
+                return <ManageList className = 'list' editArticle={this.editArticle.bind(this)}/> ;
             case 'unpublishArticle': // 草稿箱
                 return <Drafts/>;
             case 'addArticle': // 写文章
-                return <AddArticle/>;
+                return <AddArticle articleId={this.state.id}/>;
             case 'tag': // 标签管理
                 return <EditableTagGroup/>;
             case 'comment': // 评论管理

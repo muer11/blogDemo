@@ -9,9 +9,13 @@ const Option = Select.Option;
 
 class Ueditor extends React.Component {
     state = {
-        articleContent: null,
-        type: 'Javascript',
+        articleContent: "",
+        tagInfo: [],
+        tagId: null,
+        tagName: '',
         title: '',
+        userId: 1,
+        articleId: null
     }
 
     hanldeUeditorChange = (value) => {
@@ -23,7 +27,7 @@ class Ueditor extends React.Component {
 
     handleSelectChange = (value) => {
         this.setState({
-            type: value
+            tagId: value
         })
     }
 
@@ -37,10 +41,10 @@ class Ueditor extends React.Component {
     // 保存草稿
     saveArticle = ()=>{
         axios.post('http://localhost:3000/doRecording', Qs.stringify({
-            "content": this.state.articleContent,
+            "userId": this.state.userId,
             "title": this.state.title,
-            "userId": 1,
-            "type": this.state.type,
+            "content": this.state.articleContent,
+            "tagId": this.state.tagId,
             "isPublished": false,
         })).then(function (res) {
             console.log(res);
@@ -50,13 +54,45 @@ class Ueditor extends React.Component {
     // 发表文章
     publishArticle = () => {
         axios.post('http://localhost:3000/doRecording', Qs.stringify({
-            "content": this.state.articleContent,
+            "userId": this.state.userId,
             "title": this.state.title,
-            "userId": 2,
-            "type": this.state.type,
+            "content": this.state.articleContent,
+            "tagId": this.state.tagId,
             "isPublished": true,
         })).then(function (res) {
             console.log(res);
+        });
+    }
+
+    // 文章分类
+    showTags = ()=>{
+        const _this = this;
+        axios.get("http://localhost:3000/showTags?userId=" + _this.state.userId).then(function (res) {
+            // console.log(res);
+            var tagArr = res.data.allTags;
+            tagArr.map(function(value, index){
+                _this.state.tagInfo.push(value);
+            });
+            // console.log(_this.state.tagInfo);
+        });
+    }
+
+    componentWillMount(){
+        this.showTags();
+    }
+    
+    componentDidMount(){
+        console.log(this.props.articleId);
+        var articleId = this.props.articleId;
+        var _this = this;
+        axios.get("http://localhost:3000/findOneArticle?articleId=" + articleId).then(function (res) {
+            console.log(res);
+            var articleInfo = res.data.allResult[0];
+            _this.setState({
+                title: articleInfo.title,
+                articleContent: articleInfo.content,
+                
+            });
         });
     }
 
@@ -65,10 +101,10 @@ class Ueditor extends React.Component {
             <div className='ueditor'>
                 <div>
                     <div className="contentRight">
-                        <Input placeholder="请输入文章标题" name="title" className="title" onChange={this.handleInputChange}/>
+                        <Input placeholder="请输入文章标题" name="title" className="title" onChange={this.handleInputChange} value={this.state.title}/>
                     </div>
                 </div>
-                <RcUeditor onChange = {this.hanldeUeditorChange} />
+                <RcUeditor onChange = {this.hanldeUeditorChange} value={this.state.articleContent}/>
                 <div>
                     <div className="contentRight">
                         <div className="selectType right">
@@ -81,14 +117,19 @@ class Ueditor extends React.Component {
                                 onChange={this.handleSelectChange}
                                 // onFocus={handleFocus}
                                 // onBlur={handleBlur}
-                                defaultValue = "Javascript"
+                                defaultValue = {this.state.tagName}
                                 filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                             >
-                                <Option value="Javascript">Javascript</Option>
+                                {
+                                    this.state.tagInfo.map((item, index)=>{
+                                        return <Option value={item.id}>{item.name}</Option>
+                                    })
+                                }
+                                {/* <Option value="Javascript">Javascript</Option>
                                 <Option value="Css">Css</Option>
                                 <Option value="React">React</Option>
                                 <Option value="Vue">Vue</Option>
-                                <Option value="Node">Node</Option>
+                                <Option value="Node">Node</Option> */}
                             </Select> 
                         </div>
                         <div className="submi right">

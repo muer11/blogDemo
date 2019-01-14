@@ -38,26 +38,31 @@ exports.doRecording = function (req, res, next) {
     form.parse(req, function (err, fields) {
         console.log(fields);
         // res.send("发表成功");
-        db.getAllCount("article", function (count) {
-            var allCount = count.toString();
-            var date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
-            //写入数据库
-            db.insertOne("article", {
-                "ID" : parseInt(allCount) + 1,
-                "publisher": fields.userId,
-                "type": fields.type, // 文章分类
-                "content" : fields.content, // 文章正文
-                "title": fields.title, // 文章标题
-                "date" : date,
-                "isPublished": fields.isPublished, // 已发布或草稿箱
-                "visitNum" : 0, //浏览数
-                "goodNum" : 0 //点赞数
-            },function (err, result) {
-                if(err){
-                    res.send("-1");
-                    return;
-                }
-                res.send("1");
+        // db.getAllCount("article", function (count) {
+        //     var allCount = count.toString();
+        db.updateOne("counters", {"_id":"articleId"}, function (result) {
+            if (result !== "success") return;
+            db.find("counters", {"_id":"articleId"}, function (err, result){
+                var id = result[0].sequence_value;
+                var date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+                //写入数据库
+                db.insertOne("article", {
+                    "id": id,
+                    "userId": fields.userId,
+                    "tagId": fields.tagId, // 文章分类
+                    "title": fields.title, // 文章标题
+                    "content" : fields.content, // 文章正文
+                    "date" : date,
+                    "isPublished": fields.isPublished, // 已发布或草稿箱
+                    "visitNum" : 0, //浏览数
+                    "goodNum" : 0 //点赞数
+                },function (err, result) {
+                    if(err){
+                        res.send("-1");
+                        return;
+                    }
+                    res.send("1");
+                });
             });
         });
     });
@@ -66,7 +71,8 @@ exports.doRecording = function (req, res, next) {
 exports.getArticle = function (req, res, next) {
     var info = req.query;
     var userId = info.userId;
-    var type = ((info.type && info.type !== "all") ? info.type : {
+    // console.log("info.tagId:" + info.tagId);
+    var tagId = ((info.tagId && info.tagId !== "all") ? info.tagId : {
         $ne: null
     });
     var isPublished = info.isPublished;
@@ -89,9 +95,12 @@ exports.getArticle = function (req, res, next) {
             }
         break;
     }
+    // console.log("userId:" + userId);
+    // console.log("tagId:" + tagId);
+    // console.log("isPublished:" + isPublished);
     db.find("article", { 
-        "publisher": userId,
-        "type": type,
+        "userId": userId,
+        "tagId": tagId,
         "isPublished": isPublished,
     }, {
         "pageamount": 10,
@@ -105,7 +114,26 @@ exports.getArticle = function (req, res, next) {
         res.json(obj);
     });
 };
-
+//取得单篇文章
+exports.findOneArticle = function (req, res, next) {
+    if (req.query.articleId == undefined) {
+        res.send("你想干嘛？");
+        return;
+    }
+    var articleId = parseInt(req.query.articleId);
+    db.find("article", {
+        "id": articleId
+    }, function (err, result) {
+        if (err) {
+            console.log(err);
+        }
+        var obj = {
+            "allResult": result
+        };
+        // console.log(result);
+        res.json(obj);
+    });
+};
 
 
 //取得总页数
@@ -117,7 +145,7 @@ exports.getAllAmount = function (req, res, next) {
 
 //文章页面
 exports.showArticle = function (req, res, next) {
-    if(req.query.ID == undefined){
+    if(req.query.articleId == undefined){
         res.send("你想干嘛？");
         return;
     }
@@ -153,12 +181,12 @@ exports.showTags = function (req, res, next) {
     var userId = req.query.userId;
     console.log(userId);
     db.find("tag", {
-        "publisher": parseInt(userId),
+        "userId": parseInt(userId),
     }, {
         "pageamount": 200,
         "page": 0,
         "sort": {
-            "ID": -1
+            "id": 1
         }
     }, function (err, result) {
         if (err) {
@@ -177,13 +205,13 @@ exports.addTag = function(req, res, next){
     form.parse(req, function (err, fields) {
         var date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
         // mongodb非关系型数据库，counters中记录了每张表的id
-        db.updateOne("counters", {"_id":"tagid"}, function (result) {
+        db.updateOne("counters", {"_id":"tagId"}, function (result) {
             if (result !== "success") return;
-            db.find("counters", {"_id":"tagid"}, function (err, result){
+            db.find("counters", {"_id":"tagId"}, function (err, result){
                 var id = result[0].sequence_value;
                 db.insertOne("tag", {
-                    "ID": id,
-                    "publisher": parseInt(fields.userId),
+                    "id": id,
+                    "userId": parseInt(fields.userId),
                     "name": fields.name, // 文章分类
                     "date": date
                 }, function (err, result) {
@@ -229,20 +257,29 @@ exports.doRegister = function (req, res, result) {
         var email = fields.email;
         var phone = fields.phone;
         var residence = fields.residence;
+        var date = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
         // var md5PassWord = md5(md5(password).substr(4,7) + md5(password));
-        db.insertOne("user",{
-            "username" : username,
-            "password": password,
-            "email": email,
-            "phone": phone,
-            "residence": residence
-        },function(err,result){
-            if(err){
-                res.send("-3");//服务器错误
-                return;
-            }
-            req.session.login = "1";
-            res.send("1");//注册成功，写入SESSION
+        db.updateOne("counters", {"_id":"userId"}, function (result) {
+            if (result !== "success") return;
+            db.find("counters", {"_id":"userId"}, function (err, result){
+                var id = result[0].sequence_value;
+                db.insertOne("user",{
+                    "id": id,
+                    "username" : username,
+                    "password": password,
+                    "email": email,
+                    "phone": phone,
+                    "residence": residence,
+                    "date": date
+                },function(err,result){
+                    if(err){
+                        res.send("-3");//服务器错误
+                        return;
+                    }
+                    req.session.login = "1";
+                    res.send("1");//注册成功，写入SESSION
+                });
+            });
         });
     });
 };
