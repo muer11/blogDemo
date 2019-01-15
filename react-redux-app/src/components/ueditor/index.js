@@ -15,7 +15,8 @@ class Ueditor extends React.Component {
         tagName: '',
         title: '',
         userId: 1,
-        articleId: null
+        articleId: null,
+        isEdit: false,
     }
 
     hanldeUeditorChange = (value) => {
@@ -38,30 +39,47 @@ class Ueditor extends React.Component {
         })
     } 
 
+    publishFunc = (isPublished) => {
+        let url = "";
+        const articleId = this.state.articleId;
+        const userId = this.state.userId;
+        const title = this.state.title;
+        const content = this.state.articleContent;
+        const tagId = this.state.tagId;
+        if (!this.state.isEdit) { // 非编辑
+            url = 'http://localhost:3000/doRecording';
+            axios.post(url, Qs.stringify({
+                "userId": userId,
+                "title": title,
+                "content": content,
+                "tagId": tagId,
+                "isPublished": isPublished,
+            })).then(function (res) {
+                console.log(res);
+            });
+        }else{ // 编辑
+            url = 'http://localhost:3000/editRecording';
+            axios.post(url, Qs.stringify({
+                "articleId": articleId,
+                "userId": userId,
+                "title": title,
+                "content": content,
+                "tagId": tagId,
+                "isPublished": isPublished,
+            })).then(function (res) {
+                console.log(res);
+            });
+        }
+    }
+
     // 保存草稿
     saveArticle = ()=>{
-        axios.post('http://localhost:3000/doRecording', Qs.stringify({
-            "userId": this.state.userId,
-            "title": this.state.title,
-            "content": this.state.articleContent,
-            "tagId": this.state.tagId,
-            "isPublished": false,
-        })).then(function (res) {
-            console.log(res);
-        });
+        this.publishFunc("false");
     }
 
     // 发表文章
     publishArticle = () => {
-        axios.post('http://localhost:3000/doRecording', Qs.stringify({
-            "userId": this.state.userId,
-            "title": this.state.title,
-            "content": this.state.articleContent,
-            "tagId": this.state.tagId,
-            "isPublished": true,
-        })).then(function (res) {
-            console.log(res);
-        });
+        this.publishFunc("true");
     }
 
     // 文章分类
@@ -83,17 +101,20 @@ class Ueditor extends React.Component {
     
     componentDidMount(){
         console.log(this.props.articleId);
-        var articleId = this.props.articleId;
-        var _this = this;
-        axios.get("http://localhost:3000/findOneArticle?articleId=" + articleId).then(function (res) {
-            console.log(res);
-            var articleInfo = res.data.allResult[0];
-            _this.setState({
-                title: articleInfo.title,
-                articleContent: articleInfo.content,
-                
+        if (this.props.articleId != null){
+            var articleId = this.props.articleId;
+            var _this = this;
+            axios.get("http://localhost:3000/findOneArticle?articleId=" + articleId).then(function (res) {
+                console.log(res);
+                var articleInfo = res.data.allResult[0];
+                _this.setState({
+                    title: articleInfo.title,
+                    articleContent: articleInfo.content,
+                    isEdit: true,
+                    articleId: articleId,
+                });
             });
-        });
+        }
     }
 
     render() {
@@ -122,7 +143,7 @@ class Ueditor extends React.Component {
                             >
                                 {
                                     this.state.tagInfo.map((item, index)=>{
-                                        return <Option value={item.id}>{item.name}</Option>
+                                        return <Option value={item.id} key={index}>{item.name}</Option>
                                     })
                                 }
                                 {/* <Option value="Javascript">Javascript</Option>

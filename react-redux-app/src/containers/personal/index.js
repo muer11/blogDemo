@@ -11,7 +11,7 @@ class Personal extends React.Component{
         super(props);
         this.state = {
             itemName: 'article',
-            id: ''
+            id: null
         }
     }
     // getChildContext() {
@@ -35,7 +35,7 @@ class Personal extends React.Component{
             case 'article': // 已发表
                 return <ManageList className = 'list' editArticle={this.editArticle.bind(this)}/> ;
             case 'unpublishArticle': // 草稿箱
-                return <Drafts/>;
+                return <Drafts editArticle={this.editArticle.bind(this)}/>;
             case 'addArticle': // 写文章
                 return <AddArticle articleId={this.state.id}/>;
             case 'tag': // 标签管理

@@ -15,8 +15,8 @@ class App extends Component {
         <Route path="/Register" component={Register}></Route>
         <Route path="/login" component={Login}></Route>
         <Route path="/personal" component={Personal}></Route>
-        <Route path="/article" component={IndexPage}></Route>
-        <Route path="/article?type='JavaScript'&id=" component={Article}></Route>
+        <Route path="/" component={IndexPage}></Route>
+        <Route path="/article?articleId=" component={Article}></Route>
       </div>
     );
   }

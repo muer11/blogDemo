@@ -46,12 +46,17 @@ class ManageList extends React.Component{
     }
     // 编辑文章
     editArticle = (articleId) => {
-        // console.log(articleId);
-        // console.log(this.context);
         if (this.props.editArticle){
             this.props.editArticle(articleId);
         }
-        // this.context.value = articleId;
+    }
+
+    deleteArticle = (articleId) => {
+        axios.post("http://localhost:3000/delArticle",Qs.stringify({
+            "articleId": articleId
+        })).then(function (res) {
+            console.log(res);
+        });
     }
 
     shouldComponentUpdate(nextProps, nextState){
@@ -78,7 +83,6 @@ class ManageList extends React.Component{
                         type = value.name;
                     }
                 });
-                // console.log(type);
                 listInfo.push({
                     id: data[i].id,
                     userid: data[i].userid,
@@ -130,7 +134,7 @@ class ManageList extends React.Component{
                         <Option value="all">全部</Option>
                         {
                             this.state.tagInfo.map((item, index)=>{
-                                return <Option value={item.id}>{item.name}</Option>
+                                return <Option value={item.id} key={index}>{item.name}</Option>
                             })
                         }
                     </Select> 
@@ -165,7 +169,7 @@ class ManageList extends React.Component{
                     <List.Item
                         key={item.title}
                         //<IconText type="star-o" text="156" />,<IconText type="message" text="2" />,
-                        actions={[<IconText type="" text={item.type} />,<IconText type="like-o" text={item.goodNum} />, <IconText type="time" text={item.date} />, <a onClick={()=>{this.editArticle(item.id)}}>编辑</a>, <a onClick={this.deleteArticle}>删除</a>, <a>查看</a>]}
+                        actions={[<IconText type="" text={item.type} />,<IconText type="like-o" text={item.goodNum} />, <IconText type="time" text={item.date} />, <a onClick={()=>{this.editArticle(item.id)}}>编辑</a>, <a onClick={()=>{this.deleteArticle(item.id)}}>删除</a>, <a href={"/article?id="+item.id} target="_blank">查看</a>]}
                     >
                         <List.Item.Meta
                             title={<a href={item.href}>{item.title}</a>}

@@ -32,6 +32,8 @@ exports.showRecording = function (req, res, next) {
         res.render("recording");
     }
 };
+
+// 发表文章（新建）
 exports.doRecording = function (req, res, next) {
     // console.log(req);
     var form = new formidable.IncomingForm();
@@ -67,11 +69,37 @@ exports.doRecording = function (req, res, next) {
         });
     });
 };
+// 编辑文章
+exports.editRecording = function (req, res, next) {
+    // console.log(req);
+    var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields) {
+        console.log(fields);
+        //更新数据库
+        var date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+        db.updateMany("article", {
+            "id": parseInt(fields.articleId),
+        },{$set:{
+            "tagId": fields.tagId, // 文章分类
+            "title": fields.title, // 文章标题
+            "content": fields.content, // 文章正文
+            "isPublished": fields.isPublished, // 已发布或草稿箱
+            "updateDate": date,
+            // "visitNum": 0, //浏览数
+            // "goodNum": 0 //点赞数
+        }}, function (err, result) {
+            if (err) {
+                res.send("-1");
+                return;
+            }
+            res.send("1");
+        }); 
+    });
+};
 //取得文章
 exports.getArticle = function (req, res, next) {
     var info = req.query;
     var userId = info.userId;
-    // console.log("info.tagId:" + info.tagId);
     var tagId = ((info.tagId && info.tagId !== "all") ? info.tagId : {
         $ne: null
     });
@@ -95,9 +123,11 @@ exports.getArticle = function (req, res, next) {
             }
         break;
     }
+    // console.log(info);
     // console.log("userId:" + userId);
-    // console.log("tagId:" + tagId);
+    // console.log(tagId);
     // console.log("isPublished:" + isPublished);
+    // console.log("sortQuery:" + sortQuery);
     db.find("article", { 
         "userId": userId,
         "tagId": tagId,
@@ -111,6 +141,46 @@ exports.getArticle = function (req, res, next) {
             "allResult": result
         };
         // console.log(result);
+        res.json(obj);
+    });
+};
+//取得文章-前台
+exports.getTagArticle = function (req, res, next) {
+    var info = req.query;
+    var tagId = ((info.tagId && info.tagId !== "all") ? info.tagId : {
+        $ne: null
+    });
+    var isPublished = info.isPublished;
+    var page = info.page ? info.page : 0;
+    var sortQuery = {};
+    switch (info.sort) {
+        case "visitNum":
+            sortQuery = {
+                "visitNum": -1
+            }
+            break;
+        case "goodNum":
+            sortQuery = {
+                "goodNum": -1
+            }
+            break;
+        default:
+            sortQuery = {
+                "date": -1
+            }
+            break;
+    }
+    db.find("article", {
+        "tagId": tagId,
+        "isPublished": isPublished,
+    }, {
+        "pageamount": 10,
+        "page": page,
+        "sort": sortQuery,
+    }, function (err, result) {
+        var obj = {
+            "allResult": result
+        };
         res.json(obj);
     });
 };
@@ -164,8 +234,8 @@ exports.showArticle = function (req, res, next) {
 exports.delArticle =function (req, res, result) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
-        var ID = parseInt(fields.ID);
-        db.deleteMany("article",{"ID":ID},function (err,results) {
+        var articleId = parseInt(fields.articleId);
+        db.deleteMany("article",{"id":articleId},function (err,results) {
             if(err){
                 console.log("删除文章错误:"+err);
                 return
@@ -175,8 +245,29 @@ exports.delArticle =function (req, res, result) {
     });
 };
 
-
-// 显示标签
+// 显示标签-前台
+exports.showTagsFore = function (req, res, next) {
+    
+    db.find("tag", {
+        // "userId": parseInt(userId),
+    }, {
+        "pageamount": 200,
+        "page": 0,
+        "sort": {
+            "id": 1
+        }
+    }, function (err, result) {
+        if (err) {
+            console.log("查找标签错误：" + err);
+            return;
+        }
+        var allTags = {
+            "allTags": result
+        };
+        res.json(allTags);
+    });
+}
+// 显示标签-后台
 exports.showTags = function (req, res, next) {
     var userId = req.query.userId;
     console.log(userId);
@@ -199,6 +290,7 @@ exports.showTags = function (req, res, next) {
         res.json(allTags);
     });
 }
+
 // 添加标签
 exports.addTag = function(req, res, next){
     var form = new formidable.IncomingForm();

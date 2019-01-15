@@ -62,9 +62,12 @@ app.get("/",router.showIndex);
 app.get("/recording", router.showRecording);
 //执行保存
 app.post("/doRecording", router.doRecording);
+//编辑文章
+app.post("/editRecording", router.editRecording);
 
 //取得文章
 app.get("/getArticle", router.getArticle);
+app.get("/getTagArticle", router.getTagArticle);
 app.get("/findOneArticle", router.findOneArticle);
 //取得总页数
 app.post("/getAllAmount", router.getAllAmount);
@@ -73,7 +76,9 @@ app.get("/article", router.showArticle);
 //删除文章
 app.post("/delArticle", router.delArticle);
 
-//显示标签
+//显示标签-前台
+app.get("/showTagsFore", router.showTagsFore);
+//显示标签-后台
 app.get("/showTags", router.showTags);
 //添加标签
 app.post("/addTag", router.addTag);

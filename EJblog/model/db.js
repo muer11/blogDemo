@@ -95,6 +95,7 @@ exports.updateMany = function (collectionName, json1, json2, callback) {
     });
 };
 
+//获取总量
 exports.getAllCount = function (collectionName,callback) {
     _connectDB(function (err, db) {
         db.collection(collectionName).count({}).then(function(count) {
@@ -104,6 +105,7 @@ exports.getAllCount = function (collectionName,callback) {
     })
 };
 
+// 更新counters计数（非关系型mongodb）
 exports.updateOne = function (collectionName, json, callback) {
     var _this = this;
     _connectDB(function (err, db) {
