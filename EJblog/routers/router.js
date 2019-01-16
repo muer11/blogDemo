@@ -465,18 +465,21 @@ exports.showUserdata = function (req, res, result) {
         res.render("userdata");
     }
 };
+//获取用户信息
 exports.getUserdata = function (req, res ,result) {
     var page = req.query.page;
-    db.find("Visitor",{},{"pageamount":10,"page":page,"sort":{"date":-1}}, function (err, result) {
+    db.find("user",{
+        "id": page.userId
+    },{"pageamount":10,"page":page,"sort":{"date":-1}}, function (err, result) {
         var obj = {"allResult" : result};
         res.json(obj);
     });
 };
-exports.countUserdata = function (req, res ,result) {
-    db.getAllCount("Visitor", function (count) {
-        res.send(count.toString());
-    });
-};
+// exports.countUserdata = function (req, res ,result) {
+//     db.getAllCount("Visitor", function (count) {
+//         res.send(count.toString());
+//     });
+// };
 
 exports.delUserdata = function (req, res, result) {
     var form = new formidable.IncomingForm();
@@ -556,38 +559,66 @@ exports.showComment = function (req, res ,result) {
 exports.doComment = function (req, res, result) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
-        var name = fields.name;
-        var email = fields.email;
-        var content = fields.content;
-        db.getAllCount("article", function (count) {
-            var allCount = count.toString();
-            var date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
-            db.insertOne("comment", {
-                "ID" : parseInt(allCount) + 1,
-                "name" : name,
-                "email" : email,
-                "content" : content,
-                "date" : date
-            },function (err, result) {
-                if(err){
-                    console.log("留言错误" + err);
-                    return;
-                }
-                res.send("1");
+        var parentId = fields.parentId ? fields.parentId : null;
+        var commentText = fields.commentText;
+        var commentUserId = fields.commentUserId;
+        // var commentUserName = fields.commentUserName;
+        var articleId = fields.articleId;
+        var toUserId = fields.toUserId ? fields.toUserId : null;
+        // var toUserName = fields.toUserName;
+        db.updateOne("counters", {"_id":"commentId"}, function (result) {
+            if (result !== "success") return;
+            db.find("counters", {"_id":"commentId"}, function (err, result){
+                var id = result[0].sequence_value;
+                var date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+                db.insertOne("comment", {
+                    "id" : id,  //评论id
+                    "parentId": parentId, //回复id
+                    "commentText": commentText, //评论内容  
+                    "commentUserId": commentUserId, //评论者id
+                    "date" : date,
+                    "articleId": articleId, //评论文章id
+                    "toUserId": toUserId, // 回复者id
+                    "likeNum": 0, // 总点赞数
+                    "replyNum": 0, // 总回复数
+                    "status": 1, // 状态 -1：已删除 1：已发布 0：待审核
+                },function (err, result) {
+                    if(err){
+                        console.log("留言错误" + err);
+                        return;
+                    }
+                    res.send("1");
+                });
             });
         });
     });
 };
 //取得评论
 exports.getComment = function (req, res, next) {
-    var page = req.query.page;
-    db.find("comment",{},{"pageamount":10,"page":page,"sort":{"date":-1}}, function (err, result) {
-        var obj = {"allResult" : result};
-        res.json(obj);
+    var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+        var articleId = fields.articleId;
+        var page = fields.page ? fields.page : 0;
+        console.log(articleId);
+        db.find("comment",{
+            "articleId": articleId,
+        },{"pageamount":10,"page":page,"sort":{"date":-1}}, function (err, result) {
+            console.log(result);
+            // result.map((val, index)=>{
+            //     db.find("user",{
+            //         "id": val.commentUserId
+            //     },{"pageamount":10,"page":0,"sort":{"date":-1}}, function(err, result){
+
+            //     })
+                
+            // })
+            var obj = {"allResult" : result};
+            res.json(obj);
+        });
     });
 };
 
-//取得评论总页数
+//取得评论总页数   ???下拉至底部才获取内容
 exports.getAllCountComment = function (req, res, next) {
     db.getAllCount("comment", function (count) {
         res.send(count.toString());

@@ -3,6 +3,8 @@ import {
   Comment, Avatar, Form, Button, List, Input,
 } from 'antd';
 import moment from 'moment';
+import axios from 'axios';
+import Qs from 'qs';
 
 const TextArea = Input.TextArea;
 
@@ -40,29 +42,40 @@ class AddComment extends React.Component {
     comments: [],
     submitting: false,
     value: '',
+    userId: 1,
   }
 
   handleSubmit = () => {
-    if (!this.state.value) {
+    const _this = this;
+    const commentText = this.state.value;
+    if (!commentText) {
       return;
     }
 
-    this.setState({
+    _this.setState({
       submitting: true,
     });
 
+    axios.post("http://localhost:3000/doComment", Qs.stringify({
+      "commentText": commentText,
+      "commentUserId": _this.state.userId,
+      "articleId":  _this.props.articleId,
+    }), {'Content-Type': 'application/x-www-form-urlencoded'}).then(function (res) {
+      console.log(res);
+    })
+
     setTimeout(() => {
-      this.setState({
+      _this.setState({
         submitting: false,
         value: '',
         comments: [
           {
             author: 'Han Solo',
             avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-            content: <p>{this.state.value}</p>,
+            content: <p>{_this.state.value}</p>,
             datetime: moment().fromNow(),
           },
-          ...this.state.comments,
+          ..._this.state.comments,
         ],
       });
     }, 1000);
@@ -72,6 +85,32 @@ class AddComment extends React.Component {
     this.setState({
       value: e.target.value,
     });
+  }
+
+  componentWillMount(){
+    const _this = this;
+    axios.post("http://localhost:3000/getComment", Qs.stringify({
+      "articleId": _this.props.articleId,
+    }), {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }).then(function (res) {
+      console.log(res);
+      let allResult = res.data.allResult;
+      let commentsArr = [];
+      allResult.map(function (value, index) {
+        commentsArr.push({
+          author: value.commentUserName,
+          avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+          content: <p>{value.commentText}</p>,
+          datetime: value.date,
+        });
+      })
+      _this.setState({
+        submitting: false,
+        value: '',
+        comments: commentsArr
+      });
+    })
   }
 
   render() {

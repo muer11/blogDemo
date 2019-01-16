@@ -28,20 +28,27 @@ const IconText = ({ type, text }) => (
 class ContentList extends React.Component{
     state = {
         tagId: this.props.tagId,
-        listData: []
+        listData: [],
+        
     }
 
-    componentWillMount(){
-        console.log("tagId:"+this.state.tagId);
+    showArticle(articleId){
+        this.props.showArticle(false, articleId);
+    }
+
+    componentDidMount(){
         var _this = this;
         axios.get("http://localhost:3000/getTagArticle?isPublished=true&tagId=" + this.state.tagId).then(function (res) {
             const data = res.data.allResult;
             let listData = [];
             data.map(function(value, index){
-                console.log(value);
                 listData.push({
-                    href: "/article?articleId="+value.id,
+                    articleId: value.id,
                     title: value.title,
+                    type: value.type, //类型
+                    date: value.date, 
+                    goodNum: value.goodNum, //点赞数
+                    message: value.message, //评论数
                     // avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
                     // description: '121Ant Design, a design language for background applications, is refined by Ant UED Team.',
                     content: ''
@@ -71,13 +78,12 @@ class ContentList extends React.Component{
                 renderItem={item => (
                     <List.Item
                         key={item.title}
-                        // actions={[<IconText type="star-o" text="156" />, <IconText type="like-o" text="156" />, <IconText type="message" text="2" />]}
-                        extra={<img width={272} alt="logo" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" />}
+                        actions={[<IconText type="null" text={item.type} />, <IconText type="like-o" text={item.goodNum} />, <IconText type="message" text={item.message} />, <IconText type="time" text={item.date} />]}
+                        // extra={<img width={272} alt="logo" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" />}
                     >
                         <List.Item.Meta
                         // avatar={<Avatar src={item.avatar} />}
-                        // title={<a href={item.href}>{item.title}</a>} onClick={(id)=>{this.changeContent(id)}}
-                        title={<a href={item.href}>{item.title}</a>} 
+                        title={<a onClick={()=>{this.showArticle(item.articleId)}}>{item.title}</a>} 
                         // description={item.description}
                         />
                         {/* {item.content} */}

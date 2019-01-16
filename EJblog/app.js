@@ -115,7 +115,7 @@ app.get("/About", router.showAbout);
 
 //Comment!
 app.get("/Comment", router.showComment);
-app.post("/doComment", router.doComment);
+app.post("/doComment", router.doComment); //保存评论
 app.post("/getComment", router.getComment);
 app.post("/getAllCountComment", router.getAllCountComment);
 //Comment
