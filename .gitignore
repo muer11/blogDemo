@@ -1,9 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/react-redux-app/node_modules
-/express-app/node_modules
-/EJblog/node_modules
+/express-demo/node_modules
+/react-demo/node_modules
 /.pnp
 .pnp.js
 

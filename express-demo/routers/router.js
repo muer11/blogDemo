@@ -200,7 +200,7 @@ exports.findOneArticle = function (req, res, next) {
         var obj = {
             "allResult": result
         };
-        // console.log(result);
+        console.log(result);
         res.json(obj);
     });
 };
@@ -475,11 +475,11 @@ exports.getUserdata = function (req, res ,result) {
         res.json(obj);
     });
 };
-// exports.countUserdata = function (req, res ,result) {
-//     db.getAllCount("Visitor", function (count) {
-//         res.send(count.toString());
-//     });
-// };
+exports.countUserdata = function (req, res ,result) {
+    db.getAllCount("Visitor", function (count) {
+        res.send(count.toString());
+    });
+};
 
 exports.delUserdata = function (req, res, result) {
     var form = new formidable.IncomingForm();
@@ -618,6 +618,11 @@ exports.getComment = function (req, res, next) {
     });
 };
 
+exports.populate = function(req, res, next){
+    db.populate();
+    res.send("populate");
+}
+
 //取得评论总页数   ???下拉至底部才获取内容
 exports.getAllCountComment = function (req, res, next) {
     db.getAllCount("comment", function (count) {
@@ -698,6 +703,9 @@ function getClientIp(req) {
     }
     return ipAddress;
 }
+
+
+
 
 
 

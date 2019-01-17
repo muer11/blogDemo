@@ -1,6 +1,9 @@
 //这个模块里面封装了所有对数据库的常用操作
 var MongoClient = require('mongodb').MongoClient;
 var settings = require("./setting.js");
+var User = require("./model.js").User;
+var Comment = require("./model.js").Comment;
+
 //不管数据库什么操作，都是先连接数据库，所以我们可以把连接数据库
 //封装成为内部函数
 function _connectDB(callback) {
@@ -122,5 +125,39 @@ exports.updateOne = function (collectionName, json, callback) {
                 db.close();
             }
         );
+    })
+}
+
+// 连表查询 populate
+exports.populate = function(){
+    var _this = this;
+    _connectDB(function(err, db){
+        // db.collection()
+        // console.log(schemas.Comment.find());
+        console.log(11111111111111);
+        db.collection("comment").aggregate([{
+            $lookup:{
+                from: "user",
+                localField: "commentUserId",
+                foreignField: "id",
+                as: "userid"
+            }
+        }]).toArray(function(err, res){
+            if(err) throw err;
+            console.log(JSON.stringify(res));
+            db.close();
+        })
+
+
+        // Comment.find({"commentUserId":"1"}).populate({
+        //     path: 'toUserId',
+        //     select: 'username',
+        //     model: 'user',
+        // }).then(function(err, result){
+        //     console.log(22222222222)
+        //     console.log(result)
+        // }).catch(function(reason){
+        //     console.log(reason);
+        // })
     })
 }
