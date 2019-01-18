@@ -1,12 +1,13 @@
 import React from 'react';
 import {
-  Comment, Avatar, Form, Button, List, Input,
+  Comment, Avatar, Form, Button, List, Input, Icon, Tooltip
 } from 'antd';
 import moment from 'moment';
 import axios from 'axios';
 import Qs from 'qs';
 
 const TextArea = Input.TextArea;
+
 
 const CommentList = ({ comments }) => (
   <List
@@ -42,7 +43,26 @@ class AddComment extends React.Component {
     comments: [],
     submitting: false,
     value: '',
+    action: null,
+    // likes: 0,
+    // dislikes: 0,
     userId: 1,
+  }
+
+  like = () => {
+    this.setState({
+      likes: 1,
+      dislikes: 0,
+      action: 'liked',
+    });
+  }
+
+  dislike = () => {
+    this.setState({
+      likes: 0,
+      dislikes: 1,
+      action: 'disliked',
+    });
   }
 
   handleSubmit = () => {
@@ -62,7 +82,7 @@ class AddComment extends React.Component {
       "articleId":  _this.props.articleId,
     }), {'Content-Type': 'application/x-www-form-urlencoded'}).then(function (res) {
       console.log(res);
-    })
+    });
 
     setTimeout(() => {
       _this.setState({
@@ -74,6 +94,7 @@ class AddComment extends React.Component {
             avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
             content: <p>{_this.state.value}</p>,
             datetime: moment().fromNow(),
+            like: 0,
           },
           ..._this.state.comments,
         ],
@@ -89,21 +110,42 @@ class AddComment extends React.Component {
 
   componentWillMount(){
     const _this = this;
+
     axios.post("http://localhost:3000/getComment", Qs.stringify({
       "articleId": _this.props.articleId,
     }), {
       'Content-Type': 'application/x-www-form-urlencoded'
     }).then(function (res) {
-      console.log(res);
+      // console.log(res);
       let allResult = res.data.allResult;
       let commentsArr = [];
       allResult.map(function (value, index) {
-        commentsArr.push({
-          author: value.commentUserName,
-          avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-          content: <p>{value.commentText}</p>,
-          datetime: value.date,
-        });
+        if(value.userInfo.length > 0){
+          const actions = [
+            <span>
+              <Tooltip title="Like">
+                <Icon type="like" theme={'liked' === 'liked' ? 'filled' : 'outlined'} onClick={_this.like}/>
+              </Tooltip>
+              <span style={{ paddingLeft: 0, cursor: 'auto' }}>{value.likeNum}</span>
+            </span>,
+            <span>
+              <Tooltip title="Dislike">
+                <Icon type="dislike" theme={'disliked' !== 'disliked' ? 'filled' : 'outlined'} onClick={_this.dislike}/>
+              </Tooltip>
+              <span style={{ paddingLeft: 0, cursor: 'auto' }}>0</span>
+            </span>,
+            <span>Reply to</span>,
+          ];
+          commentsArr.push({
+            author: value.userInfo[0].username,
+            avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+            content: <p>{value.commentText}</p>,
+            datetime: value.date,
+            like: value.likeNum,
+            actions: actions
+            // dislikes: value,
+          });
+        }
       })
       _this.setState({
         submitting: false,
@@ -114,18 +156,20 @@ class AddComment extends React.Component {
   }
 
   render() {
-    const { comments, submitting, value } = this.state;
+    const { comments, submitting, value, action, likes, dislikes } = this.state;
 
     return (
       <div>
         {comments.length > 0 && <CommentList comments={comments} />}
         <Comment
+          // actions={actions}
           avatar={(
             <Avatar
               src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
               alt="Han Solo"
             />
           )}
+          // author={comments.author}
           content={(
             <Editor
               onChange={this.handleChange}

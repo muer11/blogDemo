@@ -598,23 +598,23 @@ exports.getComment = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
         var articleId = fields.articleId;
-        var page = fields.page ? fields.page : 0;
-        console.log(articleId);
-        db.find("comment",{
-            "articleId": articleId,
-        },{"pageamount":10,"page":page,"sort":{"date":-1}}, function (err, result) {
-            console.log(result);
-            // result.map((val, index)=>{
-            //     db.find("user",{
-            //         "id": val.commentUserId
-            //     },{"pageamount":10,"page":0,"sort":{"date":-1}}, function(err, result){
-
-            //     })
-                
-            // })
-            var obj = {"allResult" : result};
+        db.aggregate("comment", { //直接合并两张表，导致不需要的数据很多
+            from: "user",
+            localField: "commentUserId",
+            foreignField: "id",
+            as: "userInfo"
+        }, function (err, result) {
+            let commentInfo = [];
+            result.map(function(val, index){
+                if(val.articleId == articleId){
+                    commentInfo.push(val);
+                }
+            })
+            var obj = {
+                "allResult": commentInfo
+            };
             res.json(obj);
-        });
+        })
     });
 };
 

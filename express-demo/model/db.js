@@ -129,27 +129,18 @@ exports.updateOne = function (collectionName, json, callback) {
 }
 
 // 连表查询 populate
-exports.populate = function(){
+exports.aggregate = function (collectionName, json, callback) {
     var _this = this;
     _connectDB(function(err, db){
-        // db.collection()
-        // console.log(schemas.Comment.find());
-        console.log(11111111111111);
-        db.collection("comment").aggregate([{
-            $lookup:{
-                from: "user",
-                localField: "commentUserId",
-                foreignField: "id",
-                as: "userid"
-            }
-        }]).toArray(function(err, res){
-            if(err) throw err;
-            console.log(JSON.stringify(res));
+        db.collection(collectionName).aggregate([{
+            $lookup: json
+        }]).toArray(function (err, res) {
+            if (err) throw err;
+            callback(err, res);
             db.close();
         })
 
-
-        // Comment.find({"commentUserId":"1"}).populate({
+        // Comment.find({"commentUserId":1}).populate({   //尝试用schema来做
         //     path: 'toUserId',
         //     select: 'username',
         //     model: 'user',

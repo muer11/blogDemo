@@ -3,6 +3,8 @@ import {
   Comment, Icon, Tooltip, Avatar,
 } from 'antd';
 import moment from 'moment';
+import axios from 'axios';
+import Qs from 'qs';
 
 class ShowComment extends React.Component {
   state = {
@@ -25,6 +27,14 @@ class ShowComment extends React.Component {
       dislikes: 1,
       action: 'disliked',
     });
+  }
+
+  componentWillMount(){
+    axios.post("http://localhost:3000/getComment", Qs.stringify({
+      articleId: this.props.articleId
+    })).then(function(res){
+      console.log(res);
+    })
   }
 
   render() {

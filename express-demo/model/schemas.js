@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
-//定义数据模式
+//定义数据模式 统一：一律涉及id的都为Number类型
 //用户表user
 var UserSchema = new Schema({
     id: Number,
@@ -24,10 +24,10 @@ var UserSchema = new Schema({
 //评论表comment
 var CommentSchema = new Schema({
     id: Number,
-    parentId: String,
+    parentId: Number,
     commentText: String,
     commentUserId: String,
-    articleId: String,
+    articleId: Number,
     toUserId: {
         type: Schema.Types.ObjectId,
         ref: 'user'
@@ -49,8 +49,8 @@ var CommentSchema = new Schema({
 //文章表article
 var ArticleSchema = new Schema({
     id: Number,
-    userId: String,
-    tagId: String,
+    userId: Number,
+    tagId: Number,
     title: String,
     content: String,
     date: {
@@ -66,16 +66,32 @@ var ArticleSchema = new Schema({
 });
 //标签表tag
 var TagSchema = new Schema({
-
+    id: Number,
+    userId: Number,
+    name: String,
+    date:{
+       createAt: {
+            type: Date,
+            default: Date.now()
+        },
+        updateAt: {
+            type: Date,
+            default: Date.now()
+        } 
+    }
 });
 //计数表counters
 var CountersSchema = new Schema({
-
+    _id: String,
+    sequence_value: Number
 });
 
 let Schemas = {
     UserSchema: UserSchema,
     CommentSchema: CommentSchema,
+    ArticleSchema: ArticleSchema,
+    TagSchema: TagSchema,
+    CountersSchema: CountersSchema
 }
 
 module.exports = Schemas;

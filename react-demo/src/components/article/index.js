@@ -13,10 +13,10 @@ class Article extends React.Component{
  
     componentWillMount(){
         let id = this.props.articleId;
-        console.log(this.props.articleId);
+        // console.log(this.props.articleId);
         const _this = this;
         axios.get("http://localhost:3000/findOneArticle?articleId=" + id).then(function (res) {
-            console.log(res);
+            // console.log(res);
             let data = res.data.allResult[0];
             _this.setState({
                 "title": data.title,
@@ -26,7 +26,7 @@ class Article extends React.Component{
     }
 
     componentDidMount(){
-        console.log(this.props.articleId);
+        // console.log(this.props.articleId);
     }
 
     render(){
@@ -36,7 +36,7 @@ class Article extends React.Component{
                     <h1>{this.state.title}</h1>
                     <p dangerouslySetInnerHTML={{__html:this.state.content}}></p>
                 </div>
-                <ShowComment articleId={this.props.articleId}/>
+                {/* <ShowComment articleId={this.props.articleId}/> */}
                 <AddComment articleId={this.props.articleId} />
             </div>
         );
