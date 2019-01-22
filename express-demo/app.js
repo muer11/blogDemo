@@ -69,6 +69,7 @@ app.post("/editRecording", router.editRecording);
 app.get("/getArticle", router.getArticle);
 app.get("/getTagArticle", router.getTagArticle);
 app.get("/findOneArticle", router.findOneArticle);
+app.post("/pointArticle", router.pointArticle); //文章点赞
 //取得总页数
 app.post("/getAllAmount", router.getAllAmount);
 //文章页面
@@ -117,6 +118,8 @@ app.get("/About", router.showAbout);
 app.get("/Comment", router.showComment);
 // app.get("/populate", router.populate);
 app.post("/doComment", router.doComment); //保存评论
+app.post("/pointComment", router.pointComment); //评论点赞
+// app.post("/replyComment", router.replyComment); //评论回复
 app.post("/getComment", router.getComment); 
 app.post("/getAllCountComment", router.getAllCountComment);
 //Comment

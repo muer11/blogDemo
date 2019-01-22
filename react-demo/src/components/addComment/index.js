@@ -5,14 +5,13 @@ import {
 import moment from 'moment';
 import axios from 'axios';
 import Qs from 'qs';
+require("./addComment.scss");
 
 const TextArea = Input.TextArea;
-
-
 const CommentList = ({ comments }) => (
   <List
     dataSource={comments}
-    header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
+    header={`${comments.length} ${comments.length > 1 ? '条回复' : ''}`}
     itemLayout="horizontal"
     renderItem={props => <Comment {...props} />}
   />
@@ -23,7 +22,7 @@ const Editor = ({
 }) => (
   <div>
     <Form.Item>
-      <TextArea rows={4} onChange={onChange} value={value} />
+      <TextArea rows={4} onChange={onChange}/>
     </Form.Item>
     <Form.Item>
       <Button
@@ -32,7 +31,7 @@ const Editor = ({
         onClick={onSubmit}
         type="primary"
       >
-        Add Comment
+        发表
       </Button>
     </Form.Item>
   </div>
@@ -43,26 +42,30 @@ class AddComment extends React.Component {
     comments: [],
     submitting: false,
     value: '',
+    replyValue: '',
     action: null,
-    // likes: 0,
-    // dislikes: 0,
     userId: 1,
   }
 
-  like = () => {
-    this.setState({
-      likes: 1,
-      dislikes: 0,
-      action: 'liked',
+  likeFunc = (id) => {
+    console.log(id);
+    const _this = this;
+    axios.post("http://localhost:3000/pointComment", Qs.stringify({
+      "commentId": id,
+      "userId": _this.state.userId,
+    })).then(function (res) {
+      console.log(res);
     });
   }
 
-  dislike = () => {
-    this.setState({
-      likes: 0,
-      dislikes: 1,
-      action: 'disliked',
-    });
+  replyFunc = (id) => {
+    // this.setState({
+    //   likes: 1,
+    //   dislikes: 0,
+    //   action: 'liked',
+    // });
+    console.log(id);
+    
   }
 
   handleSubmit = () => {
@@ -102,9 +105,38 @@ class AddComment extends React.Component {
     }, 1000);
   }
 
+  replySubmit = (parentId, toUserId) => {
+    console.log(parentId);
+    console.log(toUserId);
+    const _this = this;
+    const replyText = this.state.replyValue;
+    if (!replyText) {
+      return;
+    }
+    axios.post("http://localhost:3000/doComment", Qs.stringify({
+      "commentText": replyText,
+      "commentUserId": _this.state.userId,
+      "articleId": _this.props.articleId,
+      "parentId": parentId,
+      "toUserId": toUserId,
+    }), {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }).then(function (res) {
+      console.log(res);
+    });
+  }
+
   handleChange = (e) => {
+    console.log(e.target.value);
     this.setState({
       value: e.target.value,
+    });
+  }
+  
+  replyChange = (e) => {
+    console.log(e.target.value);
+    this.setState({
+      replyValue: e.target.value,
     });
   }
 
@@ -121,20 +153,39 @@ class AddComment extends React.Component {
       let commentsArr = [];
       allResult.map(function (value, index) {
         if(value.userInfo.length > 0){
+          console.log(value);
           const actions = [
-            <span>
-              <Tooltip title="Like">
-                <Icon type="like" theme={'liked' === 'liked' ? 'filled' : 'outlined'} onClick={_this.like}/>
-              </Tooltip>
-              <span style={{ paddingLeft: 0, cursor: 'auto' }}>{value.likeNum}</span>
-            </span>,
-            <span>
-              <Tooltip title="Dislike">
-                <Icon type="dislike" theme={'disliked' !== 'disliked' ? 'filled' : 'outlined'} onClick={_this.dislike}/>
-              </Tooltip>
-              <span style={{ paddingLeft: 0, cursor: 'auto' }}>0</span>
-            </span>,
-            <span>Reply to</span>,
+            <div className="commentOperation">
+              <div className="Tooltip">
+                <Tooltip title="Like" onClick = {
+                  () => {
+                    _this.likeFunc(value.id);
+                  }
+                }>
+                  <Icon type="like" theme={'liked' === 'outlined' ? 'filled' : 'outlined'}/>{value.likeNum}
+                </Tooltip>
+                <Tooltip title="message" onClick = {
+                  () => {
+                    _this.replyFunc(value.id);
+                  }
+                }>
+                  <Icon type="message"  onClick={_this.replyFunc}/>回复
+                </Tooltip>
+              </div>
+              <Comment
+                content={(
+                  <Editor
+                    onChange={_this.replyChange}
+                    onSubmit={(e)=>{
+                      _this.replySubmit(value.id, value.commentUserId)
+                      }
+                    }
+                    submitting={_this.state.submitting}
+                    value={value}
+                  />
+                )}
+              />
+            </div>
           ];
           commentsArr.push({
             author: value.userInfo[0].username,
@@ -143,7 +194,6 @@ class AddComment extends React.Component {
             datetime: value.date,
             like: value.likeNum,
             actions: actions
-            // dislikes: value,
           });
         }
       })
@@ -159,7 +209,7 @@ class AddComment extends React.Component {
     const { comments, submitting, value, action, likes, dislikes } = this.state;
 
     return (
-      <div>
+      <div className="addComment">
         {comments.length > 0 && <CommentList comments={comments} />}
         <Comment
           // actions={actions}

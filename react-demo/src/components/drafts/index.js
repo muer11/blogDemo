@@ -89,7 +89,7 @@ class ManageList extends React.Component{
                     type: type,
                     title: data[i].title,
                     href: 'http://ant.design',
-                    goodNum: data[i].goodNum,
+                    likeNum: data[i].likeNum,
                     visitNum: data[i].visitNum,
                     date: data[i].date,
                     // content: data[i].content,

@@ -57,7 +57,7 @@ exports.doRecording = function (req, res, next) {
                     "date" : date,
                     "isPublished": fields.isPublished, // 已发布或草稿箱
                     "visitNum" : 0, //浏览数
-                    "goodNum" : 0 //点赞数
+                    "likeNum" : 0 //点赞数
                 },function (err, result) {
                     if(err){
                         res.send("-1");
@@ -86,7 +86,7 @@ exports.editRecording = function (req, res, next) {
             "isPublished": fields.isPublished, // 已发布或草稿箱
             "updateDate": date,
             // "visitNum": 0, //浏览数
-            // "goodNum": 0 //点赞数
+            // "likeNum": 0 //点赞数
         }}, function (err, result) {
             if (err) {
                 res.send("-1");
@@ -112,9 +112,9 @@ exports.getArticle = function (req, res, next) {
                 "visitNum": -1
             }
             break;
-        case "goodNum":
+        case "likeNum":
             sortQuery = {
-                "goodNum": -1
+                "likeNum": -1
             }
             break;
         default:
@@ -123,11 +123,6 @@ exports.getArticle = function (req, res, next) {
             }
         break;
     }
-    // console.log(info);
-    // console.log("userId:" + userId);
-    // console.log(tagId);
-    // console.log("isPublished:" + isPublished);
-    // console.log("sortQuery:" + sortQuery);
     db.find("article", { 
         "userId": userId,
         "tagId": tagId,
@@ -159,9 +154,9 @@ exports.getTagArticle = function (req, res, next) {
                 "visitNum": -1
             }
             break;
-        case "goodNum":
+        case "likeNum":
             sortQuery = {
-                "goodNum": -1
+                "likeNum": -1
             }
             break;
         default:
@@ -244,6 +239,25 @@ exports.delArticle =function (req, res, result) {
         });
     });
 };
+
+//点赞文章
+exports.pointArticle = function(req, res, next){
+    var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+        var articleId = fields.articleId;
+        db.updateMany("article",{
+            "id": parseInt(articleId),
+        }, {
+            $inc: {"likeNum":1}
+        }, function(err, result){
+            if(err){
+                console.log("文章点赞错误" + err);
+                return;
+            }
+            res.send("1");
+        })
+    })
+}
 
 // 显示标签-前台
 exports.showTagsFore = function (req, res, next) {
@@ -573,12 +587,12 @@ exports.doComment = function (req, res, result) {
                 var date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
                 db.insertOne("comment", {
                     "id" : id,  //评论id
-                    "parentId": parentId, //回复id
+                    "parentId": parseInt(parentId), //回复id
                     "commentText": commentText, //评论内容  
-                    "commentUserId": commentUserId, //评论者id
+                    "commentUserId": parseInt(commentUserId), //评论者id
                     "date" : date,
-                    "articleId": articleId, //评论文章id
-                    "toUserId": toUserId, // 回复者id
+                    "articleId": parseInt(articleId), //评论文章id
+                    "toUserId": parseInt(toUserId), // 回复者id
                     "likeNum": 0, // 总点赞数
                     "replyNum": 0, // 总回复数
                     "status": 1, // 状态 -1：已删除 1：已发布 0：待审核
@@ -593,6 +607,25 @@ exports.doComment = function (req, res, result) {
         });
     });
 };
+//点赞评论
+exports.pointComment = function(req, res, next){
+    var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+        var commentId = fields.commentId;
+        db.updateMany("comment",{
+            "id": parseInt(commentId),
+        }, {
+            $inc: {"likeNum":1}
+        }, function(err, result){
+            if(err){
+                console.log("留言错误" + err);
+                return;
+            }
+            res.send("1");
+        })
+    })
+}
+
 //取得评论
 exports.getComment = function (req, res, next) {
     var form = new formidable.IncomingForm();
@@ -602,7 +635,7 @@ exports.getComment = function (req, res, next) {
             from: "user",
             localField: "commentUserId",
             foreignField: "id",
-            as: "userInfo"
+            as: "commentUserInfo"
         }, function (err, result) {
             let commentInfo = [];
             result.map(function(val, index){

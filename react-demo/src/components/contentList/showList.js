@@ -47,7 +47,7 @@ class ContentList extends React.Component{
                     title: value.title,
                     type: value.type, //类型
                     date: value.date, 
-                    goodNum: value.goodNum, //点赞数
+                    likeNum: value.likeNum, //点赞数
                     message: value.message, //评论数
                     // avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
                     // description: '121Ant Design, a design language for background applications, is refined by Ant UED Team.',
@@ -78,7 +78,7 @@ class ContentList extends React.Component{
                 renderItem={item => (
                     <List.Item
                         key={item.title}
-                        actions={[<IconText type="null" text={item.type} />, <IconText type="like-o" text={item.goodNum} />, <IconText type="message" text={item.message} />, <IconText type="time" text={item.date} />]}
+                        actions={[<IconText type="null" text={item.type} />, <IconText type="like-o" text={item.likeNum} />, <IconText type="message" text={item.message} />, <IconText type="time" text={item.date} />]}
                         // extra={<img width={272} alt="logo" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" />}
                     >
                         <List.Item.Meta

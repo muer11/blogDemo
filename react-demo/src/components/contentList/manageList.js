@@ -89,7 +89,7 @@ class ManageList extends React.Component{
                     type: type,
                     title: data[i].title,
                     href: 'http://ant.design',
-                    goodNum: data[i].goodNum,
+                    likeNum: data[i].likeNum,
                     visitNum: data[i].visitNum,
                     date: data[i].date,
                     // content: data[i].content,
@@ -150,7 +150,7 @@ class ManageList extends React.Component{
                     >
                         <Option value="date">时间</Option>
                         <Option value="visitNum">浏览量</Option>
-                        <Option value="goodNum">点赞量</Option>
+                        <Option value="likeNum">点赞量</Option>
                     </Select> 
                 </div>
                 <List
@@ -169,7 +169,7 @@ class ManageList extends React.Component{
                     <List.Item
                         key={item.title}
                         //<IconText type="star-o" text="156" />,<IconText type="message" text="2" />,
-                        actions={[<IconText type="" text={item.type} />,<IconText type="like-o" text={item.goodNum} />, <IconText type="time" text={item.date} />, <a onClick={()=>{this.editArticle(item.id)}}>编辑</a>, <a onClick={()=>{this.deleteArticle(item.id)}}>删除</a>, <a href={"/article?id="+item.id} target="_blank">查看</a>]}
+                        actions={[<IconText type="" text={item.type} />,<IconText type="like-o" text={item.likeNum} />, <IconText type="time" text={item.date} />, <a onClick={()=>{this.editArticle(item.id)}}>编辑</a>, <a onClick={()=>{this.deleteArticle(item.id)}}>删除</a>, <a href={"/article?id="+item.id} target="_blank">查看</a>]}
                     >
                         <List.Item.Meta
                             title={<a href={item.href}>{item.title}</a>}

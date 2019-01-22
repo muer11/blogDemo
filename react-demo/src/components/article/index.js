@@ -1,14 +1,28 @@
 import React from 'react';
 import axios from 'axios';
+import Qs from 'qs';
 import AddComment from '../addComment/index';
 import ShowComment from '../showComment/index';
+import { Icon, Tooltip } from 'antd';
 require('./article.scss');
 
 class Article extends React.Component{
     state={
         title: "",
         content: "",
+        likeNum: 0,
+        articleId: this.props.articleId,
         url: this.props.match
+    }
+
+    doLike() {
+        console.log("like...............")
+        let articleId = this.state.articleId;
+        axios.post("http://localhost:3000/pointArticle", Qs.stringify({
+            "articleId": articleId
+        })).then(function(res){
+            console.log(res);
+        })
     }
  
     componentWillMount(){
@@ -20,7 +34,8 @@ class Article extends React.Component{
             let data = res.data.allResult[0];
             _this.setState({
                 "title": data.title,
-                "content": data.content
+                "content": data.content,
+                "likeNum": data.likeNum
             });
         })
     }
@@ -35,6 +50,12 @@ class Article extends React.Component{
                 <div className="content">
                     <h1>{this.state.title}</h1>
                     <p dangerouslySetInnerHTML={{__html:this.state.content}}></p>
+                    <div>
+                        <Tooltip title="Like" onClick={this.doLike.bind(this)}>
+                            <Icon type="like" theme={'liked' === 'outlined' ? 'filled' : 'outlined'}/>
+                        </Tooltip>
+                        <span style={{ paddingLeft: 0, cursor: 'auto' }}>{this.state.likeNum}</span>
+                    </div>
                 </div>
                 {/* <ShowComment articleId={this.props.articleId}/> */}
                 <AddComment articleId={this.props.articleId} />

@@ -24,17 +24,19 @@ var UserSchema = new Schema({
 //评论表comment
 var CommentSchema = new Schema({
     id: Number,
-    parentId: Number,
-    commentText: String,
-    commentUserId: String,
-    articleId: Number,
-    toUserId: {
+    parentId: Number, //评论id
+    commentText: String, //回复内容
+    commentUserId: String, //回复者(session)
+    articleId: Number, //文章编号
+    toUserId: {  //评论对象
         type: Schema.Types.ObjectId,
         ref: 'user'
     },
-    likeNum: Number,
-    replyNum: Number,
-    status: Number,
+    likeNum: Number, //点赞人数
+    // likeReader: Array,
+    replyNum: Number, //回复人数
+    // replyReader: Array,
+    status: Number, //状态1：发表
     date: {
         createAt:{
             type: Date,
@@ -53,6 +55,7 @@ var ArticleSchema = new Schema({
     tagId: Number,
     title: String,
     content: String,
+    like: Number,
     date: {
         createAt: {
             type: Date,
