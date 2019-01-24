@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 //定义数据模式 统一：一律涉及id的都为Number类型
 //用户表user
-var UserSchema = new Schema({
+var UserSchema = new mongoose.Schema({
     id: Number,
     username: String,
     password: String,
@@ -22,7 +22,7 @@ var UserSchema = new Schema({
     }
 });
 //评论表comment
-var CommentSchema = new Schema({
+var CommentSchema = new mongoose.Schema({
     id: Number,
     parentId: Number, //评论id
     commentText: String, //回复内容
@@ -49,7 +49,7 @@ var CommentSchema = new Schema({
     }
 });
 //文章表article
-var ArticleSchema = new Schema({
+var ArticleSchema = new mongoose.Schema({
     id: Number,
     userId: Number,
     tagId: Number,
@@ -68,7 +68,7 @@ var ArticleSchema = new Schema({
     }
 });
 //标签表tag
-var TagSchema = new Schema({
+var TagSchema = new mongoose.Schema({
     id: Number,
     userId: Number,
     name: String,
@@ -84,7 +84,7 @@ var TagSchema = new Schema({
     }
 });
 //计数表counters
-var CountersSchema = new Schema({
+var CountersSchema = new mongoose.Schema({
     _id: String,
     sequence_value: Number
 });
