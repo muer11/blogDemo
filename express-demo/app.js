@@ -12,7 +12,7 @@ var db = mongoose();
 
 // require('./routers/router');
 const testRouter = require("./routers/test");
-const countersRouter = require("./routers/counters");
+const countersRouter = require("./routers/counter");
 const userRouter = require("./routers/user");
 const tagRouter = require("./routers/tag");
 const articleRouter = require("./routers/article");

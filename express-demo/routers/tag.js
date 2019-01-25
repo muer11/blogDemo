@@ -1,7 +1,10 @@
+const formidable = require('formidable');
 const express = require("express");
 const router = express.Router();
-var Tag = require("../model/tag");
+const Tag = require("../model/tag");
+const Counter = require("../model/counter");
 
+//显示标签-前台
 router.get("/showTagsFore", function (req, res) {
     Tag.find({
         // "userId": parseInt(userId),
@@ -17,6 +20,7 @@ router.get("/showTagsFore", function (req, res) {
     });
 });
 
+// 显示标签-后台
 router.get("/showTags", function(req, res){
     var userId = req.query.userId;
     console.log(userId);
@@ -34,70 +38,31 @@ router.get("/showTags", function(req, res){
     });
 })
 
-// 显示标签-前台
-exports.showTagsFore = function (req, res, next) {
-    db.find("tag", {
-        // "userId": parseInt(userId),
-    }, {
-        "pageamount": 200,
-        "page": 0,
-        "sort": {
-            "id": 1
-        }
-    }, function (err, result) {
-        if (err) {
-            console.log("查找标签错误：" + err);
-            return;
-        }
-        var allTags = {
-            "allTags": result
-        };
-        res.json(allTags);
-    });
-}
-// 显示标签-后台
-exports.showTags = function (req, res, next) {
-    var userId = req.query.userId;
-    console.log(userId);
-    db.find("tag", {
-        "userId": parseInt(userId),
-    }, {
-        "pageamount": 200,
-        "page": 0,
-        "sort": {
-            "id": 1
-        }
-    }, function (err, result) {
-        if (err) {
-            console.log("查找标签错误：" + err);
-            return;
-        }
-        var allTags = {
-            "allTags": result
-        };
-        res.json(allTags);
-    });
-}
-
 // 添加标签
-exports.addTag = function (req, res, next) {
+router.post("/addTag", function(req, res){
     var form = new formidable.IncomingForm();
-    form.parse(req, function (err, fields) {
-        var date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
-        // mongodb非关系型数据库，counters中记录了每张表的id
-        db.updateOne("counters", {
+    form.parse(req, function (err, result) {
+        var reqRsult = result;
+        Counter.updateOne({
             "_id": "tagId"
-        }, function (result) {
-            if (result !== "success") return;
-            db.find("counters", {
+        }, {
+            $inc: {
+                "sequence_value": 1
+            }
+        },function (err, result) {
+            if (err) {
+                res.send("-1");
+                return;
+            }
+            Counter.find({
                 "_id": "tagId"
             }, function (err, result) {
                 var id = result[0].sequence_value;
-                db.insertOne("tag", {
+                console.log(id);
+                Tag.create({
                     "id": id,
-                    "userId": parseInt(fields.userId),
-                    "name": fields.name, // 文章分类
-                    "date": date
+                    "userId": parseInt(reqRsult.userId),
+                    "name": reqRsult.name, // 文章分类名
                 }, function (err, result) {
                     if (err) {
                         res.send("-1");
@@ -108,14 +73,14 @@ exports.addTag = function (req, res, next) {
             });
         });
     });
-}
-// 删除标签
-exports.delTag = function (req, res, next) {
+})
+
+router.post('/delTag', function(req, res){
     var form = new formidable.IncomingForm();
-    form.parse(req, function (err, fields, files) {
-        var name = fields.name;
-        db.deleteMany("tag", {
-            "name": name
+    form.parse(req, function (err, result) {
+        var id = result.id;
+        Tag.deleteOne({
+            "id": parseInt(id)
         }, function (err, results) {
             if (err) {
                 console.log("删除标签错误:" + err);
@@ -124,7 +89,6 @@ exports.delTag = function (req, res, next) {
             res.send("1");
         });
     });
-}
-
+})
 
 module.exports = router;

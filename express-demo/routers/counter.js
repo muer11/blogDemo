@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-var Counters = require("../model/counters");
+var Counters = require("../model/counter");
 
 router.get("/", function (req, res) {
     console.log("-----------test---------------");

@@ -7,11 +7,27 @@ var ArticleSchema = new mongoose.Schema({
     //     type: Schema.Types.objectId,
     // },
     id: Number,
-    userId: Number,
-    tagId: Number,
+    userId: {
+        // type: Number,
+        type: Schema.ObjectId,
+        ref: 'user',
+    },
+    tagId: {
+        // type: Number,
+        type: Schema.ObjectId,
+        ref: 'tag',
+    },
     title: String,
     content: String,
-    like: Number,
+    isPublished: Boolean,
+    visitNum: {
+        type: Number,
+        default: 0,
+    },
+    likeNum: {
+        type: Number,
+        default: 0,
+    },
     date: {
         createAt: {
             type: Date,
