@@ -18,7 +18,7 @@ class NormalLoginForm extends React.Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', Qs.stringify(values));
-        axios.post('http://localhost:3000/doLogin', Qs.stringify(values), {
+        axios.post('/user/doLogin', Qs.stringify(values), {
           'Content-Type': 'application/x-www-form-urlencoded'
         }).then(function (res) {
           console.log(res);

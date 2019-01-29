@@ -48,7 +48,7 @@ class TabsNav extends React.Component {
         const _this = this;
         let tabPane = null;
 
-        axios.get("http://localhost:3000/showTagsFore").then(function (res) {
+        axios.get("/api/tag/showTagsFore").then(function (res) {
             const tagArr = res.data.allTags;
             let tagInfo= [{
                 tagId: 'all',
@@ -58,9 +58,9 @@ class TabsNav extends React.Component {
 
             tagArr.map(function(value, index){
                 tagInfo.push({
-                    tagId: value.id,
+                    tagId: value._id,
                     name: value.name,
-                    content: <ContentList tagId={value.id} showArticle={_this.showArticle}/>,
+                    content: <ContentList tagId={value._id} showArticle={_this.showArticle}/>,
                 });
             });
             tabPane = tagInfo.map((item, index) => (

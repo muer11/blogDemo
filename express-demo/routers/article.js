@@ -57,7 +57,7 @@ router.post("/editRecording", function (req, res) {
         console.log(result);
         //更新数据库
         Article.updateMany({
-            "id": result.articleId,
+            "_id": result.articleId,
         }, {
             $set: {
                 "tagId": result.tagId, // 文章分类
@@ -116,7 +116,7 @@ router.get("/getArticle", function (req, res) {
 });
 
 //获取文章-前台
-router.post("/getTagArticle", function (req, res, next) {
+router.get("/getTagArticle", function (req, res, next) {
     var info = req.query;
     var tagId = ((info.tagId && info.tagId !== "all") ? info.tagId : {
         $ne: null
@@ -144,6 +144,9 @@ router.post("/getTagArticle", function (req, res, next) {
     Article.find({
         "tagId": tagId,
         "isPublished": isPublished,
+    }).populate({
+        path: "tagId",
+        select: 'name'
     }).sort(sortQuery).exec(function (err, result) {
         var obj = {
             "allResult": result
@@ -161,7 +164,7 @@ router.get("/findOneArticle", function (req, res) {
     }
     var articleId = req.query.articleId;
     Article.find({
-        "id": articleId
+        "_id": articleId
     }).populate({
         path: "tagId",
         select: 'name'
@@ -189,7 +192,7 @@ router.post("/delArticle", function (req, res) {
     form.parse(req, function (err, result, files) {
         var articleId = result.articleId;
         Article.deleteMany({
-            "id": articleId
+            "_id": articleId
         }, function (err, results) {
             if (err) {
                 console.log("删除文章错误:" + err);
@@ -206,7 +209,7 @@ router.post("/pointArticle", function (req, res) {
     form.parse(req, function (err, result, files) {
         var articleId = result.articleId;
         Article.updateMany({
-            "id": articleId,
+            "_id": articleId,
         }, {
             $inc: {
                 "likeNum": 1

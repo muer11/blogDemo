@@ -47,7 +47,7 @@ class Ueditor extends React.Component {
         const content = this.state.articleContent;
         const tagId = this.state.tagId;
         if (!this.state.isEdit) { // 非编辑
-            url = 'http://localhost:3000/doRecording';
+            url = '/article/doRecording';
             axios.post(url, Qs.stringify({
                 "userId": userId,
                 "title": title,
@@ -58,7 +58,7 @@ class Ueditor extends React.Component {
                 console.log(res);
             });
         }else{ // 编辑
-            url = 'http://localhost:3000/editRecording';
+            url = '/article/editRecording';
             axios.post(url, Qs.stringify({
                 "articleId": articleId,
                 "userId": userId,
@@ -85,7 +85,7 @@ class Ueditor extends React.Component {
     // 文章分类
     showTags = ()=>{
         const _this = this;
-        axios.get("http://localhost:3000/showTags?userId=" + _this.state.userId).then(function (res) {
+        axios.get("/tag/showTags?userId=" + _this.state.userId).then(function (res) {
             // console.log(res);
             var tagArr = res.data.allTags;
             tagArr.map(function(value, index){
@@ -104,7 +104,7 @@ class Ueditor extends React.Component {
         if (this.props.articleId != null){
             var articleId = this.props.articleId;
             var _this = this;
-            axios.get("http://localhost:3000/findOneArticle?articleId=" + articleId).then(function (res) {
+            axios.get("/article/findOneArticle?articleId=" + articleId).then(function (res) {
                 console.log(res);
                 var articleInfo = res.data.allResult[0];
                 _this.setState({

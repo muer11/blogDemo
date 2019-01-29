@@ -30,7 +30,7 @@ class ShowComment extends React.Component {
   }
 
   componentWillMount(){
-    axios.post("http://localhost:3000/getComment", Qs.stringify({
+    axios.post("/api/comment/getComment", Qs.stringify({
       articleId: this.props.articleId
     })).then(function(res){
       console.log(res);

@@ -1,6 +1,8 @@
+const formidable = require('formidable');
 const express = require("express");
 const router = express.Router();
 var User = require("../model/user");
+var Comment = require("../model/comment");
 
 router.get("/", function (req, res) {
     console.log("-----------test---------------");
@@ -38,9 +40,9 @@ router.post("/doComment", function (req, res, result) {
                     // "date" : date,
                     "articleId": articleId, //评论文章id
                     "toUserId": toUserId, // 回复者id
-                    "likeNum": 0, // 总点赞数
-                    "replyNum": 0, // 总回复数
-                    "status": 1, // 状态 -1：已删除 1：已发布 0：待审核
+                    // "likeNum": 0, // 总点赞数
+                    // "replyNum": 0, // 总回复数
+                    // "status": 1, // 状态 -1：已删除 1：已发布 0：待审核
                 },function (err, result) {
                     if(err){
                         console.log("留言错误" + err);
@@ -57,8 +59,8 @@ router.post("/pointComment", function(req, res, next){
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
         var commentId = fields.commentId;
-        db.updateMany("comment",{
-            "id": commentId,
+        Comment.updateMany({
+            "_id": commentId,
         }, {
             $inc: {"likeNum":1}
         }, function(err, result){
@@ -72,15 +74,15 @@ router.post("/pointComment", function(req, res, next){
 });
 
 //取得评论
-exports.getComment = function (req, res, next) {
+router.post("/getComment", function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
         var articleId = fields.articleId;
         Comment.find({
-            "_id": articleId
+            "articleId": articleId
         }).populate({
             path: "commentUserId",
-            select: 'name'
+            select: 'username'
         }).exec(function (err, result) {
             let commentInfo = [];
             result.map(function (val, index) {
@@ -111,5 +113,5 @@ exports.getComment = function (req, res, next) {
         //     res.json(obj);
         // })
     });
-};
+});
 module.exports = router;

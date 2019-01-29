@@ -52,7 +52,7 @@ class ManageList extends React.Component{
     }
 
     deleteArticle = (articleId) => {
-        axios.post("http://localhost:3000/delArticle",Qs.stringify({
+        axios.post("/article/delArticle", Qs.stringify({
             "articleId": articleId
         })).then(function (res) {
             console.log(res);
@@ -69,7 +69,7 @@ class ManageList extends React.Component{
 
     showListData = () => {
         const _this = this;
-        axios.get("http://localhost:3000/getArticle?isPublished=true&page=0&userId=" + _this.state.userId + "&tagId=" + _this.state.type + "&sort=" + _this.state.sort).then(function (res) {
+        axios.get("/article/getArticle?isPublished=true&page=0&userId=" + _this.state.userId + "&tagId=" + _this.state.type + "&sort=" + _this.state.sort).then(function (res) {
             console.log(res);
             let data = res.data.allResult;
             let listInfo = [];
@@ -103,7 +103,7 @@ class ManageList extends React.Component{
 
     showTags = () => {
         const _this = this;
-        axios.get("http://localhost:3000/showTags?userId=" + _this.state.userId).then(function (res) {
+        axios.get("/tag/showTags?userId=" + _this.state.userId).then(function (res) {
             var tagArr = res.data.allTags;
             tagArr.map(function (value, index) {
                 _this.state.tagInfo.push(value);

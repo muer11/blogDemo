@@ -11,7 +11,7 @@ const TextArea = Input.TextArea;
 const CommentList = ({ comments }) => (
   <List
     dataSource={comments}
-    header={`${comments.length} ${comments.length > 1 ? '条回复' : ''}`}
+    header={`${comments.length} ${comments.length >= 1 ? '条留言' : ''}`}
     itemLayout="horizontal"
     renderItem={props => <Comment {...props} />}
   />
@@ -44,13 +44,13 @@ class AddComment extends React.Component {
     value: '',
     replyValue: '',
     action: null,
-    userId: 1,
+    userId: "5c4ea62382bb2e33248441b6",
   }
 
   likeFunc = (id) => {
     console.log(id);
     const _this = this;
-    axios.post("http://localhost:3000/pointComment", Qs.stringify({
+    axios.post("/comment/pointComment", Qs.stringify({
       "commentId": id,
       "userId": _this.state.userId,
     })).then(function (res) {
@@ -79,7 +79,7 @@ class AddComment extends React.Component {
       submitting: true,
     });
 
-    axios.post("http://localhost:3000/doComment", Qs.stringify({
+    axios.post("/comment/doComment", Qs.stringify({
       "commentText": commentText,
       "commentUserId": _this.state.userId,
       "articleId":  _this.props.articleId,
@@ -113,7 +113,7 @@ class AddComment extends React.Component {
     if (!replyText) {
       return;
     }
-    axios.post("http://localhost:3000/doComment", Qs.stringify({
+    axios.post("/api/comment/doComment", Qs.stringify({
       "commentText": replyText,
       "commentUserId": _this.state.userId,
       "articleId": _this.props.articleId,
@@ -143,30 +143,32 @@ class AddComment extends React.Component {
   componentWillMount(){
     const _this = this;
 
-    axios.post("http://localhost:3000/getComment", Qs.stringify({
+    axios.post("/api/comment/getComment", Qs.stringify({
       "articleId": _this.props.articleId,
     }), {
       'Content-Type': 'application/x-www-form-urlencoded'
     }).then(function (res) {
-      // console.log(res);
+      console.log(res);
       let allResult = res.data.allResult;
       let commentsArr = [];
+      if(res.data.allResult.length == 0) return;
       allResult.map(function (value, index) {
-        if(value.userInfo.length > 0){
-          console.log(value);
+        console.log(value);
+        // if(value.userInfo.length > 0){
+        //   console.log(value);
           const actions = [
             <div className="commentOperation">
               <div className="Tooltip">
                 <Tooltip title="Like" onClick = {
                   () => {
-                    _this.likeFunc(value.id);
+                    _this.likeFunc(value._id);
                   }
                 }>
                   <Icon type="like" theme={'liked' === 'outlined' ? 'filled' : 'outlined'}/>{value.likeNum}
                 </Tooltip>
                 <Tooltip title="message" onClick = {
                   () => {
-                    _this.replyFunc(value.id);
+                    _this.replyFunc(value._id);
                   }
                 }>
                   <Icon type="message"  onClick={_this.replyFunc}/>回复
@@ -177,7 +179,7 @@ class AddComment extends React.Component {
                   <Editor
                     onChange={_this.replyChange}
                     onSubmit={(e)=>{
-                      _this.replySubmit(value.id, value.commentUserId)
+                      _this.replySubmit(value._id, value.commentUserId._id)
                       }
                     }
                     submitting={_this.state.submitting}
@@ -188,15 +190,16 @@ class AddComment extends React.Component {
             </div>
           ];
           commentsArr.push({
-            author: value.userInfo[0].username,
+            author: value.commentUserId.username,
             avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
             content: <p>{value.commentText}</p>,
-            datetime: value.date,
+            datetime: value.date.updateAt,
             like: value.likeNum,
             actions: actions
           });
-        }
+        // }
       })
+      console.log(commentsArr);
       _this.setState({
         submitting: false,
         value: '',

@@ -7,6 +7,7 @@ import Register from './containers/register';
 import Personal from './containers/personal/index';
 import IndexPage from './containers/indexPage';
 import Article from './components/article';
+// const proxy = require('http-proxy-middleware');
 
 class App extends Component {
   render() {

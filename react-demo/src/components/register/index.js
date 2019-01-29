@@ -45,7 +45,7 @@ class RegistrationForm extends React.Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
-        axios.post('http://localhost:3000/doRegister', Qs.stringify(values), {
+        axios.post('/user/doRegister', Qs.stringify(values), {
             'Content-Type': 'application/x-www-form-urlencoded'
           }).then(function (res) {
           console.log(res);

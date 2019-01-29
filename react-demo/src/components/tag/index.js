@@ -19,7 +19,7 @@ class EditableTagGroup extends React.Component {
     const _this = this;
     const tags = _this.state.tags.filter(tag => tag !== removedTag);
     console.log(tags);
-    axios.post('http://localhost:3000/delTag', Qs.stringify({
+    axios.post('/tag/delTag', Qs.stringify({
       "name": removedTag
     })).then(function (res) {
       console.log(res);
@@ -54,7 +54,7 @@ class EditableTagGroup extends React.Component {
       return;
     }
     // console.log(tags);
-    axios.post('http://localhost:3000/addTag', Qs.stringify({
+    axios.post('/tag/addTag', Qs.stringify({
       "userId": this.state.userId,
       "name": inputValue
     })).then(function (res) {
@@ -72,7 +72,7 @@ class EditableTagGroup extends React.Component {
 
   componentWillMount(){
     var _this = this;
-    axios.get("http://localhost:3000/showTags?userId=" + _this.state.userId).then(function (res) {
+    axios.get("/tag/showTags?userId=" + _this.state.userId).then(function (res) {
       var tagData = res.data.allTags;
       var tagArr = [];
       tagData.map(function(value, index){

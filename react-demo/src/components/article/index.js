@@ -18,7 +18,7 @@ class Article extends React.Component{
     doLike() {
         console.log("like...............")
         let articleId = this.state.articleId;
-        axios.post("http://localhost:3000/pointArticle", Qs.stringify({
+        axios.post("/api/article/pointArticle", Qs.stringify({
             "articleId": articleId
         })).then(function(res){
             console.log(res);
@@ -29,7 +29,7 @@ class Article extends React.Component{
         let id = this.props.articleId;
         // console.log(this.props.articleId);
         const _this = this;
-        axios.get("http://localhost:3000/findOneArticle?articleId=" + id).then(function (res) {
+        axios.get("/api/article/findOneArticle?articleId=" + id).then(function (res) {
             // console.log(res);
             let data = res.data.allResult[0];
             _this.setState({

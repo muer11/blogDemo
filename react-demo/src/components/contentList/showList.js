@@ -38,22 +38,24 @@ class ContentList extends React.Component{
 
     componentDidMount(){
         var _this = this;
-        axios.get("http://localhost:3000/getTagArticle?isPublished=true&tagId=" + this.state.tagId).then(function (res) {
+        axios.get("/api/article/getTagArticle?isPublished=false&tagId=" + this.state.tagId).then(function (res) {
             const data = res.data.allResult;
             let listData = [];
             data.map(function(value, index){
                 listData.push({
-                    articleId: value.id,
+                    articleId: value._id,
                     title: value.title,
-                    type: value.type, //类型
-                    date: value.date, 
+                    type: value.tagId.name, //类型
+                    date: value.date.updateAt,
                     likeNum: value.likeNum, //点赞数
-                    message: value.message, //评论数
+                    replyNum: value.replyNum ? value.replyNum : 0, //点赞数
+                    message: value.content, //评论数
                     // avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
                     // description: '121Ant Design, a design language for background applications, is refined by Ant UED Team.',
-                    content: ''
+                    // content: ''
                 })
             });
+            console.log(listData);
             _this.setState({
                 listData: listData
             })
@@ -78,7 +80,7 @@ class ContentList extends React.Component{
                 renderItem={item => (
                     <List.Item
                         key={item.title}
-                        actions={[<IconText type="null" text={item.type} />, <IconText type="like-o" text={item.likeNum} />, <IconText type="message" text={item.message} />, <IconText type="time" text={item.date} />]}
+                        actions={[<IconText type="null" text={item.type} />, <IconText type="like-o" text={item.likeNum} />, <IconText type="message" text={item.replyNum} />, <IconText type="time" text={item.date} />]}
                         // extra={<img width={272} alt="logo" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" />}
                     >
                         <List.Item.Meta
