@@ -140,6 +140,56 @@ class AddComment extends React.Component {
     });
   }
 
+  CommentsList = (value, {children})=>(
+    // <div className="commentList">
+      
+      <Comment
+        actions={[
+          <div className="Tooltip">
+            <Tooltip title="Like" onClick = {
+              () => {
+                // _this.likeFunc(value._id);
+              }
+            }>
+              <Icon type="like" theme={'liked' === 'outlined' ? 'filled' : 'outlined'}/>
+              {/* {value.likeNum} */}
+            </Tooltip>
+            <Tooltip title="message" onClick = {
+              () => {
+                // _this.replyFunc(value._id);
+              }
+            }>
+              <Icon type="message" 
+              //  onClick={_this.replyFunc}
+              />回复
+            </Tooltip>
+          </div>
+        ]}
+        author={<a>Han Solo</a>}
+        avatar={(
+          <Avatar
+            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+            alt="Han Solo"
+          />
+        )}
+        // content={(
+        //   <p>We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure).</p>,
+        //   <Editor
+        //     // onChange={_this.replyChange}
+        //     onSubmit={(e) => {
+        //       // _this.replySubmit(value._id, value.commentUserId._id)
+        //       }
+        //     }
+        //     // submitting={_this.state.submitting}
+        //     value={value}
+        //   />
+        // )}
+        content={<p>We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure).</p>}
+      >
+        {children}
+      </Comment>
+  )
+
   componentWillMount(){
     const _this = this;
 
@@ -152,68 +202,78 @@ class AddComment extends React.Component {
       let allResult = res.data.allResult;
       let commentsArr = [];
       if(res.data.allResult.length == 0) return;
-      allResult.map(function (value, index) {
-        console.log(value);
-        // if(value.userInfo.length > 0){
-        //   console.log(value);
-          const actions = [
-            <div className="commentOperation">
-              <div className="Tooltip">
-                <Tooltip title="Like" onClick = {
-                  () => {
-                    _this.likeFunc(value._id);
-                  }
-                }>
-                  <Icon type="like" theme={'liked' === 'outlined' ? 'filled' : 'outlined'}/>{value.likeNum}
-                </Tooltip>
-                <Tooltip title="message" onClick = {
-                  () => {
-                    _this.replyFunc(value._id);
-                  }
-                }>
-                  <Icon type="message"  onClick={_this.replyFunc}/>回复
-                </Tooltip>
-              </div>
-              <Comment
-                content={(
-                  <Editor
-                    onChange={_this.replyChange}
-                    onSubmit={(e)=>{
-                      _this.replySubmit(value._id, value.commentUserId._id)
-                      }
-                    }
-                    submitting={_this.state.submitting}
-                    value={value}
-                  />
-                )}
-              />
-            </div>
-          ];
-          commentsArr.push({
-            author: value.commentUserId.username,
-            avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-            content: <p>{value.commentText}</p>,
-            datetime: value.date.updateAt,
-            like: value.likeNum,
-            actions: actions
-          });
-        // }
-      })
-      console.log(commentsArr);
-      _this.setState({
-        submitting: false,
-        value: '',
-        comments: commentsArr
-      });
+      // console.log(_this.CommentList());
+      // allResult.map(function (value, index) {
+      //   console.log(value);
+      //   if(value.parentId != null){
+      //     let childrenList = [];
+      //   }
+
+      //   // if(value.userInfo.length > 0){
+      //   //   console.log(value);
+      //     const actions = [
+      //       <div className="commentOperation">
+              // <div className="Tooltip">
+              //   <Tooltip title="Like" onClick = {
+              //     () => {
+              //       _this.likeFunc(value._id);
+              //     }
+              //   }>
+              //     <Icon type="like" theme={'liked' === 'outlined' ? 'filled' : 'outlined'}/>{value.likeNum}
+              //   </Tooltip>
+              //   <Tooltip title="message" onClick = {
+              //     () => {
+              //       _this.replyFunc(value._id);
+              //     }
+              //   }>
+              //     <Icon type="message"  onClick={_this.replyFunc}/>回复
+              //   </Tooltip>
+              // </div>
+      //         <Comment
+                // content={(
+                //   <Editor
+                //     onChange={_this.replyChange}
+                //     onSubmit={(e)=>{
+                //       _this.replySubmit(value._id, value.commentUserId._id)
+                //       }
+                //     }
+                //     submitting={_this.state.submitting}
+                //     value={value}
+                //   />
+      //           )}
+      //         />
+      //       </div>
+      //     ];
+      //     commentsArr.push({
+      //       author: value.commentUserId.username,
+      //       avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+      //       content: <p>{value.commentText}</p>,
+      //       datetime: value.date.updateAt,
+      //       like: value.likeNum,
+      //       actions: actions
+      //     });
+      //   // }
+      // })
+      // console.log(commentsArr);
+      // _this.setState({
+      //   submitting: false,
+      //   value: '',
+      //   comments: commentsArr
+      // });
     })
   }
 
   render() {
     const { comments, submitting, value, action, likes, dislikes } = this.state;
-
+    const CommentsList = this.CommentsList;
     return (
       <div className="addComment">
-        {comments.length > 0 && <CommentList comments={comments} />}
+        {/* {comments.length > 0 && <CommentList comments={comments} />} */}
+        <CommentsList>
+          <CommentsList>
+            <CommentsList></CommentsList>
+          </CommentsList>
+        </CommentsList>
         <Comment
           // actions={actions}
           avatar={(
