@@ -23,7 +23,7 @@ class ManageList extends React.Component{
         type: 'all', // 分类
         tagInfo: [],
         sort: 'date', // 排序
-        userId: 1, 
+        userId: "5c481ca1a464d763b8e74b38",
     }
 
     // 文章分类
@@ -52,7 +52,7 @@ class ManageList extends React.Component{
     }
 
     deleteArticle = (articleId) => {
-        axios.post("/article/delArticle", Qs.stringify({
+        axios.post("/api/article/delArticle", Qs.stringify({
             "articleId": articleId
         })).then(function (res) {
             console.log(res);
@@ -69,31 +69,33 @@ class ManageList extends React.Component{
 
     showListData = () => {
         const _this = this;
-        axios.get("/article/getArticle?isPublished=true&page=0&userId=" + _this.state.userId + "&tagId=" + _this.state.type + "&sort=" + _this.state.sort).then(function (res) {
+        axios.get("/api/article/getArticle?isPublished=true&page=0&userId=" + _this.state.userId + "&tagId=" + _this.state.type + "&sort=" + _this.state.sort).then(function (res) {
             console.log(res);
             let data = res.data.allResult;
             let listInfo = [];
-            const length = data.length;
-            for (let i = 0; i < length; i++) {
-                if (!data[i].title) continue;
-                var tagId = parseInt(data[i].tagId);
-                var type = "";
-                _this.state.tagInfo.map((value, index)=>{
-                    if (value.id == tagId){
-                        type = value.name;
-                    }
-                });
-                listInfo.push({
-                    id: data[i].id,
-                    userid: data[i].userid,
-                    type: type,
-                    title: data[i].title,
-                    href: 'http://ant.design',
-                    likeNum: data[i].likeNum,
-                    visitNum: data[i].visitNum,
-                    date: data[i].date,
-                    // content: data[i].content,
-                });
+            if (data.length > 0) {
+                const length = data.length;
+                for (let i = 0; i < length; i++) {
+                    if (!data[i].title) continue;
+                    var tagId = parseInt(data[i].tagId);
+                    var type = "";
+                    _this.state.tagInfo.map((value, index)=>{
+                        if (value.id == tagId){
+                            type = value.name;
+                        }
+                    });
+                    listInfo.push({
+                        id: data[i].id,
+                        userid: data[i].userid,
+                        type: type,
+                        title: data[i].title,
+                        href: 'http://ant.design',
+                        likeNum: data[i].likeNum,
+                        visitNum: data[i].visitNum,
+                        date: data[i].date,
+                        // content: data[i].content,
+                    });
+                }
             }
             _this.setState({
                 listData: listInfo
@@ -103,7 +105,7 @@ class ManageList extends React.Component{
 
     showTags = () => {
         const _this = this;
-        axios.get("/tag/showTags?userId=" + _this.state.userId).then(function (res) {
+        axios.get("/api/tag/showTags?userId=" + _this.state.userId).then(function (res) {
             var tagArr = res.data.allTags;
             tagArr.map(function (value, index) {
                 _this.state.tagInfo.push(value);

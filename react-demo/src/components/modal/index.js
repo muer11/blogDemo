@@ -10,6 +10,12 @@ class ModelContent extends React.Component {
     tips: this.props.tips,
   }
 
+  componentWillReceiveProps(){
+    this.setState({
+      visible: this.props.isModel,
+    });
+  }
+
   showModal = () => {
     this.setState({
       visible: true,
@@ -17,6 +23,7 @@ class ModelContent extends React.Component {
   }
 
   handleOk = (e) => {
+    console.log("ok--------------")
     console.log(e);
     this.setState({
       visible: false,
@@ -24,6 +31,7 @@ class ModelContent extends React.Component {
   }
 
   handleCancel = (e) => {
+    console.log("close--------------")
     console.log(e);
     this.setState({
       visible: false,

@@ -50,7 +50,7 @@ class AddComment extends React.Component {
   likeFunc = (id) => {
     console.log(id);
     const _this = this;
-    axios.post("/comment/pointComment", Qs.stringify({
+    axios.post("/api/comment/pointComment", Qs.stringify({
       "commentId": id,
       "userId": _this.state.userId,
     })).then(function (res) {
@@ -79,7 +79,7 @@ class AddComment extends React.Component {
       submitting: true,
     });
 
-    axios.post("/comment/doComment", Qs.stringify({
+    axios.post("/api/comment/doComment", Qs.stringify({
       "commentText": commentText,
       "commentUserId": _this.state.userId,
       "articleId":  _this.props.articleId,

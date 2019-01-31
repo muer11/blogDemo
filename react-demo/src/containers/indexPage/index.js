@@ -12,7 +12,29 @@ const {
 } = Layout;
 
 class IndexPage extends React.Component {
+    state = {
+        login: false,
+    }
+
+    callback(value){
+        if(value == 1){
+            this.setState({
+                login: true
+            });
+        }else{
+            this.setState({
+                login: false
+            });
+        }
+    }
+
     render(){
+        let formInfo = null;
+        if(this.state.login){
+            formInfo = <PersonalTips/>;
+        }else{
+            formInfo = <WrappedNormalLoginForm callback={this.callback.bind(this)} />;
+        }
         return (
             <Layout>
                 <Header>
@@ -24,8 +46,7 @@ class IndexPage extends React.Component {
                         {/* <ContentList /> */}
                     </Content>
                     <Sider>
-                        <WrappedNormalLoginForm />
-                        {/* <PersonalTips/> */}
+                        {formInfo}
                     </Sider>
                 </Layout>
                 {/* <Footer>Footer</Footer> */}

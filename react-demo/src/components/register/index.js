@@ -10,29 +10,29 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const AutoCompleteOption = AutoComplete.Option;
 
-const residences = [{
-  value: 'zhejiang',
-  label: 'Zhejiang',
-  children: [{
-    value: 'hangzhou',
-    label: 'Hangzhou',
-    children: [{
-      value: 'xihu',
-      label: 'West Lake',
-    }],
-  }],
-}, {
-  value: 'jiangsu',
-  label: 'Jiangsu',
-  children: [{
-    value: 'nanjing',
-    label: 'Nanjing',
-    children: [{
-      value: 'zhonghuamen',
-      label: 'Zhong Hua Men',
-    }],
-  }],
-}];
+// const residences = [{
+//   value: 'zhejiang',
+//   label: 'Zhejiang',
+//   children: [{
+//     value: 'hangzhou',
+//     label: 'Hangzhou',
+//     children: [{
+//       value: 'xihu',
+//       label: 'West Lake',
+//     }],
+//   }],
+// }, {
+//   value: 'jiangsu',
+//   label: 'Jiangsu',
+//   children: [{
+//     value: 'nanjing',
+//     label: 'Nanjing',
+//     children: [{
+//       value: 'zhonghuamen',
+//       label: 'Zhong Hua Men',
+//     }],
+//   }],
+// }];
 
 class RegistrationForm extends React.Component {
   state = {
@@ -40,15 +40,19 @@ class RegistrationForm extends React.Component {
     autoCompleteResult: [],
   };
 
-  handleSubmit = (e) => {
+  handleRegisterSubmit = (e) => {
+    const _this = this;
     e.preventDefault();
-    this.props.form.validateFieldsAndScroll((err, values) => {
+    _this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
-        axios.post('/user/doRegister', Qs.stringify(values), {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          }).then(function (res) {
+        axios.post('/api/user/doRegister', Qs.stringify(values), {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }).then(function (res) {
           console.log(res);
+          if(res.data == 1){
+            _this.props.showModel(false);
+          }
         })
       }
     });
@@ -121,12 +125,12 @@ class RegistrationForm extends React.Component {
       </Select>
     );
 
-    const websiteOptions = autoCompleteResult.map(website => (
-      <AutoCompleteOption key={website}>{website}</AutoCompleteOption>
-    ));
+    // const websiteOptions = autoCompleteResult.map(website => (
+    //   <AutoCompleteOption key={website}>{website}</AutoCompleteOption>
+    // ));
 
     return (
-      <Form onSubmit={this.handleSubmit}>
+      <Form onSubmit={this.handleRegisterSubmit}>
         <FormItem
           {...formItemLayout}
           label={(
@@ -193,7 +197,7 @@ class RegistrationForm extends React.Component {
             <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
           )}
         </FormItem>
-        <FormItem
+        {/* <FormItem
           {...formItemLayout}
           label="常住地址"
         >
@@ -203,7 +207,7 @@ class RegistrationForm extends React.Component {
           })(
             <Cascader options={residences} />
           )}
-        </FormItem>
+        </FormItem> */}
         
         {/* <FormItem
           {...formItemLayout}
@@ -247,7 +251,7 @@ class RegistrationForm extends React.Component {
           )}
         </FormItem> */}
         <FormItem {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">Register</Button>
+          <Button type="primary" htmlType="submit">注册</Button>
         </FormItem>
       </Form>
     );

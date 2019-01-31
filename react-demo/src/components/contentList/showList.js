@@ -76,7 +76,7 @@ class ContentList extends React.Component{
                     pageSize: 6,
                 }}
                 dataSource={this.state.listData}
-                footer={<div><b>ant design</b> footer part</div>}
+                // footer={<div><b>ant design</b> footer part</div>}
                 renderItem={item => (
                     <List.Item
                         key={item.title}
