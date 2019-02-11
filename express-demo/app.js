@@ -9,8 +9,79 @@ var session = require('express-session');
 
 var mongoose = require("./config/mongoose");
 var db = mongoose();
-
+//使用session
+app.use(session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 1000 * 60 * 3
+    }
+}));
 // require('./routers/router');
+
+
+const formidable = require('formidable');
+const User = require("./model/user");
+app.post("/doLogin", function (req, res, result) {
+    console.log("--------user1------------")
+    console.log(req.session);
+    //得到用户填写的东西
+    var form = new formidable.IncomingForm();
+
+    form.parse(req, function (err, fields, files) {
+        var username = fields.username;
+        var password = fields.password;
+        // password = md5(md5(password).substr(4,7) + md5(password));
+
+        // console.log(fields);
+        //检索数据库，按登录名检索数据库，查看密码是否匹配
+        User.find({
+            "username": username
+        }, function (err, result) {
+            // 登录判断时返回的信息不需详细，否则容易造成风险
+            if (err) {
+                res.send("-3"); //服务器错误
+                return
+            }
+            if (result.length == 0) {
+                res.send("-1"); //-1没有这个人
+                return;
+            }
+            var dbpassword = result[0].password;
+            //要对用户这次输入的密码，进行相同的加密操作。然后与
+            //数据库中的密码进行比对
+            if (password == dbpassword) {
+                // req.session.login = "1";
+                req.session.username = username;
+                console.log("--------user2------------")
+                console.log(req.session);
+                res.send("1"); //登陆成功
+                return;
+            } else {
+                res.send("-2"); //密码不匹配
+            }
+        });
+    });
+
+    return;
+});
+
+app.get("/", function (req, res) {
+    console.log("-------/-------")
+    console.log(req.session);
+    if (req.session.username) {
+        res.json({
+            username: req.session.username
+        })
+    } else {
+        res.json({
+            ret_code: 1,
+            ret_msg: "账号未登录"
+        })
+    }
+});
+
 const testRouter = require("./routers/test");
 const countersRouter = require("./routers/counter");
 const userRouter = require("./routers/user");
@@ -23,13 +94,6 @@ app.use("/user", userRouter);
 app.use("/tag", tagRouter);
 app.use("/article", articleRouter);
 app.use("/comment", commentRouter);
-
-//使用session
-app.use(session({
-    secret : 'keyboard cat',
-    resave : false,
-    saveUninitialized : true
-}));
 
 app.all('*', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");

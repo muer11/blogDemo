@@ -1,7 +1,7 @@
 const formidable = require('formidable');
 const express = require("express");
 const router = express.Router();
-var User = require("../model/user");
+const User = require("../model/user");
 
 //所有用户信息
 router.get("/", function (req, res) {
@@ -84,6 +84,7 @@ router.post("/doLogin", function (req, res, result) {
             //数据库中的密码进行比对
             if(password == dbpassword){
                 // req.session.login = "1";
+                req.session.username = username;
                 res.send("1");  //登陆成功
                 return;
             }else{
