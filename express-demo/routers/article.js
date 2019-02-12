@@ -1,5 +1,6 @@
 const formidable = require('formidable');
 const express = require("express");
+const mongoose = require("mongoose");
 const router = express.Router();
 var Article = require("../model/article");
 var Counter = require("../model/counter");
@@ -9,44 +10,22 @@ router.post("/doRecording", function (req, res) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, result) {
         const reqResult = result;
-        //写入失败也会导致对应的counter增加  ？？？
-        // Counter.updateOne({
-        //     "_id": "articleId"
-        // }, {
-        //     $inc: {
-        //         "sequence_value": 1
-        //     }
-        // }, function (err, result) {
-        //     if (err) {
-        //         res.send("-1");
-        //         return;
-        //     }
-        //     Counter.find({
-        //         "_id": "articleId"
-        //     }, function (err, result) {
-        //         if (err) {
-        //             res.send("-1");
-        //             return;
-        //         }
-        //         console.log(result);
-        //         var id = result[0].sequence_value;
-                //写入数据库
-                Article.create({
-                    // "id": id,
-                    "userId": reqResult.userId,
-                    "tagId": reqResult.tagId, // 文章分类
-                    "title": reqResult.title, // 文章标题
-                    "content": reqResult.content, // 文章正文
-                    "isPublished": reqResult.isPublished, // 已发布或草稿箱
-                }, function (err, result) {
-                    if (err) {
-                        res.send("-1");
-                        return;
-                    }
-                    res.send("1");
-                });
-    //         });
-    //     });
+        //写入数据库
+        Article.create({
+            // "id": id,
+            "userId": req.session.userid,
+            "tagId": reqResult.tagId, // 文章分类
+            "title": reqResult.title, // 文章标题
+            "content": reqResult.content, // 文章正文
+            "isPublished": reqResult.isPublished, // 已发布或草稿箱
+        }, function (err, result) {
+            if (err) {
+                console.log(err);
+                res.send("-1");
+                return;
+            }
+            res.send("1");
+        });
     });
 });
 
@@ -54,7 +33,7 @@ router.post("/doRecording", function (req, res) {
 router.post("/editRecording", function (req, res) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, result) {
-        console.log(result);
+        // console.log(result);
         //更新数据库
         Article.updateMany({
             "_id": result.articleId,
@@ -78,7 +57,7 @@ router.post("/editRecording", function (req, res) {
 //取得文章
 router.get("/getArticle", function (req, res) {
     var info = req.query;
-    var userId = info.userId;
+    var userId = req.session.userid;
     var tagId = ((info.tagId && info.tagId !== "all") ? info.tagId : {
         $ne: null
     });
@@ -110,7 +89,7 @@ router.get("/getArticle", function (req, res) {
         var obj = {
             "allResult": result
         };
-        console.log(result);
+        // console.log(result);
         res.json(obj);
     });
 });
@@ -151,7 +130,7 @@ router.get("/getTagArticle", function (req, res, next) {
         var obj = {
             "allResult": result
         };
-        console.log(result);
+        // console.log(result);
         res.json(obj);
     });
 });
@@ -180,8 +159,8 @@ router.get("/findOneArticle", function (req, res) {
         };
         // user : ObjectId("5c481ca1a464d763b8e74b38")
         // tag: ObjectId("5c4984eaf1da12baaa627b03")
-        console.log("obj-----------------")
-        console.log(obj);
+        // console.log("obj-----------------")
+        // console.log(obj);
         res.json(obj);
     });
 });
@@ -225,12 +204,6 @@ router.post("/pointArticle", function (req, res) {
 });
 
 module.exports = router;
-
-
-
-
-
-
 
 // //取得总页数
 // exports.getAllAmount = function (req, res, next) {

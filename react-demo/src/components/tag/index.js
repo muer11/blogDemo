@@ -11,7 +11,7 @@ class EditableTagGroup extends React.Component {
     tags: [],  
     inputVisible: false,
     inputValue: '',
-    userId: "5c481ca1a464d763b8e74b38",
+    // userId: "5c481ca1a464d763b8e74b38",
   };
 
   // 删除分类， 点击时弹出框提醒是否删除，且该用户的该tag下无相关文章才可以删除
@@ -55,7 +55,7 @@ class EditableTagGroup extends React.Component {
     }
     // console.log(tags);
     axios.post('/api/tag/addTag', Qs.stringify({
-      "userId": this.state.userId,
+      // "userId": this.state.userId,
       "name": inputValue
     })).then(function (res) {
       console.log(res); 
@@ -72,7 +72,7 @@ class EditableTagGroup extends React.Component {
 
   componentWillMount(){
     var _this = this;
-    axios.get("/api/tag/showTags?userId=" + _this.state.userId).then(function (res) {
+    axios.get("/api/tag/showTags").then(function (res) {
       var tagData = res.data.allTags;
       var tagArr = [];
       tagData.map(function(value, index){

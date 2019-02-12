@@ -6,6 +6,7 @@ const User = require("../model/user");
 //所有用户信息
 router.get("/", function (req, res) {
     console.log("-----------test---------------");
+    console.log(req.session);
     User.find({}, (err, result) => {
         console.log("result.............")
         if (err) {
@@ -57,6 +58,7 @@ router.post('/doRegister', function (req, res) {
 
 //执行登陆
 router.post("/doLogin", function (req, res, result) {
+    
     //得到用户填写的东西
     var form = new formidable.IncomingForm();
 
@@ -65,7 +67,7 @@ router.post("/doLogin", function (req, res, result) {
         var password = fields.password;
         // password = md5(md5(password).substr(4,7) + md5(password));
 
-        console.log(fields);
+        // console.log(fields);
         //检索数据库，按登录名检索数据库，查看密码是否匹配
         User.find({
             "username": username
@@ -80,21 +82,38 @@ router.post("/doLogin", function (req, res, result) {
                 return;
             }
             var dbpassword = result[0].password;
+            var userid = result[0]._id.toString();
+            var role = result[0].role;
             //要对用户这次输入的密码，进行相同的加密操作。然后与
             //数据库中的密码进行比对
             if(password == dbpassword){
                 // req.session.login = "1";
                 req.session.username = username;
+                req.session.role = role;
+                req.session.userid = userid;
                 res.send("1");  //登陆成功
+                console.log("-----------doLogin---------------")
+                console.log(req.session);
                 return;
             }else{
                 res.send("-2"); //密码不匹配
             }
         });
     });
-
     return;
 });
+
+//退出登录
+router.get("/logout", function(req, res){
+    req.session.destroy(function(err){
+        if(err){
+            res.json({ret_code: 2, ret_msg: "退出登录失败"});
+            return;
+        }
+        res.clearCookie("blogSession");
+        res.json({ret_code: 1, ret_msg: "退出登录成功"});
+    })
+})
 
 module.exports = router;
 

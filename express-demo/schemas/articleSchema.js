@@ -3,9 +3,9 @@ var Schema = mongoose.Schema;
 
 //文章表article
 var ArticleSchema = new mongoose.Schema({
-    _id: {
-        type: Schema.ObjectId,
-    },
+    // _id: {
+    //     type: Schema.ObjectId,
+    // },
     // id: Number,
     userId: {
         // type: Number,

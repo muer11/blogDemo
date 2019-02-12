@@ -1,5 +1,4 @@
 // admin 文章列表
-
 import React from 'react';
 import { List, Avatar, Icon, Button, Select } from 'antd';
 import axios from 'axios';
@@ -69,7 +68,7 @@ class ManageList extends React.Component{
 
     showListData = () => {
         const _this = this;
-        axios.get("/api/article/getArticle?isPublished=true&page=0&userId=" + _this.state.userId + "&tagId=" + _this.state.type + "&sort=" + _this.state.sort).then(function (res) {
+        axios.get("/api/article/getArticle?isPublished=true&page=0&tagId=" + _this.state.type + "&sort=" + _this.state.sort).then(function (res) {
             console.log(res);
             let data = res.data.allResult;
             let listInfo = [];

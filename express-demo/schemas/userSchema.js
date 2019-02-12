@@ -13,6 +13,10 @@ var UserSchema = new mongoose.Schema({
     email: String,
     phone: String,
     residence: String,
+    role:{
+        type: Number,
+        default: 0 //admin:1 user:0
+    },
     date: {
         createAt: {
             type: Date,

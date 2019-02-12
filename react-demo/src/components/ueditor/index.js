@@ -14,7 +14,7 @@ class Ueditor extends React.Component {
         tagId: null,
         tagName: '',
         title: '',
-        userId: "5c4ea5fa157c342f089688e5",
+        // userId: "5c4ea5fa157c342f089688e5",
         articleId: null,
         isEdit: false,
     }
@@ -42,14 +42,14 @@ class Ueditor extends React.Component {
     publishFunc = (isPublished) => {
         let url = "";
         const articleId = this.state.articleId;
-        const userId = this.state.userId;
+        // const userId = this.state.userId;
         const title = this.state.title;
         const content = this.state.articleContent;
         const tagId = this.state.tagId;
         if (!this.state.isEdit) { // 非编辑
             url = '/api/article/doRecording';
             axios.post(url, Qs.stringify({
-                "userId": userId,
+                // "userId": userId,
                 "title": title,
                 "content": content,
                 "tagId": tagId,
@@ -61,7 +61,7 @@ class Ueditor extends React.Component {
             url = '/api/article/editRecording';
             axios.post(url, Qs.stringify({
                 "articleId": articleId,
-                "userId": userId,
+                // "userId": userId,
                 "title": title,
                 "content": content,
                 "tagId": tagId,
@@ -85,7 +85,7 @@ class Ueditor extends React.Component {
     // 文章分类
     showTags = ()=>{
         const _this = this;
-        axios.get("/api/tag/showTags?userId=" + _this.state.userId).then(function (res) {
+        axios.get("/api/tag/showTags").then(function (res) {
             // console.log(res);
             var tagArr = res.data.allTags;
             tagArr.map(function(value, index){
@@ -143,7 +143,7 @@ class Ueditor extends React.Component {
                             >
                                 {
                                     this.state.tagInfo.map((item, index)=>{
-                                        return <Option value={item.id} key={index}>{item.name}</Option>
+                                        return <Option value={item._id} key={index}>{item.name}</Option>
                                     })
                                 }
                                 {/* <Option value="Javascript">Javascript</Option>

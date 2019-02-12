@@ -17,6 +17,7 @@
     "mongodb": "^2.2.16",
     "mongoose": "^5.4.4",
     "morgan": "^1.5.3",
+    "nedb-session-store": "^1.1.2",
     "serve-favicon": "^2.2.1",
     "ueditor": "^1.1.4"
   },

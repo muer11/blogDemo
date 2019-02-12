@@ -23,11 +23,11 @@ router.get("/showTagsFore", function (req, res) {
 
 //显示标签-后台
 router.get("/showTags", function(req, res){
-    var userId = req.query.userId;
+    // var userId = req.query.userId;
     // console.log(mongoose.Types.ObjectId(userId));
     // console.log(userId);
     Tag.find({
-        "userId": userId,
+        // "userId": userId,
     }, function (err, result) {
         if (err) {
             console.log("查找标签错误：" + err);

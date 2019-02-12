@@ -1,16 +1,21 @@
 
 .personalTips{
     margin-top: 40px;
+    .logo{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .detail{
+        text-align: center;
+        margin-top: 20px;
+        p {
+            margin-top: 1em;
+            margin-bottom: 1em;
+        }
+    }
 }
 
-.logo{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
-.detail{
-    text-align: center;
-    margin-top: 20px;
-}
 

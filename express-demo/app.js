@@ -6,73 +6,35 @@ var bodyParser   = require('body-parser');
 var ejs          = require('ejs');
 var ueditor      = require('ueditor');
 var session = require('express-session');
+var NedbStore = require('nedb-session-store')(session);
 
 var mongoose = require("./config/mongoose");
 var db = mongoose();
 //使用session
-app.use(session({
-    secret: 'secret',
-    resave: true,
+const sessionMiddleware = session({
+    secret: 'blogSession',
+    resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 1000 * 60 * 3
-    }
-}));
-// require('./routers/router');
-
-
-const formidable = require('formidable');
-const User = require("./model/user");
-app.post("/doLogin", function (req, res, result) {
-    console.log("--------user1------------")
-    console.log(req.session);
-    //得到用户填写的东西
-    var form = new formidable.IncomingForm();
-
-    form.parse(req, function (err, fields, files) {
-        var username = fields.username;
-        var password = fields.password;
-        // password = md5(md5(password).substr(4,7) + md5(password));
-
-        // console.log(fields);
-        //检索数据库，按登录名检索数据库，查看密码是否匹配
-        User.find({
-            "username": username
-        }, function (err, result) {
-            // 登录判断时返回的信息不需详细，否则容易造成风险
-            if (err) {
-                res.send("-3"); //服务器错误
-                return
-            }
-            if (result.length == 0) {
-                res.send("-1"); //-1没有这个人
-                return;
-            }
-            var dbpassword = result[0].password;
-            //要对用户这次输入的密码，进行相同的加密操作。然后与
-            //数据库中的密码进行比对
-            if (password == dbpassword) {
-                // req.session.login = "1";
-                req.session.username = username;
-                console.log("--------user2------------")
-                console.log(req.session);
-                res.send("1"); //登陆成功
-                return;
-            } else {
-                res.send("-2"); //密码不匹配
-            }
-        });
-    });
-
-    return;
+        path: "/",
+        httpOnly: true,
+        maxAge: 1000 * 60 * 30
+    },
+    store: new NedbStore({
+        filename: 'path_to_nedb_persistence_file.db'
+    })
 });
+app.use(sessionMiddleware);
 
+//首页验证用户是否已登录
 app.get("/", function (req, res) {
     console.log("-------/-------")
     console.log(req.session);
     if (req.session.username) {
         res.json({
-            username: req.session.username
+            ret_code: 0,
+            username: req.session.username,
+            role: req.session.role
         })
     } else {
         res.json({
