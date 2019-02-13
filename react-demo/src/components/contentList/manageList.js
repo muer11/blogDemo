@@ -1,6 +1,6 @@
 // admin 文章列表
 import React from 'react';
-import { List, Avatar, Icon, Button, Select } from 'antd';
+import { List, Avatar, Icon, Button, Select, Modal } from 'antd';
 import axios from 'axios';
 import Qs from 'qs';
 import './manageList.scss';
@@ -17,12 +17,26 @@ const IconText = ({ type, text }) => (
 
 class ManageList extends React.Component{
     state = {
+        visible: false,
         listData: [], // 文章数据
         page: 1,
         type: 'all', // 分类
         tagInfo: [],
         sort: 'date', // 排序
-        userId: "5c481ca1a464d763b8e74b38",
+        // userId: "5c481ca1a464d763b8e74b38",
+    }
+
+    showModal = ()=>{
+        console.log("showModal-------");
+        this.setState({
+            visible: true,
+        })
+    }
+
+    handleCancel = () => {
+        this.setState({
+            visible: false,
+        })
     }
 
     // 文章分类
@@ -50,11 +64,15 @@ class ManageList extends React.Component{
         }
     }
 
+    // 删除文章
     deleteArticle = (articleId) => {
         axios.post("/api/article/delArticle", Qs.stringify({
             "articleId": articleId
         })).then(function (res) {
             console.log(res);
+            if(res.data == 1){
+
+            }
         });
     }
 
@@ -69,29 +87,28 @@ class ManageList extends React.Component{
     showListData = () => {
         const _this = this;
         axios.get("/api/article/getArticle?isPublished=true&page=0&tagId=" + _this.state.type + "&sort=" + _this.state.sort).then(function (res) {
-            console.log(res);
             let data = res.data.allResult;
             let listInfo = [];
             if (data.length > 0) {
                 const length = data.length;
                 for (let i = 0; i < length; i++) {
                     if (!data[i].title) continue;
-                    var tagId = parseInt(data[i].tagId);
                     var type = "";
+                    var date = new Date(data[i].date.updateAt).toLocaleString();
                     _this.state.tagInfo.map((value, index)=>{
-                        if (value.id == tagId){
+                        if (value._id == data[i].tagId) {
                             type = value.name;
                         }
                     });
                     listInfo.push({
-                        id: data[i].id,
+                        id: data[i]._id,
                         userid: data[i].userid,
                         type: type,
                         title: data[i].title,
                         href: 'http://ant.design',
                         likeNum: data[i].likeNum,
                         visitNum: data[i].visitNum,
-                        date: data[i].date,
+                        date: date,
                         // content: data[i].content,
                     });
                 }
@@ -104,12 +121,18 @@ class ManageList extends React.Component{
 
     showTags = () => {
         const _this = this;
-        axios.get("/api/tag/showTags?userId=" + _this.state.userId).then(function (res) {
+        axios.get("/api/tag/showTags").then(function (res) {
             var tagArr = res.data.allTags;
             tagArr.map(function (value, index) {
                 _this.state.tagInfo.push(value);
+                // _this.state.tagInfo.map(function(val, index){
+                //     console.log("value.name:" + value.name);
+                //     console.log("val.name:" + val.name);
+                //     if (value.name != val.name){
+                //     }
+                // })
             });
-            console.log(_this.state.tagInfo);
+            console.log("_this.state.tagInfo:"+_this.state.tagInfo);
         });
     }
     
@@ -119,6 +142,7 @@ class ManageList extends React.Component{
     }
 
     render(){
+        console.log("------22" + this.state.visible);
         return (
             <div className="manageList">
                 <div className="selectItem content">
@@ -135,7 +159,7 @@ class ManageList extends React.Component{
                         <Option value="all">全部</Option>
                         {
                             this.state.tagInfo.map((item, index)=>{
-                                return <Option value={item.id} key={index}>{item.name}</Option>
+                                return <Option value={item._id} key={index}>{item.name}</Option>
                             })
                         }
                     </Select> 
@@ -170,7 +194,8 @@ class ManageList extends React.Component{
                     <List.Item
                         key={item.title}
                         //<IconText type="star-o" text="156" />,<IconText type="message" text="2" />,
-                        actions={[<IconText type="" text={item.type} />,<IconText type="like-o" text={item.likeNum} />, <IconText type="time" text={item.date} />, <a onClick={()=>{this.editArticle(item.id)}}>编辑</a>, <a onClick={()=>{this.deleteArticle(item.id)}}>删除</a>, <a href={"/article?id="+item.id} target="_blank">查看</a>]}
+                        actions={[<IconText type="" text={item.type} />,<IconText type="like-o" text={item.likeNum} />, <IconText type="time" text={item.date} />, <a onClick={()=>{this.editArticle(item.id)}}>编辑</a>, <a onClick={this.showModal}>删除</a>, <a href={"/article?id="+item.id} target="_blank">查看</a>]}
+                        // {()=>{this.editArticle(item.id)}}
                     >
                         <List.Item.Meta
                             title={<a href={item.href}>{item.title}</a>}
@@ -179,6 +204,17 @@ class ManageList extends React.Component{
                     </List.Item>
                     )}
                 />
+                        <Modal
+                            visible={this.state.visible}
+                            // onOk={this.deleteArticle(item.id)}
+                            // onCancel={this.handleCancel}
+                        >
+                            <p>您确定要删除此文章嘛？</p>
+                            {
+                                
+                                console.log("------"+this.state.visible)
+                            }
+                        </Modal>
             </div>
         )
     }

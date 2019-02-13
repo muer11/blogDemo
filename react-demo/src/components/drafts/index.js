@@ -76,22 +76,22 @@ class ManageList extends React.Component{
             const length = data.length;
             for (let i = 0; i < length; i++) {
                 if (!data[i].title) continue;
-                var tagId = parseInt(data[i].tagId);
                 var type = "";
-                _this.state.tagInfo.map((value, index)=>{
-                    if (value.id == tagId){
+                var date = new Date(data[i].date.updateAt).toLocaleString();
+                _this.state.tagInfo.map((value, index) => {
+                    if (value._id == data[i].tagId) {
                         type = value.name;
                     }
                 });
                 listInfo.push({
-                    id: data[i].id,
+                    id: data[i]._id,
                     userid: data[i].userid,
                     type: type,
                     title: data[i].title,
                     href: 'http://ant.design',
                     likeNum: data[i].likeNum,
                     visitNum: data[i].visitNum,
-                    date: data[i].date,
+                    date: date,
                     // content: data[i].content,
                 });
             }

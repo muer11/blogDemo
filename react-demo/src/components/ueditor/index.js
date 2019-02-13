@@ -12,7 +12,7 @@ class Ueditor extends React.Component {
         articleContent: "",
         tagInfo: [],
         tagId: null,
-        tagName: '',
+        tagName: null,
         title: '',
         // userId: "5c4ea5fa157c342f089688e5",
         articleId: null,
@@ -105,19 +105,26 @@ class Ueditor extends React.Component {
             var articleId = this.props.articleId;
             var _this = this;
             axios.get("/api/article/findOneArticle?articleId=" + articleId).then(function (res) {
-                console.log(res);
                 var articleInfo = res.data.allResult[0];
+                // console.log("-----articleInfo-----");
+                // console.log(articleInfo);
                 _this.setState({
                     title: articleInfo.title,
                     articleContent: articleInfo.content,
                     isEdit: true,
                     articleId: articleId,
+                    tagId: articleInfo.tagId._id,
+                    tagName: articleInfo.tagId.name,
                 });
+                // console.log(_this.state.tagId);
+                // console.log(_this.state.tagName);
             });
         }
     }
 
     render() {
+        // console.log("-----render-----");
+        // console.log("this.state.tagId:" + this.state.tagId);
         return (
             <div className='ueditor'>
                 <div>
@@ -138,11 +145,16 @@ class Ueditor extends React.Component {
                                 onChange={this.handleSelectChange}
                                 // onFocus={handleFocus}
                                 // onBlur={handleBlur}
-                                defaultValue = {this.state.tagName}
+                                defaultValue = {
+                                    this.state.tagId
+                                }
                                 filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                             >
                                 {
                                     this.state.tagInfo.map((item, index)=>{
+                                        // console.log("------item._id-------");
+                                        // console.log("this.state.tagId:" + this.state.tagId);
+                                        // console.log(item._id);
                                         return <Option value={item._id} key={index}>{item.name}</Option>
                                     })
                                 }
