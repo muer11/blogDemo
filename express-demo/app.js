@@ -18,7 +18,7 @@ const sessionMiddleware = session({
     cookie: {
         path: "/",
         httpOnly: true,
-        maxAge: 1000 * 60 * 30
+        maxAge: 1000 * 60 * 3
     },
     store: new NedbStore({
         filename: 'path_to_nedb_persistence_file.db'

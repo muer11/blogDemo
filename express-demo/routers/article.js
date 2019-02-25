@@ -18,6 +18,7 @@ router.post("/doRecording", function (req, res) {
             "title": reqResult.title, // 文章标题
             "content": reqResult.content, // 文章正文
             "isPublished": reqResult.isPublished, // 已发布或草稿箱
+            "updateAt": new Date(),
         }, function (err, result) {
             if (err) {
                 console.log(err);
@@ -43,6 +44,7 @@ router.post("/editRecording", function (req, res) {
                 "title": result.title, // 文章标题
                 "content": result.content, // 文章正文
                 "isPublished": result.isPublished, // 已发布或草稿箱
+                "updateAt": new Date(),
             }
         }, function (err, result) {
             if (err) {
