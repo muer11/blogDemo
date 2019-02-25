@@ -1,37 +1,67 @@
 .addComment{
     .ant-comment-actions{
         padding-left: 0;
-        li{
-            display: block;
-            .Tooltip span{
-                // display: inline-block;
-                margin-right: 20px;
-                i{
-                    margin-right: 4px;
+        // li{
+        //     display: block;
+        //     .Tooltip span{
+        //         // display: inline-block;
+        //         margin-right: 20px;
+        //         i{
+        //             margin-right: 4px;
+        //         }
+        //     }
+            
+        // }
+        .ant-comment {
+            .ant-comment-inner {
+                padding: 16px 0 0 !important;
+                margin: 100px;
+                .ant-comment-avatar {
+                    margin: 0;
                 }
-            }
-            .ant-comment{
-                .ant-comment-inner{
-                    padding: 0;
-                    .ant-comment-avatar{
-                        margin: 0;
-                    }
-                    .ant-form-item{
-                        margin-bottom: 0;
-                        width: 80%;
-                        display: inline-block;
-                        button{
-                            width: 80px;
+
+                // .ant-form-item{
+                //     margin-bottom: 0;
+                //     width: 80%;
+                //     display: inline-block;
+                //     button{
+                //         width: 80px;
+                //     }
+                //     textarea.ant-input{
+                //         height: 30px;
+                //     }
+                // }
+                // .ant-form-item:last-child{
+                //     display: inline-block;
+                //     width: 80px;
+                //     margin-left: 10px;
+                //     margin-top: 3px;
+                // }
+                .ant-comment-actions {
+                    .anticon-like {
+                        margin-right: 10px;
+                        cursor: pointer;
+
+                        span {
+                            cursor: pointer;
                         }
-                        textarea.ant-input{
-                            height: 30px;
-                        }
                     }
-                    .ant-form-item:last-child{
-                        display: inline-block;
-                        width: 80px;
-                        margin-left: 10px;
-                        margin-top: 3px;
+
+                    .Tooltip div {
+                        .ant-form-item:nth-child(1) {
+                            width: 83%;
+                            display: inline-block;
+                            margin-bottom: 0;
+                        }
+
+                        .ant-form-item:nth-child(2) {
+                            display: inline-block;
+                            width: 10%;
+                            margin-bottom: 0;
+                            margin-left: 2%;
+                            margin-top: 3px;
+                        }
+
                     }
                 }
             }

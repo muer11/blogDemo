@@ -40,11 +40,14 @@ const Editor = ({
 class AddComment extends React.Component {
   state = {
     comments: [],
+    isReplyVisible:false,
+    isReplyId:"",
     submitting: false,
     value: '',
     replyValue: '',
     action: null,
-    userId: "5c4ea62382bb2e33248441b6",
+    username: "muer",
+    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
   }
 
   likeFunc = (id) => {
@@ -57,17 +60,16 @@ class AddComment extends React.Component {
       console.log(res);
     });
   }
-
+  //回复
   replyFunc = (id) => {
-    // this.setState({
-    //   likes: 1,
-    //   dislikes: 0,
-    //   action: 'liked',
-    // });
+    this.setState({
+      isReplyId: id,
+      isReplyVisible: true
+    });
     console.log(id);
     
   }
-
+  //发表评论
   handleSubmit = () => {
     const _this = this;
     const commentText = this.state.value;
@@ -93,9 +95,9 @@ class AddComment extends React.Component {
         value: '',
         comments: [
           {
-            author: 'Han Solo',
-            avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-            content: <p>{_this.state.value}</p>,
+            author: _this.state.username,
+            avatar: _this.state.avatar,
+            content: _this.state.value,
             datetime: moment().fromNow(),
             like: 0,
           },
@@ -140,13 +142,14 @@ class AddComment extends React.Component {
     });
   }
 
-  CommentsList = (value, {children})=>(
-    // <div className="commentList">
-      
+  CommentsList = (value, index)=>{
+    console.log(value);
+    return (
+    <div className="commentList" key={index}>     
       <Comment
         actions={[
           <div className="Tooltip">
-            <Tooltip title="Like" onClick = {
+            <Tooltip onClick = {
               () => {
                 // _this.likeFunc(value._id);
               }
@@ -154,41 +157,41 @@ class AddComment extends React.Component {
               <Icon type="like" theme={'liked' === 'outlined' ? 'filled' : 'outlined'}/>
               {/* {value.likeNum} */}
             </Tooltip>
-            <Tooltip title="message" onClick = {
+            <Tooltip onClick = {
               () => {
-                // _this.replyFunc(value._id);
+                this.replyFunc(value._id);
               }
             }>
-              <Icon type="message" 
-              //  onClick={_this.replyFunc}
+              <Icon type="message"
+                //  onClick={this.replyFunc}
               />回复
             </Tooltip>
+            {
+              this.state.isReplyVisible && this.state.isReplyId == value._id?
+                <Editor
+                     // onChange={_this.replyChange}
+                     onSubmit={(e) => {
+                       // _this.replySubmit(value._id, value.commentUserId._id)
+                       }
+                     }
+                     value={value}
+                /> : null
+            }
           </div>
         ]}
-        author={<a>Han Solo</a>}
+        author={<a>{value.author}</a>}
         avatar={(
           <Avatar
-            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-            alt="Han Solo"
+            src = {value.avatar}
+            alt = {value.author}
           />
         )}
-        // content={(
-        //   <p>We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure).</p>,
-        //   <Editor
-        //     // onChange={_this.replyChange}
-        //     onSubmit={(e) => {
-        //       // _this.replySubmit(value._id, value.commentUserId._id)
-        //       }
-        //     }
-        //     // submitting={_this.state.submitting}
-        //     value={value}
-        //   />
-        // )}
-        content={<p>We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure).</p>}
+        content={<p>{value.content}</p>}
       >
-        {children}
+        {/* {children} */}
       </Comment>
-  )
+    </div>
+  )}
 
   componentWillMount(){
     const _this = this;
@@ -198,93 +201,133 @@ class AddComment extends React.Component {
     }), {
       'Content-Type': 'application/x-www-form-urlencoded'
     }).then(function (res) {
-      console.log(res);
+      // console.log(res);
       let allResult = res.data.allResult;
+      if(allResult.length == 0) return;
+      
       let commentsArr = [];
-      if(res.data.allResult.length == 0) return;
-      // console.log(_this.CommentList());
-      // allResult.map(function (value, index) {
-      //   console.log(value);
-      //   if(value.parentId != null){
-      //     let childrenList = [];
-      //   }
+      allResult.map(function (value, index) {
+        console.log(value);
+        if(value.parentId != null){
+          let childrenList = [];
+        }
 
-      //   // if(value.userInfo.length > 0){
-      //   //   console.log(value);
-      //     const actions = [
-      //       <div className="commentOperation">
-              // <div className="Tooltip">
-              //   <Tooltip title="Like" onClick = {
-              //     () => {
-              //       _this.likeFunc(value._id);
-              //     }
-              //   }>
-              //     <Icon type="like" theme={'liked' === 'outlined' ? 'filled' : 'outlined'}/>{value.likeNum}
-              //   </Tooltip>
-              //   <Tooltip title="message" onClick = {
-              //     () => {
-              //       _this.replyFunc(value._id);
-              //     }
-              //   }>
-              //     <Icon type="message"  onClick={_this.replyFunc}/>回复
-              //   </Tooltip>
-              // </div>
-      //         <Comment
-                // content={(
-                //   <Editor
-                //     onChange={_this.replyChange}
-                //     onSubmit={(e)=>{
-                //       _this.replySubmit(value._id, value.commentUserId._id)
-                //       }
-                //     }
-                //     submitting={_this.state.submitting}
-                //     value={value}
-                //   />
-      //           )}
-      //         />
-      //       </div>
-      //     ];
-      //     commentsArr.push({
-      //       author: value.commentUserId.username,
-      //       avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-      //       content: <p>{value.commentText}</p>,
-      //       datetime: value.date.updateAt,
-      //       like: value.likeNum,
-      //       actions: actions
-      //     });
-      //   // }
-      // })
-      // console.log(commentsArr);
-      // _this.setState({
-      //   submitting: false,
-      //   value: '',
-      //   comments: commentsArr
-      // });
+        // if(value.userInfo.length > 0){
+        //   console.log(value);
+          const actions = [
+            <div className="commentOperation">
+              <div className="Tooltip">
+                <Tooltip title="Like" onClick = {
+                  () => {
+                    _this.likeFunc(value._id);
+                  }
+                }>
+                  <Icon type="like" theme={'liked' === 'outlined' ? 'filled' : 'outlined'}/>{value.likeNum}
+                </Tooltip>
+                <Tooltip title="message" onClick = {
+                  () => {
+                    _this.replyFunc(value._id);
+                  }
+                }>
+                  <Icon type="message"  onClick={_this.replyFunc}/>回复
+                </Tooltip>
+              </div>
+              <Comment
+                content={(
+                  <Editor
+                    onChange={_this.replyChange}
+                    onSubmit={(e)=>{
+                      _this.replySubmit(value._id, value.commentUserId._id)
+                      }
+                    }
+                    submitting={_this.state.submitting}
+                    value={value}
+                  />
+                )}
+              />
+            </div>
+          ];
+          commentsArr.push({
+            author: "muer",
+            avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+            content: value.commentText,
+            datetime: value.date.updateAt,
+            like: value.likeNum,
+            actions: actions,
+            _id: value._id,
+          });
+        // }
+      })
+      console.log("---------------commentsArr--------------");
+      console.log(commentsArr);
+      _this.setState({
+        submitting: false,
+        value: '',
+        comments: commentsArr
+      });
     })
   }
 
   render() {
     const { comments, submitting, value, action, likes, dislikes } = this.state;
     const CommentsList = this.CommentsList;
+    const data= [{
+      articleId: "5c70fdda277b6a44c0a763a0",
+      commentText: "13",
+      commentUserId: null,
+      date: {createAt: "2019-02-23T07:42:26.562Z", updateAt: "2019-02-23T07:42:26.562Z"},
+      likeNum: 0,
+      parentId: null,
+      replyNum: 0,
+      status: 1,
+      toUserId: 1,
+      __v: 0,
+      _id: "5c710177277b6a44c0a763a1",
+    },{
+      articleId: "5c70fdda277b6a44c0a763a0",
+      commentText: "1233",
+      commentUserId: null,
+      date: {createAt: "2019-02-23T07:42:26.562Z", updateAt: "2019-02-23T07:42:26.562Z"},
+      likeNum: 0,
+      parentId: null,
+      replyNum: 0,
+      status: 1,
+      toUserId: 2,
+      __v: 0,
+      _id: "5c710177277b6a44c0a763a2",
+    }];
+    let data2 = [
+      {
+        __v:0,
+        _id:"5c739e13c2e403160409811d",
+        articleId:"5c62904dcfe97018b02f3f62",
+        commentText:"你嘲讽给你个",
+        date:{createAt: "2019-02-25T01:24:04.953Z", updateAt: "2019-02-25T01:24:04.953Z"},
+        likeNum:0,
+        parentId:null,
+        replyNum:0,
+        status:1,
+        toUserId:null
+      },
+    ];
+    console.log("---------------this.state.comments--------------");
+    console.log(this.state.comments);
     return (
       <div className="addComment">
-        {/* {comments.length > 0 && <CommentList comments={comments} />} */}
-        <CommentsList>
-          <CommentsList>
-            <CommentsList></CommentsList>
-          </CommentsList>
-        </CommentsList>
+        {
+          Array.prototype.map.call(this.state.comments, (el, index) => CommentsList(el, index))
+        }
         <Comment
           // actions={actions}
           avatar={(
             <Avatar
               src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-              alt="Han Solo"
+              alt={this.state.author}
             />
           )}
-          // author={comments.author}
+          author={this.state.author}
           content={(
-            <Editor
+            <Editor  
               onChange={this.handleChange}
               onSubmit={this.handleSubmit}
               submitting={submitting}

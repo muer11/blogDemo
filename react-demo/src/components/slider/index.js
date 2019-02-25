@@ -7,7 +7,7 @@ const imgs = [
     {
         url: '/',
         name: '南山竹海',
-        src: '/static/images/indexBg.jpg'
+        src: require('../../static/images/indexBg.jpg')
     }
 ];
 
