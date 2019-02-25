@@ -40,11 +40,12 @@ const Editor = ({
 class AddComment extends React.Component {
   state = {
     comments: [],
+    isReplyVisible:false,
+    isReplyId:"",
     submitting: false,
     value: '',
     replyValue: '',
     action: null,
-    userId: "5c4ea62382bb2e33248441b6",
   }
 
   likeFunc = (id) => {
@@ -59,11 +60,10 @@ class AddComment extends React.Component {
   }
 
   replyFunc = (id) => {
-    // this.setState({
-    //   likes: 1,
-    //   dislikes: 0,
-    //   action: 'liked',
-    // });
+    this.setState({
+      isReplyId: id,
+      isReplyVisible: true
+    });
     console.log(id);
     
   }
@@ -156,13 +156,19 @@ class AddComment extends React.Component {
             </Tooltip>
             <Tooltip title="message" onClick = {
               () => {
-                // _this.replyFunc(value._id);
+                this.replyFunc(value._id);
               }
             }>
-              <Icon type="message" 
-              //  onClick={_this.replyFunc}
+              <Icon type="message"
+                //  onClick={this.replyFunc}
               />回复
             </Tooltip>
+            {
+              this.state.isReplyVisible && this.state.isReplyId == value._id?
+                <input />
+                :null
+            }
+            
           </div>
         ]}
         author={<a>Han Solo</a>}
@@ -265,15 +271,45 @@ class AddComment extends React.Component {
 
   render() {
     const { comments, submitting, value, action, likes, dislikes } = this.state;
+
+    const data= [{
+      articleId: "5c70fdda277b6a44c0a763a0",
+      commentText: "13",
+      commentUserId: null,
+      date: {createAt: "2019-02-23T07:42:26.562Z", updateAt: "2019-02-23T07:42:26.562Z"},
+      likeNum: 0,
+      parentId: null,
+      replyNum: 0,
+      status: 1,
+      toUserId: null,
+      __v: 0,
+      _id: "5c710177277b6a44c0a763a1",
+    },{
+      articleId: "5c70fdda277b6a44c0a763a0",
+      commentText: "1233",
+      commentUserId: null,
+      date: {createAt: "2019-02-23T07:42:26.562Z", updateAt: "2019-02-23T07:42:26.562Z"},
+      likeNum: 0,
+      parentId: null,
+      replyNum: 0,
+      status: 1,
+      toUserId: null,
+      __v: 0,
+      _id: "5c710177277b6a44c0a763a2",
+    }]
+
     const CommentsList = this.CommentsList;
     return (
       <div className="addComment">
         {/* {comments.length > 0 && <CommentList comments={comments} />} */}
-        <CommentsList>
-          <CommentsList>
-            <CommentsList></CommentsList>
-          </CommentsList>
-        </CommentsList>
+        {/* <CommentsList> */}
+          {/* <CommentsList> */}
+            {/* <CommentsList></CommentsList> */}
+            {
+              data.map(x => this.CommentsList(x,{}))
+            }
+          {/* </CommentsList> */}
+        {/* </CommentsList> */}
         <Comment
           // actions={actions}
           avatar={(
@@ -284,7 +320,7 @@ class AddComment extends React.Component {
           )}
           // author={comments.author}
           content={(
-            <Editor
+            <Editor  
               onChange={this.handleChange}
               onSubmit={this.handleSubmit}
               submitting={submitting}

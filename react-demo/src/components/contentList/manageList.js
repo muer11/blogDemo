@@ -194,7 +194,7 @@ class ManageList extends React.Component{
                     <List.Item
                         key={item.title}
                         //<IconText type="star-o" text="156" />,<IconText type="message" text="2" />,
-                        actions={[<IconText type="" text={item.type} />,<IconText type="like-o" text={item.likeNum} />, <IconText type="time" text={item.date} />, <a onClick={()=>{this.editArticle(item.id)}}>编辑</a>, <a onClick={this.showModal}>删除</a>, <a href={"/article?id="+item.id} target="_blank">查看</a>]}
+                        actions={[<IconText type="" text={item.type} />,<IconText type="like-o" text={item.likeNum} />, <IconText type="time" text={item.date} />, <a onClick={()=>{this.editArticle(item.id)}}>编辑</a>, <a onClick={()=>{this.deleteArticle(item.id)}}>删除</a>, <a href={"/article?id="+item.id} target="_blank">查看</a>]}
                         // {()=>{this.editArticle(item.id)}}
                     >
                         <List.Item.Meta

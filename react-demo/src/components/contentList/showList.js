@@ -37,7 +37,7 @@ class ContentList extends React.Component{
 
     componentDidMount(){
         var _this = this;
-        axios.get("/api/article/getTagArticle?isPublished=false&tagId=" + this.state.tagId).then(function (res) {
+        axios.get("/api/article/getTagArticle?isPublished=true&tagId=" + this.state.tagId).then(function (res) {
             const data = res.data.allResult;
             let listData = [];
             data.map(function(value, index){
@@ -45,7 +45,7 @@ class ContentList extends React.Component{
                     articleId: value._id,
                     title: value.title,
                     type: value.tagId.name, //类型
-                    date: value.date.updateAt,
+                    date: new Date(value.date.updateAt).toLocaleString(),
                     likeNum: value.likeNum, //点赞数
                     replyNum: value.replyNum ? value.replyNum : 0, //点赞数
                     message: value.content, //评论数

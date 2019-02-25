@@ -7,11 +7,7 @@ const imgs = [
     {
         url: '/',
         name: 'img1',
-        src: 'static/images/mac.jpg'
-    },{
-        url: '/',
-        name: 'img2',
-        src: 'static/images/time.jpg'
+        src: require('../../static/images/trees.jpg')
     }
 ];
 
