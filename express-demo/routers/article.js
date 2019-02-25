@@ -58,6 +58,15 @@ router.post("/editRecording", function (req, res) {
 router.get("/getArticle", function (req, res) {
     var info = req.query;
     var userId = req.session.userid;
+    console.log(userId);
+    console.log(typeof userId);
+    if (userId == ""){
+        res.json({
+            ret_code: 1,
+            ret_msg: "账号未登录"
+        })
+    }
+
     var tagId = ((info.tagId && info.tagId !== "all") ? info.tagId : {
         $ne: null
     });
