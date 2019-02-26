@@ -26,22 +26,24 @@ const sessionMiddleware = session({
 });
 app.use(sessionMiddleware);
 
-//首页验证用户是否已登录
-app.get("/", function (req, res) {
+//拦截用户登录信息
+app.post("/*", function (req, res, next) {
     console.log("-------/-------")
     console.log(req.session);
-    if (req.session.username) {
-        res.json({
-            ret_code: 0,
-            username: req.session.username,
-            role: req.session.role
-        })
-    } else {
+    if (typeof req.session.username == "undefined"  && req.url != "/user/doLogin") {
+    //     res.json({
+    //         ret_code: 0,
+    //         username: req.session.username,
+    //         role: req.session.role
+    //     });
+    //     return true;
         res.json({
             ret_code: 1,
             ret_msg: "账号未登录"
         })
+        return false;
     }
+    next();
 });
 
 const testRouter = require("./routers/test");
@@ -57,7 +59,7 @@ app.use("/tag", tagRouter);
 app.use("/article", articleRouter);
 app.use("/comment", commentRouter);
 
-app.all('*', function(req, res, next) {
+app.all('*', function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -74,22 +76,17 @@ app.use("/libs/ueditor/ue", ueditor(path.join(__dirname, 'public'), function (re
     // ueditor 客户发起上传图片请求
     if (req.query.action === 'uploadimage') {
         var foo = req.ueditor;
-
         var imgname = req.ueditor.filename;
-
         var img_url = '/upload';
         res.ue_up(img_url); //你只要输入要保存的地址 。保存操作交给ueditor来做
     }
-
     //  客户端发起图片列表请求
     else if (req.query.action === 'listimage') {
         var dir_url = '/upload';
         res.ue_list(dir_url);  // 客户端会列出 dir_url 目录下的所有图片
     }
-
     // 客户端发起其它请求
     else {
-
         res.setHeader('Content-Type', 'application/json');
         res.redirect('/libs/ueditor/nodejs/config.json')
     }

@@ -22,7 +22,8 @@ router.post("/doComment", function (req, res, result) {
     form.parse(req, function (err, fields, files) {
         var parentId = fields.parentId ? fields.parentId : null;
         var commentText = fields.commentText;
-        var commentUserId = fields.commentUserId;
+        var commentUserId = req.session.userid;
+        // var commentUserId = fields.commentUserId;
         // var commentUserName = fields.commentUserName;
         var articleId = fields.articleId;
         var toUserId = fields.toUserId ? fields.toUserId : null;

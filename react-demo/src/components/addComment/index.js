@@ -83,7 +83,7 @@ class AddComment extends React.Component {
 
     axios.post("/api/comment/doComment", Qs.stringify({
       "commentText": commentText,
-      "commentUserId": _this.state.userId,
+      // "commentUserId": _this.state.userId,
       "articleId":  _this.props.articleId,
     }), {'Content-Type': 'application/x-www-form-urlencoded'}).then(function (res) {
       console.log(res);
@@ -107,9 +107,9 @@ class AddComment extends React.Component {
     }, 1000);
   }
 
-  replySubmit = (parentId, toUserId) => {
+  replySubmit = (parentId) => {
     console.log(parentId);
-    console.log(toUserId);
+    // console.log(toUserId);
     const _this = this;
     const replyText = this.state.replyValue;
     if (!replyText) {
@@ -117,10 +117,10 @@ class AddComment extends React.Component {
     }
     axios.post("/api/comment/doComment", Qs.stringify({
       "commentText": replyText,
-      "commentUserId": _this.state.userId,
+      // "commentUserId": _this.state.userId,
       "articleId": _this.props.articleId,
       "parentId": parentId,
-      "toUserId": toUserId,
+      // "toUserId": toUserId,
     }), {
       'Content-Type': 'application/x-www-form-urlencoded'
     }).then(function (res) {
@@ -143,7 +143,9 @@ class AddComment extends React.Component {
   }
 
   CommentsList = (value, index)=>{
+    console.log("------------value--------------");
     console.log(value);
+    const _this = this;
     return (
     <div className="commentList" key={index}>     
       <Comment
@@ -169,9 +171,9 @@ class AddComment extends React.Component {
             {
               this.state.isReplyVisible && this.state.isReplyId == value._id?
                 <Editor
-                     // onChange={_this.replyChange}
+                     onChange={_this.replyChange}
                      onSubmit={(e) => {
-                       // _this.replySubmit(value._id, value.commentUserId._id)
+                        _this.replySubmit(value._id)
                        }
                      }
                      value={value}
@@ -237,7 +239,7 @@ class AddComment extends React.Component {
                   <Editor
                     onChange={_this.replyChange}
                     onSubmit={(e)=>{
-                      _this.replySubmit(value._id, value.commentUserId._id)
+                      _this.replySubmit(value._id)
                       }
                     }
                     submitting={_this.state.submitting}

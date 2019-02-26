@@ -50,6 +50,7 @@ class TabsNav extends React.Component {
 
         axios.get("/api/tag/showTagsFore").then(function (res) {
             const tagArr = res.data.allTags;
+            console.log(tagArr);
             let tagInfo= [{
                 tagId: 'all',
                 name: '首页',
