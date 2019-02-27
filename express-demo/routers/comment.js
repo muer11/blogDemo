@@ -4,19 +4,7 @@ const router = express.Router();
 var User = require("../model/user");
 var Comment = require("../model/comment");
 
-router.get("/", function (req, res) {
-    console.log("-----------test---------------");
-    User.find({}, (err, result) => {
-        console.log("result.............")
-        if (err) {
-            res.send("server or db error");
-        }
-        console.log(result);
-        res.send(result);
-    });
-    // res.send("-----------test---------------");
-});
-
+//发表评论
 router.post("/doComment", function (req, res, result) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
@@ -55,6 +43,7 @@ router.post("/doComment", function (req, res, result) {
         // });
     });
 });
+
 //点赞评论
 router.post("/pointComment", function(req, res, next){
     var form = new formidable.IncomingForm();
@@ -74,45 +63,42 @@ router.post("/pointComment", function(req, res, next){
     })
 });
 
-//取得评论
-router.post("/getComment", function (req, res, next) {
-    var form = new formidable.IncomingForm();
-    form.parse(req, function (err, fields, files) {
-        var articleId = fields.articleId;
-        Comment.find({
-            "articleId": articleId
-        }).populate({
-            path: "commentUserId",
-            select: 'username'
-        }).exec(function (err, result) {
-            let commentInfo = [];
-            result.map(function (val, index) {
-                if (val.articleId == articleId) {
-                    commentInfo.push(val);
-                }
-            })
-            var obj = {
-                "allResult": commentInfo
-            };
-            res.json(obj);
+//获取评论
+router.get("/getComment", function (req, res, next) {
+    var articleId = req.query.articleId;
+    Comment.find({
+        "articleId": articleId
+    }).populate({
+        path: "commentUserId",
+        select: 'username'
+    }).exec(function (err, result) {
+        let commentInfo = [];
+        result.map(function (val, index) {
+            if (val.articleId == articleId) {
+                commentInfo.push(val);
+            }
         });
-        // db.aggregate("comment", { //直接合并两张表，导致不需要的数据很多
-        //     from: "user",
-        //     localField: "commentUserId",
-        //     foreignField: "id",
-        //     as: "commentUserInfo"
-        // }, function (err, result) {
-        //     let commentInfo = [];
-        //     result.map(function(val, index){
-        //         if(val.articleId == articleId){
-        //             commentInfo.push(val);
-        //         }
-        //     })
-        //     var obj = {
-        //         "allResult": commentInfo
-        //     };
-        //     res.json(obj);
-        // })
+        var obj = {
+            "allResult": commentInfo
+        };
+        res.json(obj);
     });
+    // db.aggregate("comment", { //直接合并两张表，导致不需要的数据很多
+    //     from: "user",
+    //     localField: "commentUserId",
+    //     foreignField: "id",
+    //     as: "commentUserInfo"
+    // }, function (err, result) {
+    //     let commentInfo = [];
+    //     result.map(function(val, index){
+    //         if(val.articleId == articleId){
+    //             commentInfo.push(val);
+    //         }
+    //     })
+    //     var obj = {
+    //         "allResult": commentInfo
+    //     };
+    //     res.json(obj);
+    // })
 });
 module.exports = router;

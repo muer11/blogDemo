@@ -41,22 +41,22 @@ class IndexPage extends React.Component {
         }
     }
 
-    componentDidMount(){
-        const _this = this;
-        axios.get("/api/").then(function(res) {
-            console.log("--------axios/---------");
-            console.log(res.data.ret_code == 0);
-            if(res.data.ret_code == 0){
-                _this.setState({
-                    login: true
-                });
-            }else{
-                _this.setState({
-                    login: false
-                });
-            }
-        })
-    }
+    // componentDidMount(){
+    //     const _this = this;
+    //     axios.get("/api/*").then(function(res) {
+    //         console.log("--------axios/---------");
+    //         console.log(res.data.ret_code == 0);
+    //         if(res.data.ret_code == 0){
+    //             _this.setState({
+    //                 login: true
+    //             });
+    //         }else{
+    //             _this.setState({
+    //                 login: false
+    //             });
+    //         }
+    //     })
+    // }
 
     render(){
         let formInfo = null;
