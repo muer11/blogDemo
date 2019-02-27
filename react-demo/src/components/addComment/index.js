@@ -109,6 +109,16 @@ class AddComment extends React.Component {
       parentId: "5c739e13c2e4031604098d111",
       commentUserId: "111",
       toUserId: "222"
+    }, {
+      _id: "5c739e13c2e4031604098d777",
+      author: "muer222",
+      avatar: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
+      content: "d333",
+      datetime: "2019-02-27T01:24:04.953Z",
+      like: 0,
+      parentId: "5c739e13c2e4031604098d111",
+      commentUserId: "111",
+      toUserId: "222"
     }]
   }
 
@@ -212,89 +222,83 @@ class AddComment extends React.Component {
 
   cycleComments = (value, index) => {
     // console.log(this.state.data2);
-    // console.log(value);
+    // console.log("------------value-----------")
+    console.log(value); //所有评论的骨架
+    
     let currentComment = null;
-    this.state.data2.map((dt, index)=>{
-      if (dt._id == value.pId){
+    let parentList= null;
+    let childs= [];
+    this.state.data2.map((dt, index)=>{ //首先遍历所有的父元素
+      // console.log(dt._id);
+      // console.log(value.pId);
+      if (dt._id == value.pId){ //得到所有的父节点
         currentComment = this.state.data2[index];
+        parentList =  this.CommentsList(currentComment, index);
+      }
+      if(value.listArr.length > 0){ //得到所有的子节点
+        value.listArr.map((child, i)=>{
+          console.log("child:"+child);
+          if(dt._id == child){
+            childs.push(this.CommentsList(this.state.data2[index], i));
+          }
+        })
       }
     })
-    // value.pId
-    // console.log("---------currentComment--------");
-    // console.log(currentComment);
-    // if(value.parentId != null){
-    //   let data2 = this.state.data2;
-    //   let childArr = [];
-    //   data2.map((dt, index)=>{
-    //     if (dt.parentId === value.parentId){
-    //       childArr.map((val, index)=>{
-    //         this.CommentsList(val, index);
-    //       })
-    //     }
-    //   })
-    // }else{
-      console.log("*************");
-      console.log(this.CommentsList(currentComment, index));
-      return this.CommentsList(currentComment, index);
-    // }
+    console.log(childs);
+    return [parentList, childs];
   }
 
   CommentsList = (value, index)=>{
-    console.log("------------value--------------");
-    console.log(value._id);
-    console.log(index);
     const _this = this;
-    return (<div className="commentList" key={index}>111</div>)
+    return (
+      <div className="commentList" key={index}>     
+        <Comment
+          actions={[
+            <div className="Tooltip">
+              <Tooltip onClick = {
+                () => {
+                  // _this.likeFunc(value._id);
+                }
+              }>
+                <Icon type="like" theme={'liked' === 'outlined' ? 'filled' : 'outlined'}/>
+                {/* {value.likeNum} */}
+              </Tooltip>
+              <Tooltip onClick = {
+                () => {
+                  this.replyFunc(value._id);
+                }
+              }>
+                <Icon type="message"
+                  //  onClick={this.replyFunc}
+                />回复
+              </Tooltip>
+              {
+                this.state.isReplyVisible && this.state.isReplyId == value._id ?
+                  <Editor
+                      onChange={_this.replyChange}
+                      onSubmit={(e) => {
+                          _this.replySubmit(value._id)
+                        }
+                      }
+                      value={value}
+                  /> : null
+              }
+            </div>
+          ]}
+          author={<a>{value.author}</a>}
+          avatar={(
+            <Avatar
+              src = {value.avatar}
+              alt = {value.author}
+            />
+          )}
+          content={<p>{value.content}</p>}
+        >
+          {/* {children} */}
+        </Comment>
+      </div>
+    )
   }
-    // (
-    //   <div className="commentList" key={index}>     
-    //     <Comment
-    //       actions={[
-    //         <div className="Tooltip">
-    //           <Tooltip onClick = {
-    //             () => {
-    //               // _this.likeFunc(value._id);
-    //             }
-    //           }>
-    //             <Icon type="like" theme={'liked' === 'outlined' ? 'filled' : 'outlined'}/>
-    //             {/* {value.likeNum} */}
-    //           </Tooltip>
-    //           <Tooltip onClick = {
-    //             () => {
-    //               this.replyFunc(value._id);
-    //             }
-    //           }>
-    //             <Icon type="message"
-    //               //  onClick={this.replyFunc}
-    //             />回复
-    //           </Tooltip>
-    //           {
-    //             this.state.isReplyVisible && this.state.isReplyId == value._id ?
-    //               <Editor
-    //                   onChange={_this.replyChange}
-    //                   onSubmit={(e) => {
-    //                       _this.replySubmit(value._id)
-    //                     }
-    //                   }
-    //                   value={value}
-    //               /> : null
-    //           }
-    //         </div>
-    //       ]}
-    //       author={<a>{value.author}</a>}
-    //       avatar={(
-    //         <Avatar
-    //           src = {value.avatar}
-    //           alt = {value.author}
-    //         />
-    //       )}
-    //       content={<p>{value.content}</p>}
-    //     >
-    //       {/* {children} */}
-    //     </Comment>
-    //   </div>
-    // )
-  // }
 
   componentWillMount(){
     const _this = this;
@@ -316,8 +320,8 @@ class AddComment extends React.Component {
       "resultArr": resultArr
     })
 
-    console.log("------------resultArr-----------");
-    console.log(resultArr);
+    // console.log("------------resultArr-----------");
+    // console.log(resultArr);
   //   axios.get("/api/comment/getComment?articleId="+_this.props.articleId).then(function (res) {
   //     // console.log(res);
   //     let allResult = res.data.allResult;
@@ -390,64 +394,31 @@ class AddComment extends React.Component {
   render() {
     const { comments, submitting, value, action, likes, dislikes } = this.state;
     const CommentsList = this.CommentsList;
-    // const data= [{
-    //   articleId: "5c70fdda277b6a44c0a763a0",
-    //   commentText: "13",
-    //   commentUserId: null,
-    //   date: {createAt: "2019-02-23T07:42:26.562Z", updateAt: "2019-02-23T07:42:26.562Z"},
-    //   likeNum: 0,
-    //   parentId: null,
-    //   replyNum: 0,
-    //   status: 1,
-    //   toUserId: 1,
-    //   __v: 0,
-    //   _id: "5c710177277b6a44c0a763a1",
-    // }, {
-    //   articleId: "5c70fdda277b6a44c0a763a0",
-    //   commentText: "1233",
-    //   commentUserId: null,
-    //   date: {
-    //     createAt: "2019-02-23T07:42:26.562Z",
-    //     updateAt: "2019-02-23T07:42:26.562Z"
-    //   },
-    //   likeNum: 0,
-    //   parentId: "5c710177277b6a44c0a763a1",
-    //   replyNum: 0,
-    //   status: 1,
-    //   toUserId: 2,
-    //   __v: 0,
-    //   _id: "5c710177277b6a44c0a763a2",
-    // }, {
-    //   articleId: "5c70fdda277b6a44c0a763a0",
-    //   commentText: "1233",
-    //   commentUserId: null,
-    //   date: {
-    //     createAt: "2019-02-23T07:42:26.562Z",
-    //     updateAt: "2019-02-23T07:42:26.562Z"
-    //   },
-    //   likeNum: 0,
-    //   parentId: "5c710177277b6a44c0a763a1",
-    //   replyNum: 0,
-    //   status: 1,
-    //   toUserId: 2,
-    //   __v: 0,
-    //   _id: "5c710177277b6a44c0a763a3",
-    // }];
-    // console.log("---------------this.state.comments--------------");
-    // console.log(this.state.comments);
+
     return (
       <div className="addComment">
         {
           // Array.prototype.map.call(this.state.comments, (el, index) => CommentsList(el, index))
-          // Array.prototype.map.call(this.state.resultArr, (el, index) => {
-          //   console.log(el);
-          //   // this.cycleComments(el, index)
-          // })
-          // Array.prototype.map.call(data, (el, index) => CommentsList(el, index))
-          this.state.resultArr.map((el, index) => {
-            // console.log(el);
-            this.cycleComments(el, index)
+         Array.prototype.map.call(this.state.resultArr, (el, index) => {
+            let [parentList, childList] = this.cycleComments(el, index);
+            
+            return (
+              <div key={index}>
+                {parentList}
+                <div className="childs" style={{"backgroundColor":"red"}}>
+                {
+                  childList.map((c, i)=>{
+                    return c;
+                  })
+                }
+                </div>
+              </div>
+            );
           })
+          // this.state.resultArr.map((el, index) => {
+            // console.log(el);
+            // this.cycleComments(el, index)
+          // })
         }
         <Comment
           // actions={actions}
