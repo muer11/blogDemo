@@ -5,26 +5,26 @@ require('./tips.scss');
 
 class PersonalTips extends React.Component{
     state = {
-        username: "",
-        role: 0
+        username: this.props.name,
+        role: this.props.role
     }
 
-    componentDidMount(){
-        const _this = this;
-        axios.get("/api/").then(function (res) {
-            _this.setState({
-                username: res.data.username,
-                role: res.data.role
-            })
-        });
-    }
+    // componentDidMount(){
+    //     const _this = this;
+    //     axios.get("/api/").then(function (res) {
+    //         _this.setState({
+    //             username: res.data.username,
+    //             role: res.data.role
+    //         })
+    //     });
+    // }
 
     logout = ()=>{
         const _this = this;
         axios.get("/api/user/logout").then(function (res) {
             let code = res.data.ret_code;
             let msg = res.data.ret_msg;
-            if (code == 1) {
+            if (code == 0) {
                 _this.props.logoutCallback(code);
             }else{
             }

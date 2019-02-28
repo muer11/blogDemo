@@ -41,6 +41,7 @@ class AddComment extends React.Component {
   state = {
     comments: [],
     resultArr: [],
+    allResult: [],
     isReplyVisible:false,
     isReplyId:"",
     submitting: false,
@@ -49,77 +50,6 @@ class AddComment extends React.Component {
     action: null,
     username: "muer",
     avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-    data2: [{
-      _id: "5c739e13c2e4031604098d111",
-      author: "muer222",
-      avatar: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-      content: "d111",
-      datetime: "2019-02-25T01:24:04.953Z",
-      like: 0,
-      parentId: null,
-      commentUserId: "111",
-      toUserId: null
-    }, {
-      _id: "5c739e13c2e4031604098d222",
-      author: "muer111",
-      avatar: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-      content: "d222",
-      datetime: "2019-02-26T01:24:04.953Z",
-      like: 0,
-      parentId: "5c739e13c2e4031604098d111",
-      commentUserId: "222",
-      toUserId: "111"
-    }, {
-      _id: "5c739e13c2e4031604098d333",
-      author: "muer222",
-      avatar: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-      content: "d333",
-      datetime: "2019-02-27T01:24:04.953Z",
-      like: 0,
-      parentId: "5c739e13c2e4031604098d111",
-      commentUserId: "111",
-      toUserId: "222"
-    }, {
-      _id: "5c739e13c2e4031604098d444",
-      author: "muer222",
-      avatar: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-      content: "d111",
-      datetime: "2019-02-25T01:24:04.953Z",
-      like: 0,
-      parentId: null,
-      commentUserId: "111",
-      toUserId: null
-    }, {
-      _id: "5c739e13c2e4031604098d555",
-      author: "muer111",
-      avatar: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-      content: "d222",
-      datetime: "2019-02-26T01:24:04.953Z",
-      like: 0,
-      parentId: "5c739e13c2e4031604098d444",
-      commentUserId: "222",
-      toUserId: "111"
-    }, {
-      _id: "5c739e13c2e4031604098d666",
-      author: "muer222",
-      avatar: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-      content: "d333",
-      datetime: "2019-02-27T01:24:04.953Z",
-      like: 0,
-      parentId: "5c739e13c2e4031604098d111",
-      commentUserId: "111",
-      toUserId: "222"
-    }, {
-      _id: "5c739e13c2e4031604098d777",
-      author: "muer222",
-      avatar: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-      content: "d333",
-      datetime: "2019-02-27T01:24:04.953Z",
-      like: 0,
-      parentId: "5c739e13c2e4031604098d111",
-      commentUserId: "111",
-      toUserId: "222"
-    }]
   }
 
   likeFunc = (id) => {
@@ -179,7 +109,7 @@ class AddComment extends React.Component {
     }, 1000);
   }
 
-  replySubmit = (parentId) => {
+  replySubmit = (parentId, toUserId) => {
     console.log(parentId);
     // console.log(toUserId);
     const _this = this;
@@ -192,7 +122,7 @@ class AddComment extends React.Component {
       // "commentUserId": _this.state.userId,
       "articleId": _this.props.articleId,
       "parentId": parentId,
-      // "toUserId": toUserId,
+      "toUserId": toUserId,
     }), {
       'Content-Type': 'application/x-www-form-urlencoded'
     }).then(function (res) {
@@ -223,76 +153,105 @@ class AddComment extends React.Component {
   cycleComments = (value, index) => {
     // console.log(this.state.data2);
     // console.log("------------value-----------")
-    console.log(value); //所有评论的骨架
-    
+    // console.log(value); //所有评论的骨架
+    // console.log("-------------this.state.allResult----------");
+    // console.log(this.state.allResult);
     let currentComment = null;
     let parentList= null;
     let childs= [];
-    this.state.data2.map((dt, index)=>{ //首先遍历所有的父元素
+    this.state.allResult.map((dt, index) => { //首先遍历所有的父元素
       // console.log(dt._id);
       // console.log(value.pId);
       if (dt._id == value.pId){ //得到所有的父节点
-        currentComment = this.state.data2[index];
+        currentComment = this.state.allResult[index];
         parentList =  this.CommentsList(currentComment, index);
       }
       if(value.listArr.length > 0){ //得到所有的子节点
         value.listArr.map((child, i)=>{
-          console.log("child:"+child);
+          // console.log("child:"+child);
           if(dt._id == child){
-            childs.push(this.CommentsList(this.state.data2[index], i));
+            childs.push(this.CommentsList(this.state.allResult[index], i));
           }
         })
       }
     })
-    console.log(childs);
+    // console.log(childs);
     return [parentList, childs];
   }
 
   CommentsList = (value, index)=>{
+    console.log(value);
     const _this = this;
+    let [author, title] = [null, null];
+    let avatar = "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png";
+    author = value.commentUserId ? value.commentUserId.username : null
+    if (value.parentId != null) {
+      
+      title = (<div><a>{author}</a>回复<a>{value.toUserId}</a></div>)
+    } else {
+      title = (<div><a>{author}</a></div>)
+    }
     return (
       <div className="commentList" key={index}>     
         <Comment
           actions={[
             <div className="Tooltip">
-              <Tooltip onClick = {
-                () => {
-                  // _this.likeFunc(value._id);
+              <div className="replyTime">
+                {
+                  new Date(value.date.createAt).toLocaleString()
                 }
-              }>
-                <Icon type="like" theme={'liked' === 'outlined' ? 'filled' : 'outlined'}/>
-                {/* {value.likeNum} */}
-              </Tooltip>
-              <Tooltip onClick = {
-                () => {
-                  this.replyFunc(value._id);
-                }
-              }>
-                <Icon type="message"
-                  //  onClick={this.replyFunc}
-                />回复
-              </Tooltip>
+              </div>
+              <div className="replyBtn">
+                <Tooltip onClick = {
+                  () => {
+                    this.replyFunc(value._id);
+                  }
+                }>
+                  <Icon type="message"
+                    //  onClick={this.replyFunc}
+                  />回复
+                </Tooltip>
+              </div>
+              <div className="likeBtn">
+                <Tooltip onClick = {
+                  () => {
+                    // _this.likeFunc(value._id);
+                  }
+                }>
+                  <Icon type="like" theme={'liked' === 'outlined' ? 'filled' : 'outlined'}/>
+                  {value.likeNum}
+                </Tooltip>
+              </div>
+              
               {
                 this.state.isReplyVisible && this.state.isReplyId == value._id ?
-                  <Editor
-                      onChange={_this.replyChange}
-                      onSubmit={(e) => {
-                          _this.replySubmit(value._id)
+                  <div className="replyEditor">
+                    <Editor
+                        onChange={_this.replyChange}
+                        onSubmit={(e) => {
+                            //toUserId: 回复对象-向谁回复中的谁
+                            //commentUserId: 回复者-从后台session取登录数据
+                            //parentId: 针对的父级回复
+                            let toUserId = value.commentUserId ? value.commentUserId._id : null;
+                            // let commentUserId = ;
+                            let parentId = value.parentId ? value.parentId : value._id;
+                            _this.replySubmit(parentId, toUserId)
+                          }
                         }
-                      }
-                      value={value}
-                  /> : null
+                        value={value}
+                    />
+                  </div> : null
               }
             </div>
           ]}
-          author={<a>{value.author}</a>}
+          author={title}
           avatar={(
             <Avatar
-              src = {value.avatar}
-              alt = {value.author}
+              src = {avatar}
+              alt = {author}
             />
           )}
-          content={<p>{value.content}</p>}
+          content={<p>{value.commentText}</p>}
         >
           {/* {children} */}
         </Comment>
@@ -303,92 +262,102 @@ class AddComment extends React.Component {
   componentWillMount(){
     const _this = this;
 
-    let data = this.state.data2;
-    let resultArr = this.state.resultArr;
-    data.map((val, index)=>{
-      if(val.parentId == null){
-        resultArr.push({"pId": val._id, "listArr":[]});
-      }else if(val.parentId != null){
-        resultArr.map((one, index)=>{
-          if (one.pId === val.parentId) {
-            one.listArr.push(val._id);
-          }
-        })
-      }
-    });
-    this.setState({
-      "resultArr": resultArr
-    })
+    // let data = this.state.data2;
+    
 
     // console.log("------------resultArr-----------");
     // console.log(resultArr);
-  //   axios.get("/api/comment/getComment?articleId="+_this.props.articleId).then(function (res) {
-  //     // console.log(res);
-  //     let allResult = res.data.allResult;
-  //     if(allResult.length == 0) return;
+    axios.get("/api/comment/getComment?articleId="+_this.props.articleId).then(function (res) {
+      // console.log(res);
+      let allResult = res.data.allResult;
+      if(allResult.length == 0) return;
       
-  //     let commentsArr = [];
-  //     allResult.map(function (value, index) {
-  //       console.log(value);
-  //       if(value.parentId != null){
-  //         let childrenList = [];
-  //       }
+      // let commentsArr = [];
+      let resultArr = _this.state.resultArr;
+      allResult.map((val, index) => {
+        if (val.parentId == null) {
+          resultArr.push({
+            "pId": val._id,
+            "listArr": []
+          });
+        } else if (val.parentId != null) {
+          resultArr.map((one, index) => {
+            if (one.pId === val.parentId) {
+              one.listArr.push(val._id);
+            }
+          })
+        }
+      });
+      // console.log(resultArr);
+      _this.setState({
+        resultArr: resultArr,
+        allResult: allResult,
+      });
 
-  //       // if(value.userInfo.length > 0){
-  //       //   console.log(value);
-  //         const actions = [
-  //           <div className="commentOperation">
-  //             <div className="Tooltip">
-  //               <Tooltip title="Like" onClick = {
-  //                 () => {
-  //                   _this.likeFunc(value._id);
-  //                 }
-  //               }>
-  //                 <Icon type="like" theme={'liked' === 'outlined' ? 'filled' : 'outlined'}/>{value.likeNum}
-  //               </Tooltip>
-  //               <Tooltip title="message" onClick = {
-  //                 () => {
-  //                   _this.replyFunc(value._id);
-  //                 }
-  //               }>
-  //                 <Icon type="message"  onClick={_this.replyFunc}/>回复
-  //               </Tooltip>
-  //             </div>
-  //             <Comment
-  //               content={(
-  //                 <Editor
-  //                   onChange={_this.replyChange}
-  //                   onSubmit={(e)=>{
-  //                     _this.replySubmit(value._id)
-  //                     }
-  //                   }
-  //                   submitting={_this.state.submitting}
-  //                   value={value}
-  //                 />
-  //               )}
-  //             />
-  //           </div>
-  //         ];
-  //         commentsArr.push({
-  //           author: "muer",
-  //           avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-  //           content: value.commentText,
-  //           datetime: value.date.updateAt,
-  //           like: value.likeNum,
-  //           actions: actions,
-  //           _id: value._id,
-  //           parentId: value.parentId,
-  //         });
-  //       // }
-  //     })
-  //     console.log("---------------commentsArr--------------");
-  //     console.log(commentsArr);
-  //     _this.setState({
-  //       submitting: false,
-  //       value: '',
-  //       comments: commentsArr
-  //     });
-  //   })
+      
+    //   allResult.map(function (value, index) {
+    //     console.log(value);
+    //     let author = value.commentUserId ? value.commentUserId.username : null
+    //     // if(value.parentId != null){
+    //     //   let childrenList = [];
+    //     // }
+
+    //     // if(value.userInfo.length > 0){
+    //     //   console.log(value);
+    //       const actions = [
+    //         <div className="commentOperation">
+    //           <div className="Tooltip">
+    //             <Tooltip title="Like" onClick = {
+    //               () => {
+    //                 _this.likeFunc(value._id);
+    //               }
+    //             }>
+    //               <Icon type="like" theme={'liked' === 'outlined' ? 'filled' : 'outlined'}/>{value.likeNum}
+    //             </Tooltip>
+    //             <Tooltip title="message" onClick = {
+    //               () => {
+    //                 _this.replyFunc(value._id);
+    //               }
+    //             }>
+    //               <Icon type="message"  onClick={_this.replyFunc}/>回复
+    //             </Tooltip>
+    //           </div>
+    //           <Comment
+    //             content={(
+    //               <Editor
+    //                 onChange={_this.replyChange}
+    //                 onSubmit={(e)=>{
+    //                   _this.replySubmit(value._id)
+    //                   }
+    //                 }
+    //                 submitting={_this.state.submitting}
+    //                 value={value}
+    //               />
+    //             )}
+    //           />
+    //         </div>
+    //       ];
+    //       commentsArr.push({
+    //         _id: value._id,
+    //         author: author,
+    //         avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+    //         content: value.commentText,
+    //         datetime: value.date.updateAt,
+    //         like: value.likeNum,
+    //         parentId: value.parentId,
+    //         actions: actions,
+    //       });
+    //     // }
+    //   })
+    //   console.log("---------------commentsArr--------------");
+    //   console.log(commentsArr);
+    //   _this.setState({
+    //     submitting: false,
+    //     value: '',
+    //     comments: commentsArr,
+    //     resultArr: resultArr
+    //   });
+    })
   }
 
   render() {
@@ -405,7 +374,7 @@ class AddComment extends React.Component {
             return (
               <div key={index}>
                 {parentList}
-                <div className="childs" style={{"backgroundColor":"red"}}>
+                <div className="childs">
                 {
                   childList.map((c, i)=>{
                     return c;

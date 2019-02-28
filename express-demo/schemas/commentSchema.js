@@ -20,7 +20,7 @@ var CommentSchema = new mongoose.Schema({
     },
     toUserId: { //评论对象
         type: Schema.ObjectId,
-        ref: 'user'
+        ref: 'user',
     },
     likeNum: { //点赞人数
         type: Number,

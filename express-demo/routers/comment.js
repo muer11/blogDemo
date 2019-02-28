@@ -15,6 +15,8 @@ router.post("/doComment", function (req, res, result) {
         // var commentUserName = fields.commentUserName;
         var articleId = fields.articleId;
         var toUserId = fields.toUserId ? fields.toUserId : null;
+        console.log(commentUserId)
+        console.log(toUserId)
         // var toUserName = fields.toUserName;
         // db.updateOne("counters", {"_id":"commentId"}, function (result) {
         //     if (result !== "success") return;

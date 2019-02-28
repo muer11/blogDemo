@@ -11,6 +11,9 @@ class Article extends React.Component{
         title: "",
         content: "",
         likeNum: 0,
+        tagType: "",
+        writer: "",
+        publishTime: "",
         articleId: this.props.articleId,
         url: this.props.match
     }
@@ -30,12 +33,15 @@ class Article extends React.Component{
         // console.log(this.props.articleId);
         const _this = this;
         axios.get("/api/article/findOneArticle?articleId=" + id).then(function (res) {
-            // console.log(res);
+            console.log(res);
             let data = res.data.allResult[0];
             _this.setState({
                 "title": data.title,
                 "content": data.content,
-                "likeNum": data.likeNum
+                "likeNum": data.likeNum,
+                "tagType": data.tagId.name,
+                "writer": data.userId.username,
+                "publishTime": new Date(data.date.createAt).toLocaleString(),
             });
         })
     }
@@ -49,6 +55,7 @@ class Article extends React.Component{
             <div>
                 <div className="content">
                     <h1>{this.state.title}</h1>
+                    <h6>文章分类：{this.state.tagType} | 作者：{this.state.writer} | 发表时间：{this.state.publishTime}</h6>
                     <p dangerouslySetInnerHTML={{__html:this.state.content}}></p>
                     <div>
                         <Tooltip title="Like" onClick={this.doLike.bind(this)}>

@@ -48,7 +48,7 @@ class TabsNav extends React.Component {
         const _this = this;
         let tabPane = null;
 
-        axios.get("/api/tag/showTagsFore").then(function (res) {
+        axios.get("/api/tag/showTags").then(function (res) {
             const tagArr = res.data.allTags;
             console.log(tagArr);
             let tagInfo= [{

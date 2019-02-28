@@ -6,22 +6,31 @@ const Tag = require("../model/tag");
 const Counter = require("../model/counter");
 
 //显示标签-前台
-router.get("/showTagsFore", function (req, res) {
-    Tag.find({
-        // "userId": parseInt(userId),
-    }, function (err, result) {
-        if (err) {
-            console.log("查找标签错误：" + err);
-            return;
-        }
-        var allTags = {
-            "allTags": result
-        };
-        res.json(allTags);
-    });
-});
+// router.get("/showTagsFore", function (req, res) {
+//     Tag.find({
+//         // "userId": parseInt(userId),
+//     }, function (err, result) {
+//         if (err) {
+//             console.log("查找标签错误：" + err);
+//             return;
+//         }
+//         let tagIdArr = [];
+//         let resultArr = [];
+//         result.map((val, index)=>{
+//             if (tagIdArr.indexOf(val.name) < 0){
+//                 tagIdArr.push(val.name);
+//                 resultArr.push(val);
+//             }
+//         })
+//         console.log(resultArr);
+//         var allTags = {
+//             "allTags": resultArr
+//         };
+//         res.json(allTags);
+//     });
+// });
 
-//显示标签-后台
+//显示标签
 router.get("/showTags", function(req, res){
     // var userId = req.query.userId;
     // console.log(mongoose.Types.ObjectId(userId));
@@ -33,8 +42,17 @@ router.get("/showTags", function(req, res){
             console.log("查找标签错误：" + err);
             return;
         }
+        let tagIdArr = [];
+        let resultArr = [];
+        result.map((val, index) => {
+            if (tagIdArr.indexOf(val.name) < 0) {
+                tagIdArr.push(val.name);
+                resultArr.push(val);
+            }
+        })
+        console.log(resultArr);
         var allTags = {
-            "allTags": result
+            "allTags": resultArr
         };
         res.json(allTags);
     });

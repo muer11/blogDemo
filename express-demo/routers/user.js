@@ -4,21 +4,40 @@ const router = express.Router();
 const User = require("../model/user");
 
 //所有用户信息
-router.get("/", function (req, res) {
-    console.log("-----------test---------------");
-    console.log(req.session);
-    User.find({}, (err, result) => {
-        console.log("result.............")
-        if (err) {
-            res.send("server or db error");
-        }
-        console.log(result);
-        res.send(result);
-    });
-    // res.send("-----------test---------------");
+// router.get("/", function (req, res) {
+//     console.log("-----------test---------------");
+//     console.log(req.session);
+//     User.find({}, (err, result) => {
+//         console.log("result.............")
+//         if (err) {
+//             res.send("server or db error");
+//         }
+//         console.log(result);
+//         res.send(result);
+//     });
+//     // res.send("-----------test---------------");
+// });
+
+//登录状态 -1未登录 0登录
+router.get("/isLogin", function (req, res) {
+    if (typeof req.session.username == "undefined") {
+        res.json({
+            ret_code: -1,
+            ret_msg: "账号未登录"
+        })
+        return false;
+    }else{
+        res.json({
+            ret_code: 0,
+            ret_msg: {
+                name: req.session.username,
+                role: req.session.role
+            }
+        })
+    }
 });
 
-//执行注册
+//执行注册 -1未注册 0注册
 router.post('/doRegister', function (req, res) {
     //得到用户填写的东西
     var form = new formidable.IncomingForm();
@@ -49,14 +68,20 @@ router.post('/doRegister', function (req, res) {
                         return;
                     }
                     // req.session.login = "1";
-                    res.send("1");//注册成功，写入SESSION
+                    // res.send("1");//注册成功，写入SESSION
+                    res.json({
+                        ret_code: 0,
+                        ret_msg: {
+                            name: req.session.username
+                        }
+                    })
                 });
         //     });
         // });
     });
 })
 
-//执行登陆
+//执行登陆 0登录成功 -1未登录
 router.post("/doLogin", function (req, res, result) {
     
     //得到用户填写的东西
@@ -74,11 +99,23 @@ router.post("/doLogin", function (req, res, result) {
         }, function (err, result) {
             // 登录判断时返回的信息不需详细，否则容易造成风险
             if(err){
-                res.send("-3");//服务器错误
+                // res.send("-3");//服务器错误
+                res.json({
+                    ret_code: -1,
+                    ret_msg: "服务器错误"
+                })
                 return
             }
+            // console.log("------result-------");
+            // console.log(result);
+            // console.log(username);
+            // console.log(password);
             if(result.length == 0){
-                res.send("-1");  //-1没有这个人
+                // res.send("-1");  //-1没有这个人
+                res.json({
+                    ret_code: -1,
+                    ret_msg: "用户名或密码错误"
+                })
                 return;
             }
             var dbpassword = result[0].password;
@@ -91,12 +128,23 @@ router.post("/doLogin", function (req, res, result) {
                 req.session.username = username;
                 req.session.role = role;
                 req.session.userid = userid;
-                res.send("1");  //登陆成功
+                // res.send("1");  //登陆成功
+                res.json({
+                    ret_code: 0,
+                    ret_msg: {
+                        name: req.session.username,
+                        role: role
+                    }
+                })
                 console.log("-----------doLogin---------------")
                 console.log(req.session);
                 return;
             }else{
-                res.send("-2"); //密码不匹配
+                // res.send("-2"); //密码不匹配
+                res.json({
+                    ret_code: -1,
+                    ret_msg: "用户名或密码错误"
+                })
             }
         });
     });
@@ -107,11 +155,11 @@ router.post("/doLogin", function (req, res, result) {
 router.get("/logout", function(req, res){
     req.session.destroy(function(err){
         if(err){
-            res.json({ret_code: 2, ret_msg: "退出登录失败"});
+            res.json({ret_code:-1, ret_msg: "退出登录失败"});
             return;
         }
         res.clearCookie("blogSession");
-        res.json({ret_code: 1, ret_msg: "退出登录成功"});
+        res.json({ret_code: 0, ret_msg: "退出登录成功"});
     })
 })
 

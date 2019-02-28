@@ -27,6 +27,24 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 
 //拦截用户登录信息
+// app.get("/", function (req, res, next) {
+//     console.log("-------/-------")
+//     console.log(req.session);
+//     if (typeof req.session.username == "undefined" && req.url != "/user/doLogin") {
+//         //     res.json({
+//         //         ret_code: 0,
+//         //         username: req.session.username,
+//         //         role: req.session.role
+//         //     });
+//         //     return true;
+//         res.json({
+//             ret_code: 1,
+//             ret_msg: "账号未登录"
+//         })
+//         return false;
+//     }
+//     next();
+// });
 app.post("/*", function (req, res, next) {
     console.log("-------/-------")
     console.log(req.session);

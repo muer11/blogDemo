@@ -28,29 +28,30 @@ class NormalLoginForm extends React.Component {
         axios.post('/api/user/doLogin', Qs.stringify(values), {
           'Content-Type': 'application/x-www-form-urlencoded'
         }).then(function (res) {
-          _this.changeNameInfo(res.data);
+          _this.changeNameInfo(res);
         });
       }
     });
   }
 
   //登录信息反馈
-  changeNameInfo(data) {
+  changeNameInfo(res) {
+    console.log(res);
     let value="";
-    switch (data) {
-      case 1:
+    switch (res.data.ret_code) {
+      case 0:
         value = '登录成功';
-        this.props.callback(data);
+        this.props.callback(res.data);
         break;
       case -1:
         value = '用户名或密码错误'; //实则“该账号未注册”，尽可能降低提示信息的准确性
         break;
-      case -2:
-        value = '用户名或密码错误';
-        break;
-      case -3:
-        value = '服务器错误';
-        break;
+      // case -2:
+      //   value = '用户名或密码错误';
+      //   break;
+      // case -3:
+      //   value = '服务器错误';
+      //   break;
       default:
         value = '用户名或密码错误';
     }
