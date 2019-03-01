@@ -1,15 +1,14 @@
 var express      = require("express");
 var app          = express();
-var router       = require("./routers/router.js");
 var path         = require('path');
 var bodyParser   = require('body-parser');
 var ejs          = require('ejs');
 var ueditor      = require('ueditor');
 var session = require('express-session');
 var NedbStore = require('nedb-session-store')(session);
-
 var mongoose = require("./config/mongoose");
 var db = mongoose();
+
 //使用session
 const sessionMiddleware = session({
     secret: 'blogSession',
@@ -48,7 +47,7 @@ app.use(sessionMiddleware);
 app.post("/*", function (req, res, next) {
     console.log("-------/-------")
     console.log(req.session);
-    if (typeof req.session.username == "undefined"  && req.url != "/user/doLogin") {
+    if (typeof req.session.username == "undefined" && req.url != "/user/doLogin" && req.url != "/user/doRegister") {
     //     res.json({
     //         ret_code: 0,
     //         username: req.session.username,
@@ -64,13 +63,11 @@ app.post("/*", function (req, res, next) {
     next();
 });
 
-const testRouter = require("./routers/test");
 const countersRouter = require("./routers/counter");
 const userRouter = require("./routers/user");
 const tagRouter = require("./routers/tag");
 const articleRouter = require("./routers/article");
 const commentRouter = require("./routers/comment");
-app.use("/test", testRouter);
 app.use("/counters", countersRouter);
 app.use("/user", userRouter);
 app.use("/tag", tagRouter);
@@ -113,8 +110,6 @@ app.use("/libs/ueditor/ue", ueditor(path.join(__dirname, 'public'), function (re
 //模板引擎
 app.set("view engine","ejs");
 
-//测试
-app.get("/testSchemas", router.testSchemas); 
 
 //首页
 // app.get("/",router.showIndex);

@@ -1,7 +1,6 @@
-const formidable = require('formidable');
 const express = require("express");
-const mongoose = require("mongoose");
 const router = express.Router();
+const formidable = require('formidable');
 var Article = require("../model/article");
 var Counter = require("../model/counter");
 
@@ -18,14 +17,23 @@ router.post("/doRecording", function (req, res) {
             "title": reqResult.title, // 文章标题
             "content": reqResult.content, // 文章正文
             "isPublished": reqResult.isPublished, // 已发布或草稿箱
-            "updateAt": new Date(),
+            "createAt": new Date(),
         }, function (err, result) {
             if (err) {
-                console.log(err);
-                res.send("-1");
+                res.json({
+                    success: false,
+                    code: 100,
+                    msg: "发表文章失败",
+                    data: null
+                });
                 return;
             }
-            res.send("1");
+            res.json({
+                success: true,
+                code: 000,
+                msg: "成功发表文章",
+                data: null
+            });
         });
     });
 });
@@ -49,26 +57,28 @@ router.post("/editRecording", function (req, res) {
         }, function (err, result) {
             if (err) {
                 res.send("-1");
+                res.json({
+                    success: false,
+                    code: 100,
+                    msg: "编辑失败",
+                    data: null
+                });
                 return;
             }
-            res.send("1");
+            res.json({
+                success: true,
+                code: 000,
+                msg: "成功保存文章",
+                data: null
+            });
         });
     });
 });
 
-//取得文章
+//获取所有文章
 router.get("/getArticle", function (req, res) {
     var info = req.query;
     var userId = req.session.userid;
-    console.log(userId);
-    console.log(typeof userId);
-    // if (userId == ""){
-    //     res.json({
-    //         ret_code: 1,
-    //         ret_msg: "账号未登录"
-    //     })
-    // }
-
     var tagId = ((info.tagId && info.tagId !== "all") ? info.tagId : {
         $ne: null
     });
@@ -97,15 +107,27 @@ router.get("/getArticle", function (req, res) {
         "tagId": tagId,
         "isPublished": isPublished,
     }).sort(sortQuery).exec(function (err, result) {
-        var obj = {
-            "allResult": result
-        };
-        // console.log(result);
-        res.json(obj);
+        if(err){
+            res.json({
+                success: false,
+                code: 100,
+                msg: "查不到相关数据",
+                data: null
+            });
+            return;
+        }
+        res.json({
+            success: true,
+            code: 000,
+            msg: "成功获取文章",
+            data: {
+                "allResult": result
+            }
+        });
     });
 });
 
-//获取文章-前台
+//获取分类文章-前台
 router.get("/getTagArticle", function (req, res, next) {
     var info = req.query;
     var tagId = ((info.tagId && info.tagId !== "all") ? info.tagId : {
@@ -138,16 +160,29 @@ router.get("/getTagArticle", function (req, res, next) {
         path: "tagId",
         select: 'name'
     }).sort(sortQuery).exec(function (err, result) {
-        var obj = {
-            "allResult": result
-        };
-        // console.log(result);
-        res.json(obj);
+        if(err){
+            res.json({
+                success: false,
+                code: 100,
+                msg: "查不到相关数据",
+                data: null
+            });
+            return;
+        }
+        res.json({
+            success: true,
+            code: 000,
+            msg: "成功获取文章",
+            data: {
+                "allResult": result
+            }
+        });
     });
 });
 
 //获取单篇文章
 router.get("/findOneArticle", function (req, res) {
+    console.log(req);
     if (req.query.articleId == undefined) {
         res.send("你想干嘛？");
         return;
@@ -163,16 +198,22 @@ router.get("/findOneArticle", function (req, res) {
         select: 'username'
     }).exec(function (err, result) {
         if (err) {
-            console.log(err);
+            res.json({
+                success: false,
+                code: 100,
+                msg: "查不到相关数据",
+                data: null
+            });
+            return;
         }
-        var obj = {
-            "allResult": result 
-        };
-        // user : ObjectId("5c481ca1a464d763b8e74b38")
-        // tag: ObjectId("5c4984eaf1da12baaa627b03")
-        // console.log("obj-----------------")
-        // console.log(obj);
-        res.json(obj);
+        res.json({
+            success: true,
+            code: 000,
+            msg: "成功获取文章",
+            data: {
+                "allResult": result
+            }
+        });
     });
 });
 
@@ -185,10 +226,20 @@ router.post("/delArticle", function (req, res) {
             "_id": articleId
         }, function (err, results) {
             if (err) {
-                console.log("删除文章错误:" + err);
-                return
+                res.json({
+                    success: false,
+                    code: 100,
+                    msg: "删除文章失败",
+                    data: null
+                });
+                return;
             }
-            res.send("1");
+            res.json({
+                success: true,
+                code: 000,
+                msg: "成功删除文章",
+                data: null
+            });
         });
     });
 });
@@ -206,39 +257,22 @@ router.post("/pointArticle", function (req, res) {
             }
         }, function (err, result) {
             if (err) {
-                console.log("文章点赞错误" + err);
+                res.json({
+                    success: false,
+                    code: 100,
+                    msg: "点赞失败",
+                    data: null
+                });
                 return;
             }
-            res.send("1");
+            res.json({
+                success: true,
+                code: 000,
+                msg: "点赞成功",
+                data: null
+            });
         })
     })
 });
 
 module.exports = router;
-
-// //取得总页数
-// exports.getAllAmount = function (req, res, next) {
-//     db.getAllCount("article", function (count) {
-//         res.send(count.toString());
-//     });
-// };
-
-// //文章页面
-// exports.showArticle = function (req, res, next) {
-//     if (req.query.articleId == undefined) {
-//         res.send("你想干嘛？");
-//         return;
-//     }
-//     var aId = parseInt(req.query.ID);
-//     db.find("article", {
-//         "ID": aId
-//     }, function (err, result) {
-//         if (err) {
-//             console.log(err);
-//         }
-//         res.render("article", {
-//             "allResult": result[0]
-//         });
-//     });
-// };
-

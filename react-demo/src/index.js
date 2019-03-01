@@ -7,7 +7,8 @@ import { BrowserRouter } from 'react-router-dom';
 
 import registerServiceWorker from './registerServiceWorker ';
 import reducers from './reducer';
-import './config'; 
+// import './config'; 
+import "./api/api";
 import App from './App';
 
 registerServiceWorker();

@@ -8,6 +8,7 @@ import Qs from 'qs';
 import Register from '../register/index';
 import ModelContent from '../modal/index';
 import WrappedChangePasswordForm from '../changePassword/index';
+import { loginFunc } from './../../api/api';
 require('./login.scss');
 
 const FormItem = Form.Item;
@@ -20,45 +21,35 @@ class NormalLoginForm extends React.Component {
   }
 
   //登录提交
-  handleLoginSubmit = (e) => {
-    const _this = this;
+  handleLoginSubmit = async (e) => {
     e.preventDefault();
-    _this.props.form.validateFields((err, values) => {
-      if (!err) {
-        axios.post('/api/user/doLogin', Qs.stringify(values), {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }).then(function (res) {
-          _this.changeNameInfo(res);
-        });
+    // let _this = this;
+    let formdata = null; 
+    this.props.form.validateFields((err, values) => {
+      if(!err){
+        formdata = Qs.stringify(values);
       }
-    });
-  }
-
-  //登录信息反馈
-  changeNameInfo(res) {
-    console.log(res);
-    let value="";
-    switch (res.data.ret_code) {
-      case 0:
-        value = '登录成功';
-        this.props.callback(res.data);
-        break;
-      case -1:
-        value = '用户名或密码错误'; //实则“该账号未注册”，尽可能降低提示信息的准确性
-        break;
-      // case -2:
-      //   value = '用户名或密码错误';
-      //   break;
-      // case -3:
-      //   value = '服务器错误';
-      //   break;
-      default:
-        value = '用户名或密码错误';
-    }
-    this.setState({
-      promptMsg: value,
-      show: true,
     })
+    let data = null;
+    if (formdata != null) {
+      //异常捕获
+      try{
+        data = await loginFunc(formdata);
+        if(data.success){
+          if(data.code === 0){
+            this.props.callback(data);
+          }
+          this.setState({
+            promptMsg: data.msg,
+            show: true,
+          })
+        }else{
+          console.log(data.msg);
+        }
+      }catch(err){
+        console.log("login error:"+err);
+      }
+    }
   }
   //及时关闭登录失败提示语
   changeInput() {

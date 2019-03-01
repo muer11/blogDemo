@@ -1,6 +1,6 @@
 // admin 文章列表
 import React from 'react';
-import { List, Avatar, Icon, Button, Select, Modal } from 'antd';
+import { List, Icon, Select, Modal } from 'antd';
 import axios from 'axios';
 import Qs from 'qs';
 import './manageList.scss';
@@ -70,7 +70,7 @@ class ManageList extends React.Component{
             "articleId": articleId
         })).then(function (res) {
             console.log(res);
-            if(res.data == 1){
+            if(res.data === 1){
 
             }
         });
@@ -96,7 +96,7 @@ class ManageList extends React.Component{
                     var type = "";
                     var date = new Date(data[i].date.updateAt).toLocaleString();
                     _this.state.tagInfo.map((value, index)=>{
-                        if (value._id == data[i].tagId) {
+                        if (value._id === data[i].tagId) {
                             type = value.name;
                         }
                     });

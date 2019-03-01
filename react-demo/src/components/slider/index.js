@@ -13,7 +13,7 @@ const imgs = [
 
 const imgsItems = imgs.map((item, index)=>(
     <div className='imgItem' key={index}>
-        <img src={item.src} title={item.name}/>
+        <img src={item.src} alt={item.name}/>
     </div>
 ));
 

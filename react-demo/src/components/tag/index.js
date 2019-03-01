@@ -23,7 +23,7 @@ class EditableTagGroup extends React.Component {
       "name": removedTag
     })).then(function (res) {
       console.log(res);
-      if (res.data == 1) 
+      if (res.data === 1) 
       alert("删除成功");
       _this.setState({
         tags

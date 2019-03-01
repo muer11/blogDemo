@@ -1,14 +1,15 @@
 import React from 'react';
 import {
-  Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete,
+  Form, Input, Select, Button, AutoComplete,
 } from 'antd';
-import { ENGINE_METHOD_NONE } from 'constants';
 import axios from 'axios';
 import Qs from 'qs';
-
+import {
+  registerFunc
+} from './../../api/api';
 const FormItem = Form.Item;
 const Option = Select.Option;
-const AutoCompleteOption = AutoComplete.Option;
+// const AutoCompleteOption = AutoComplete.Option;
 
 // const residences = [{
 //   value: 'zhejiang',
@@ -40,22 +41,37 @@ class RegistrationForm extends React.Component {
     autoCompleteResult: [],
   };
 
-  handleRegisterSubmit = (e) => {
-    const _this = this;
+  //注册
+  handleRegisterSubmit = async (e) => {
+    // const _this = this;
     e.preventDefault();
-    _this.props.form.validateFieldsAndScroll((err, values) => {
+    let formData = null;
+    this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
-        axios.post('/api/user/doRegister', Qs.stringify(values), {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }).then(function (res) {
-          console.log(res);
-          if(res.data == 1){
-            _this.props.showModel(false);
-          }
-        })
+        formData = Qs.stringify(values);
       }
     });
+    if(formData != null){
+      // console.log(formData)
+      let data = await registerFunc(formData);
+      console.log(data);
+      if (data.code == 0) {
+        this.props.showModel(false);
+      }
+    }
+    // _this.props.form.validateFieldsAndScroll((err, values) => {
+    //   if (!err) {
+    //     console.log('Received values of form: ', values);
+    //     axios.post('/api/user/doRegister', Qs.stringify(values), {
+    //       'Content-Type': 'application/x-www-form-urlencoded'
+    //     }).then(function (res) {
+    //       console.log(res);
+    //       if(res.data == 1){
+    //         _this.props.showModel(false);
+    //       }
+    //     })
+    //   }
+    // });
   }
 
   handleConfirmBlur = (e) => {
@@ -63,6 +79,7 @@ class RegistrationForm extends React.Component {
     this.setState({ confirmDirty: this.state.confirmDirty || !!value });
   }
 
+  //密码比对
   compareToFirstPassword = (rule, value, callback) => {
     const form = this.props.form;
     if (value && value !== form.getFieldValue('password')) {

@@ -3,6 +3,7 @@ import {Tabs} from 'antd';
 import axios from 'axios';
 import ContentList from '../contentList/showList';
 import Article from '../article/index';
+import { showTagsFunc } from './../../api/api';
 require('./tabsNav.scss');
 
 const TabPane = Tabs.TabPane;
@@ -44,24 +45,29 @@ class TabsNav extends React.Component {
     }
 
     // 文章分类
-    showTags = () => {
+    showTags = async () => {
         const _this = this;
         let tabPane = null;
-
-        axios.get("/api/tag/showTags").then(function (res) {
-            const tagArr = res.data.allTags;
-            console.log(tagArr);
-            let tagInfo= [{
+        let data = null;
+        let res = await showTagsFunc();
+        data = res.data;
+        if(data != null){
+            let tagArr = data.allTags;
+            let tagInfo = [{
                 tagId: 'all',
                 name: '首页',
-                content: <ContentList tagId="all" showArticle={_this.showArticle}/>,
+                content: < ContentList tagId = "all"
+                showArticle = {
+                    _this.showArticle
+                }
+                />,
             }];
-
+    
             tagArr.map(function(value, index){
                 tagInfo.push({
                     tagId: value._id,
                     name: value.name,
-                    content: <ContentList tagId={value._id} showArticle={_this.showArticle}/>,
+                    content: < ContentList tagId = {value._id} showArticle = {_this.showArticle}/>,
                 });
             });
             tabPane = tagInfo.map((item, index) => (
@@ -73,7 +79,7 @@ class TabsNav extends React.Component {
                 tagInfo: tagInfo,
                 tabPane: tabPane
             })
-        })
+        }
     }
 
     componentWillMount(){

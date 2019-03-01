@@ -4,6 +4,7 @@ import Qs from 'qs';
 import AddComment from '../addComment/index';
 import ShowComment from '../showComment/index';
 import { Icon, Tooltip } from 'antd';
+import { findOneArticleFunc } from './../../api/api';
 require('./article.scss');
 
 class Article extends React.Component{
@@ -28,22 +29,25 @@ class Article extends React.Component{
         })
     }
  
-    componentWillMount(){
+    async componentWillMount(){
         let id = this.props.articleId;
+        let params = ("articleId=" + id);
+        let res = await findOneArticleFunc(params);
+        console.log(res);
         // console.log(this.props.articleId);
-        const _this = this;
-        axios.get("/api/article/findOneArticle?articleId=" + id).then(function (res) {
-            console.log(res);
-            let data = res.data.allResult[0];
-            _this.setState({
-                "title": data.title,
-                "content": data.content,
-                "likeNum": data.likeNum,
-                "tagType": data.tagId.name,
-                "writer": data.userId.username,
-                "publishTime": new Date(data.date.createAt).toLocaleString(),
-            });
-        })
+        // const _this = this;
+        // axios.get("/api/article/findOneArticle?articleId=" + id).then(function (res) {
+        //     console.log(res);
+        //     let data = res.data.allResult[0];
+        //     _this.setState({
+        //         "title": data.title,
+        //         "content": data.content,
+        //         "likeNum": data.likeNum,
+        //         "tagType": data.tagId.name,
+        //         "writer": data.userId.username,
+        //         "publishTime": new Date(data.date.createAt).toLocaleString(),
+        //     });
+        // })
     }
 
     componentDidMount(){
@@ -55,7 +59,7 @@ class Article extends React.Component{
             <div>
                 <div className="content">
                     <h1>{this.state.title}</h1>
-                    <h6>文章分类：{this.state.tagType} | 作者：{this.state.writer} | 发表时间：{this.state.publishTime}</h6>
+                    <h6>{this.state.tagType} | <a>{this.state.writer}</a> | {this.state.publishTime}</h6>
                     <p dangerouslySetInnerHTML={{__html:this.state.content}}></p>
                     <div>
                         <Tooltip title="Like" onClick={this.doLike.bind(this)}>
@@ -65,7 +69,7 @@ class Article extends React.Component{
                     </div>
                 </div>
                 {/* <ShowComment articleId={this.props.articleId}/> */}
-                <AddComment articleId={this.props.articleId} />
+                {/* <AddComment articleId={this.props.articleId} /> */}
             </div>
         );
     }

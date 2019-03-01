@@ -1,7 +1,7 @@
 // admin 文章列表
 
 import React from 'react';
-import { List, Avatar, Icon, Button, Select } from 'antd';
+import { List, Icon, Select } from 'antd';
 import axios from 'axios';
 import Qs from 'qs';
 import '../contentList/manageList.scss';

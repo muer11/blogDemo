@@ -8,14 +8,14 @@ import Qs from 'qs';
 require("./addComment.scss");
 
 const TextArea = Input.TextArea;
-const CommentList = ({ comments }) => (
-  <List
-    dataSource={comments}
-    header={`${comments.length} ${comments.length >= 1 ? '条留言' : ''}`}
-    itemLayout="horizontal"
-    renderItem={props => <Comment {...props} />}
-  />
-);
+// const CommentList = ({ comments }) => (
+//   <List
+//     dataSource={comments}
+//     header={`${comments.length} ${comments.length >= 1 ? '条留言' : ''}`}
+//     itemLayout="horizontal"
+//     renderItem={props => <Comment {...props} />}
+//   />
+// );
 
 const Editor = ({
   onChange, onSubmit, submitting, value,
