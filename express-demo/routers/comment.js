@@ -27,10 +27,22 @@ router.post("/doComment", function (req, res, result) {
             // "status": 1, // 状态 -1：已删除 1：已发布 0：待审核
         },function (err, result) {
             if(err){
-                console.log("留言错误" + err);
+                // console.log("留言错误" + err);
+                res.json({
+                    success: false,
+                    code: 100,
+                    msg: "留言失败",
+                    data: null
+                });
                 return;
             }
-            res.send("1");
+            // res.send("1");
+            res.json({
+                success: true,
+                code: 000,
+                msg: "留言成功",
+                data: null
+            });
         });
     });
 });
@@ -46,10 +58,20 @@ router.post("/pointComment", function(req, res, next){
             $inc: {"likeNum":1}
         }, function(err, result){
             if(err){
-                console.log("留言错误" + err);
+                res.json({
+                    success: false,
+                    code: 100,
+                    msg: "点赞失败",
+                    data: null
+                });
                 return;
             }
-            res.send("1");
+            res.json({
+                success: true,
+                code: 000,
+                msg: "点赞成功",
+                data: null
+            });
         })
     })
 });
@@ -63,16 +85,30 @@ router.get("/getComment", function (req, res, next) {
         path: "commentUserId",
         select: 'username'
     }).exec(function (err, result) {
+        if(err){
+            res.json({
+                success: false,
+                code: 100,
+                msg: "无法获取相关数据",
+                data: null
+            });
+            return;
+        }
+        
         let commentInfo = [];
         result.map(function (val, index) {
             if (val.articleId == articleId) {
                 commentInfo.push(val);
             }
         });
-        var obj = {
-            "allResult": commentInfo
-        };
-        res.json(obj);
-    });
+        res.json({
+            success: true,
+            code: 000,
+            msg: "获取评论成功",
+            data: {
+                "allResult": commentInfo
+            }
+        });
+    });  
 });
 module.exports = router;

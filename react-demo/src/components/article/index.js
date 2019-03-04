@@ -14,7 +14,7 @@ class Article extends React.Component{
         likeNum: 0,
         tagType: "",
         writer: "",
-        publishTime: "",
+        publishTime: "", 
         articleId: this.props.articleId,
         url: this.props.match
     }
@@ -34,20 +34,15 @@ class Article extends React.Component{
         let params = ("articleId=" + id);
         let res = await findOneArticleFunc(params);
         console.log(res);
-        // console.log(this.props.articleId);
-        // const _this = this;
-        // axios.get("/api/article/findOneArticle?articleId=" + id).then(function (res) {
-        //     console.log(res);
-        //     let data = res.data.allResult[0];
-        //     _this.setState({
-        //         "title": data.title,
-        //         "content": data.content,
-        //         "likeNum": data.likeNum,
-        //         "tagType": data.tagId.name,
-        //         "writer": data.userId.username,
-        //         "publishTime": new Date(data.date.createAt).toLocaleString(),
-        //     });
-        // })
+        let data = res.data.allResult[0];
+        this.setState({
+            "title": data.title,
+            "content": data.content,
+            "likeNum": data.likeNum,
+            "tagType": data.tagId.name,
+            "writer": data.userId.username,
+            "publishTime": new Date(data.date.createAt).toLocaleString(),
+        });
     }
 
     componentDidMount(){
@@ -69,7 +64,7 @@ class Article extends React.Component{
                     </div>
                 </div>
                 {/* <ShowComment articleId={this.props.articleId}/> */}
-                {/* <AddComment articleId={this.props.articleId} /> */}
+                <AddComment articleId={this.props.articleId} />
             </div>
         );
     }

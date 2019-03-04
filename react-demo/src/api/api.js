@@ -3,12 +3,11 @@ import url from './serviceAPI.config';
 
 //get方法
 function getMethod(apiUrl, data) {
-    console.log(data);
     return {
-        url: apiUrl,
+        url: data ? (apiUrl+"?"+data) : apiUrl,
         method: 'get',
         dataType: "json",
-        data: data ? data : null
+        // data: null
     }
 }
 //post方法
@@ -109,11 +108,11 @@ export function delArticleFunc(data) {
     )
 }
 export function pointArticleFunc(data) {
-    return server(
+    return server(  
         postMethod(pointArticleUrl, data)
     )
 }
-
+  
 //comment
 let doCommentUrl = url.doCommentUrl;
 let pointCommentUrl = url.pointCommentUrl;
@@ -128,8 +127,8 @@ export function pointCommentFunc(data) {
         postMethod(pointCommentUrl, data)
     )
 }
-export function getCommentFunc() {
+export function getCommentFunc(data) {
     return server(
-        getMethod(getCommentUrl)
+        getMethod(getCommentUrl, data)
     )
 }

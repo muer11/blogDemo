@@ -3,8 +3,9 @@ import {
   Comment, Avatar, Form, Button, List, Input, Icon, Tooltip
 } from 'antd';
 import moment from 'moment';
-import axios from 'axios';
+import axios from 'axios';  
 import Qs from 'qs';
+import {getCommentFunc, doCommentFunc} from '../../api/api';
 require("./addComment.scss");
 
 const TextArea = Input.TextArea;
@@ -29,7 +30,7 @@ const Editor = ({
         htmlType="submit"
         loading={submitting}
         onClick={onSubmit}
-        type="primary"
+        type="primary"  
       >
         发表
       </Button>
@@ -72,68 +73,55 @@ class AddComment extends React.Component {
     
   }
   //发表评论
-  handleSubmit = () => {
-    const _this = this;
+  handleSubmit = async () => {
     const commentText = this.state.value;
     if (!commentText) {
       return;
     }
-
-    _this.setState({
+    this.setState({
       submitting: true,
     });
 
-    axios.post("/api/comment/doComment", Qs.stringify({
+    let formData = Qs.stringify({
       "commentText": commentText,
-      // "commentUserId": _this.state.userId,
-      "articleId":  _this.props.articleId,
-    }), {'Content-Type': 'application/x-www-form-urlencoded'}).then(function (res) {
-      console.log(res);
+      "articleId":  this.props.articleId,
     });
+    let res = await doCommentFunc(formData);
+    console.log(res);
 
     setTimeout(() => {
-      _this.setState({
+      this.setState({
         submitting: false,
         value: '',
         comments: [
           {
-            author: _this.state.username,
-            avatar: _this.state.avatar,
-            content: _this.state.value,
+            author: this.state.username,
+            avatar: this.state.avatar,
+            content: this.state.value,
             datetime: moment().fromNow(),
             like: 0,
           },
-          ..._this.state.comments,
+          ...this.state.comments,
         ],
       });
     }, 1000);
   }
 
-  replySubmit = (parentId, toUserId) => {
-    console.log(parentId);
-    // console.log(toUserId);
-    const _this = this;
+  replySubmit = async (parentId, toUserId) => {
     const replyText = this.state.replyValue;
     if (!replyText) {
       return;
     }
-    axios.post("/api/comment/doComment", Qs.stringify({
+    let formData = Qs.stringify({
       "commentText": replyText,
-      // "commentUserId": _this.state.userId,
-      "articleId": _this.props.articleId,
+      "articleId": this.props.articleId,
       "parentId": parentId,
       "toUserId": toUserId,
-    }), {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }).then(function (res) {
-      console.log(res);
-      if (res.ret_code == 1){
-        alert("请先登录");
-      }
-      if(res.data == 1){
-        alert("发表成功");
-      }
     });
+    let res = await doCommentFunc(formData);
+    if(res.success){
+      alert("留言成功～");
+    }
   }
 
   handleChange = (e) => {
@@ -151,31 +139,24 @@ class AddComment extends React.Component {
   }
 
   cycleComments = (value, index) => {
-    // console.log(this.state.data2);
     // console.log("------------value-----------")
     // console.log(value); //所有评论的骨架
-    // console.log("-------------this.state.allResult----------");
-    // console.log(this.state.allResult);
     let currentComment = null;
     let parentList= null;
     let childs= [];
     this.state.allResult.map((dt, index) => { //首先遍历所有的父元素
-      // console.log(dt._id);
-      // console.log(value.pId);
       if (dt._id == value.pId){ //得到所有的父节点
         currentComment = this.state.allResult[index];
         parentList =  this.CommentsList(currentComment, index);
       }
       if(value.listArr.length > 0){ //得到所有的子节点
         value.listArr.map((child, i)=>{
-          // console.log("child:"+child);
           if(dt._id == child){
             childs.push(this.CommentsList(this.state.allResult[index], i));
           }
         })
       }
     })
-    // console.log(childs);
     return [parentList, childs];
   }
 
@@ -259,105 +240,31 @@ class AddComment extends React.Component {
     )
   }
 
-  componentWillMount(){
-    const _this = this;
+  async componentWillMount(){
+    let params = "articleId="+this.props.articleId;
+    let res = await getCommentFunc(params);
+    let allResult = res.data.allResult;
+    if(allResult.length == 0) return;
 
-    // let data = this.state.data2;
-    
-
-    // console.log("------------resultArr-----------");
-    // console.log(resultArr);
-    axios.get("/api/comment/getComment?articleId="+_this.props.articleId).then(function (res) {
-      // console.log(res);
-      let allResult = res.data.allResult;
-      if(allResult.length == 0) return;
-      
-      // let commentsArr = [];
-      let resultArr = _this.state.resultArr;
-      allResult.map((val, index) => {
-        if (val.parentId == null) {
-          resultArr.push({
-            "pId": val._id,
-            "listArr": []
-          });
-        } else if (val.parentId != null) {
-          resultArr.map((one, index) => {
-            if (one.pId === val.parentId) {
-              one.listArr.push(val._id);
-            }
-          })
-        }
-      });
-      // console.log(resultArr);
-      _this.setState({
-        resultArr: resultArr,
-        allResult: allResult,
-      });
-
-      
-    //   allResult.map(function (value, index) {
-    //     console.log(value);
-    //     let author = value.commentUserId ? value.commentUserId.username : null
-    //     // if(value.parentId != null){
-    //     //   let childrenList = [];
-    //     // }
-
-    //     // if(value.userInfo.length > 0){
-    //     //   console.log(value);
-    //       const actions = [
-    //         <div className="commentOperation">
-    //           <div className="Tooltip">
-    //             <Tooltip title="Like" onClick = {
-    //               () => {
-    //                 _this.likeFunc(value._id);
-    //               }
-    //             }>
-    //               <Icon type="like" theme={'liked' === 'outlined' ? 'filled' : 'outlined'}/>{value.likeNum}
-    //             </Tooltip>
-    //             <Tooltip title="message" onClick = {
-    //               () => {
-    //                 _this.replyFunc(value._id);
-    //               }
-    //             }>
-    //               <Icon type="message"  onClick={_this.replyFunc}/>回复
-    //             </Tooltip>
-    //           </div>
-    //           <Comment
-    //             content={(
-    //               <Editor
-    //                 onChange={_this.replyChange}
-    //                 onSubmit={(e)=>{
-    //                   _this.replySubmit(value._id)
-    //                   }
-    //                 }
-    //                 submitting={_this.state.submitting}
-    //                 value={value}
-    //               />
-    //             )}
-    //           />
-    //         </div>
-    //       ];
-    //       commentsArr.push({
-    //         _id: value._id,
-    //         author: author,
-    //         avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-    //         content: value.commentText,
-    //         datetime: value.date.updateAt,
-    //         like: value.likeNum,
-    //         parentId: value.parentId,
-    //         actions: actions,
-    //       });
-    //     // }
-    //   })
-    //   console.log("---------------commentsArr--------------");
-    //   console.log(commentsArr);
-    //   _this.setState({
-    //     submitting: false,
-    //     value: '',
-    //     comments: commentsArr,
-    //     resultArr: resultArr
-    //   });
-    })
+    let resultArr = this.state.resultArr;
+    allResult.map((val, index) => {
+      if (val.parentId == null) {
+        resultArr.push({
+          "pId": val._id,
+          "listArr": []
+        });
+      } else if (val.parentId != null) {
+        resultArr.map((one, index) => {
+          if (one.pId === val.parentId) {
+            one.listArr.push(val._id);
+          }
+        })
+      }
+    });
+    this.setState({
+      resultArr: resultArr,
+      allResult: allResult,
+    });
   }
 
   render() {
