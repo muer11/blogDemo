@@ -5,6 +5,7 @@ import {
 import moment from 'moment';
 import axios from 'axios';
 import Qs from 'qs';
+import { getCommentFunc } from '../../api/api';
 
 class ShowComment extends React.Component {
   state = {
@@ -29,12 +30,17 @@ class ShowComment extends React.Component {
     });
   }
 
-  componentWillMount(){
-    axios.post("/api/comment/getComment", Qs.stringify({
+  async componentWillMount(){
+    let data = Qs.stringify({
       articleId: this.props.articleId
-    })).then(function(res){
-      console.log(res);
-    })
+    });
+    let res = await getCommentFunc(data);
+    console.log(res);
+    // axios.post("/api/comment/getComment", Qs.stringify({
+    //   articleId: this.props.articleId
+    // })).then(function(res){
+    //   console.log(res);
+    // })
   }
 
   render() {

@@ -197,6 +197,7 @@ router.get("/findOneArticle", function (req, res) {
         path: "userId",
         select: 'username'
     }).exec(function (err, result) {
+        console.log(result);
         if (err) {
             res.json({
                 success: false,

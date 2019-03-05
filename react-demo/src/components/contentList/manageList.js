@@ -3,6 +3,11 @@ import React from 'react';
 import { List, Icon, Select, Modal } from 'antd';
 import axios from 'axios';
 import Qs from 'qs';
+import {
+    delArticleFunc,
+    getArticleFunc,
+    showTagsFunc
+} from './../../api/api';
 import './manageList.scss';
 
 
@@ -65,15 +70,19 @@ class ManageList extends React.Component{
     }
 
     // 删除文章
-    deleteArticle = (articleId) => {
-        axios.post("/api/article/delArticle", Qs.stringify({
+    deleteArticle = async (articleId) => {
+        let data = Qs.stringify({
             "articleId": articleId
-        })).then(function (res) {
-            console.log(res);
-            if(res.data === 1){
-
-            }
         });
+        let res = await delArticleFunc(data);
+        console.log("deleteArticle:");
+        console.log(res);
+        // axios.post("/api/article/delArticle", ).then(function (res) {
+        //     console.log(res);
+        //     if(res.data === 1){
+
+        //     }
+        // });
     }
 
     shouldComponentUpdate(nextProps, nextState){
@@ -84,56 +93,55 @@ class ManageList extends React.Component{
         }
     }
 
-    showListData = () => {
+    showListData = async () => {
         const _this = this;
-        axios.get("/api/article/getArticle?isPublished=true&page=0&tagId=" + _this.state.type + "&sort=" + _this.state.sort).then(function (res) {
-            let data = res.data.allResult;
-            let listInfo = [];
-            if (data.length > 0) {
-                const length = data.length;
-                for (let i = 0; i < length; i++) {
-                    if (!data[i].title) continue;
-                    var type = "";
-                    var date = new Date(data[i].date.updateAt).toLocaleString();
-                    _this.state.tagInfo.map((value, index)=>{
-                        if (value._id === data[i].tagId) {
-                            type = value.name;
-                        }
-                    });
-                    listInfo.push({
-                        id: data[i]._id,
-                        userid: data[i].userid,
-                        type: type,
-                        title: data[i].title,
-                        href: 'http://ant.design',
-                        likeNum: data[i].likeNum,
-                        visitNum: data[i].visitNum,
-                        date: date,
-                        // content: data[i].content,
-                    });
-                }
+        let params = "isPublished=true&page=0&tagId=" + this.state.type + "&sort=" + this.state.sort;
+        let res = await getArticleFunc(params);
+        console.log(res);
+        let data = res.data.allResult;
+        let listInfo = [];
+        if (data.length > 0) {
+            const length = data.length;
+            for (let i = 0; i < length; i++) {
+                if (!data[i].title) continue;
+                var type = "";
+                var date = new Date(data[i].date.updateAt).toLocaleString();
+                this.state.tagInfo.map((value, index) => {
+                    if (value._id === data[i].tagId) {
+                        type = value.name;
+                    }
+                });
+                listInfo.push({
+                    id: data[i]._id,
+                    userid: data[i].userid,
+                    type: type,
+                    title: data[i].title,
+                    href: 'http://ant.design',
+                    likeNum: data[i].likeNum,
+                    visitNum: data[i].visitNum,
+                    date: date,
+                    // content: data[i].content,
+                });
             }
-            _this.setState({
-                listData: listInfo
-            });
+        }
+        this.setState({
+            listData: listInfo
         });
+        // axios.get("/api/article/getArticle?isPublished=true&page=0&tagId=" + _this.state.type + "&sort=" + _this.state.sort).then(function (res) {
+        // });
     }
 
-    showTags = () => {
+    showTags = async () => {
         const _this = this;
-        axios.get("/api/tag/showTags").then(function (res) {
-            var tagArr = res.data.allTags;
-            tagArr.map(function (value, index) {
-                _this.state.tagInfo.push(value);
-                // _this.state.tagInfo.map(function(val, index){
-                //     console.log("value.name:" + value.name);
-                //     console.log("val.name:" + val.name);
-                //     if (value.name != val.name){
-                //     }
-                // })
-            });
-            console.log("_this.state.tagInfo:"+_this.state.tagInfo);
+        let res = await showTagsFunc();
+        console.log("showTags:")
+        console.log(res);
+        let tagArr = res.data.allTags;
+        tagArr.map(function (value, index) {
+            _this.state.tagInfo.push(value);
         });
+        // axios.get("/api/tag/showTags").then(function (res) {
+        // });
     }
     
     componentWillMount() {
@@ -142,7 +150,6 @@ class ManageList extends React.Component{
     }
 
     render(){
-        console.log("------22" + this.state.visible);
         return (
             <div className="manageList">
                 <div className="selectItem content">

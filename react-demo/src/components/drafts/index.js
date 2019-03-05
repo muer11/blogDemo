@@ -5,6 +5,7 @@ import { List, Icon, Select } from 'antd';
 import axios from 'axios';
 import Qs from 'qs';
 import '../contentList/manageList.scss';
+import { delArticleFunc, getArticleFunc, showTagsFunc } from '../../api/api';
 
 const Option = Select.Option;
 // let listData = [];
@@ -51,12 +52,17 @@ class ManageList extends React.Component{
         }
     }
 
-    deleteArticle = (articleId) => {
-        axios.post("/api/article/delArticle", Qs.stringify({
+    deleteArticle = async (articleId) => {
+        let data = Qs.stringify({
             "articleId": articleId
-        })).then(function (res) {
-            console.log(res);
         });
+        let res = await delArticleFunc(data);
+        console.log(res);
+        // axios.post("/api/article/delArticle", Qs.stringify({
+        //         "articleId": articleId
+        //     })).then(function (res) {
+        //     console.log(res);
+        // });
     }
 
     shouldComponentUpdate(nextProps, nextState){
@@ -67,49 +73,53 @@ class ManageList extends React.Component{
         }
     }
 
-    showListData = () => {
+    showListData = async () => {
         const _this = this;
-        axios.get("/api/article/getArticle?isPublished=false&page=0&userId=" + _this.state.userId + "&tagId=" + _this.state.type + "&sort=" + _this.state.sort).then(function (res) {
-            console.log(res);
-            let data = res.data.allResult;
-            let listInfo = [];
-            const length = data.length;
-            for (let i = 0; i < length; i++) {
-                if (!data[i].title) continue;
-                var type = "";
-                var date = new Date(data[i].date.updateAt).toLocaleString();
-                _this.state.tagInfo.map((value, index) => {
-                    if (value._id == data[i].tagId) {
-                        type = value.name;
-                    }
-                });
-                listInfo.push({
-                    id: data[i]._id,
-                    userid: data[i].userid,
-                    type: type,
-                    title: data[i].title,
-                    href: 'http://ant.design',
-                    likeNum: data[i].likeNum,
-                    visitNum: data[i].visitNum,
-                    date: date,
-                    // content: data[i].content,
-                });
-            }
-            _this.setState({
-                listData: listInfo
+        let params = "isPublished=false&page=0&userId=" + _this.state.userId + "&tagId=" + _this.state.type + "&sort=" + _this.state.sort;
+        let res = await getArticleFunc(params);
+        console.log(res);
+        let data = res.data.allResult;
+        let listInfo = [];
+        const length = data.length;
+        for (let i = 0; i < length; i++) {
+            if (!data[i].title) continue;
+            var type = "";
+            var date = new Date(data[i].date.updateAt).toLocaleString();
+            _this.state.tagInfo.map((value, index) => {
+                if (value._id == data[i].tagId) {
+                    type = value.name;
+                }
             });
+            listInfo.push({
+                id: data[i]._id,
+                userid: data[i].userid,
+                type: type,
+                title: data[i].title,
+                href: 'http://ant.design',
+                likeNum: data[i].likeNum,
+                visitNum: data[i].visitNum,
+                date: date,
+                // content: data[i].content,
+            });
+        }
+        _this.setState({
+            listData: listInfo
         });
+        // axios.get("/api/article/getArticle?isPublished=false&page=0&userId=" + _this.state.userId + "&tagId=" + _this.state.type + "&sort=" + _this.state.sort).then(function (res) {
+        // });
     }
 
-    showTags = () => {
+    showTags = async () => {
         const _this = this;
-        axios.get("/api/tag/showTags?userId=" + _this.state.userId).then(function (res) {
-            var tagArr = res.data.allTags;
-            tagArr.map(function (value, index) {
-                _this.state.tagInfo.push(value);
-            });
-            console.log(_this.state.tagInfo);
+        let params = "userId=" + _this.state.userId
+        let res = await showTagsFunc(params);
+        var tagArr = res.data.allTags;
+        tagArr.map(function (value, index) {
+            _this.state.tagInfo.push(value);
         });
+        console.log(_this.state.tagInfo);
+        // axios.get("/api/tag/showTags?userId=" + _this.state.userId).then(function (res) {
+        // });
     }
     
     componentWillMount() {

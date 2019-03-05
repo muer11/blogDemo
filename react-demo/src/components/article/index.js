@@ -40,7 +40,7 @@ class Article extends React.Component{
             "content": data.content,
             "likeNum": data.likeNum,
             "tagType": data.tagId.name,
-            "writer": data.userId.username,
+            "writer": data.userId ? data.userId.username : "佚名",
             "publishTime": new Date(data.date.createAt).toLocaleString(),
         });
     }

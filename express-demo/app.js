@@ -48,16 +48,12 @@ app.post("/*", function (req, res, next) {
     console.log("-------/-------")
     console.log(req.session);
     if (typeof req.session.username == "undefined" && req.url != "/user/doLogin" && req.url != "/user/doRegister") {
-    //     res.json({
-    //         ret_code: 0,
-    //         username: req.session.username,
-    //         role: req.session.role
-    //     });
-    //     return true;
         res.json({
-            ret_code: 1,
-            ret_msg: "账号未登录"
-        })
+            success: false,
+            code: 100,
+            msg: "账号未登录",
+            data: null
+        });
         return false;
     }
     next();

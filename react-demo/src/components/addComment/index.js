@@ -167,10 +167,9 @@ class AddComment extends React.Component {
     let avatar = "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png";
     author = value.commentUserId ? value.commentUserId.username : null
     if (value.parentId != null) {
-      
-      title = (<div><a>{author}</a>回复<a>{value.toUserId}</a></div>)
+      title = (<div><a>{author?author:"佚名"}</a>回复<a>{value.toUserId?value.toUserId:"佚名"}</a></div>)
     } else {
-      title = (<div><a>{author}</a></div>)
+      title = (<div><a>{author?author:"佚名"}</a></div>)
     }
     return (
       <div className="commentList" key={index}>     

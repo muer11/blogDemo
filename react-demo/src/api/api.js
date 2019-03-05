@@ -87,9 +87,9 @@ export function editRecordingFunc(data) {
         postMethod(editRecordingUrl, data)
     )
 }
-export function getArticleFunc() {
+export function getArticleFunc(params) {
     return server(
-        getMethod(getArticleUrl)
+        getMethod(getArticleUrl, params)
     )
 }
 export function getTagArticleFunc() {

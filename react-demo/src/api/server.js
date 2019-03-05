@@ -43,7 +43,7 @@ axios.interceptors.response.use(
             // return "1111";
             return res;
         } else {
-            // console.log("error:" + error);
+            console.log("error:" + res.msg);
             // return Promise.reject(error);
         }
     }

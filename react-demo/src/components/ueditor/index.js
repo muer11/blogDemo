@@ -4,6 +4,7 @@ import Qs from 'qs';
 import RcUeditor from 'react-ueditor-wrap';
 import { Select, Button, Input  } from 'antd';
 import './ueditor.scss';
+import { doRecordingFunc, editRecordingFunc, showTagsFunc, findOneArticleFunc } from '../../api/api';
 
 const Option = Select.Option;
 
@@ -39,36 +40,55 @@ class Ueditor extends React.Component {
         })
     } 
 
-    publishFunc = (isPublished) => {
-        let url = "";
+    publishFunc = async (isPublished) => {
+        // let url = "";
         const articleId = this.state.articleId;
         // const userId = this.state.userId;
         const title = this.state.title;
         const content = this.state.articleContent;
         const tagId = this.state.tagId;
+        
         if (!this.state.isEdit) { // 非编辑
-            url = '/api/article/doRecording';
-            axios.post(url, Qs.stringify({
+            let data = Qs.stringify({
                 // "userId": userId,
                 "title": title,
                 "content": content,
                 "tagId": tagId,
                 "isPublished": isPublished,
-            })).then(function (res) {
-                console.log(res);
-            });
+            })
+            let res = await doRecordingFunc(data);
+            console.log(res);
+            // url = '/api/article/doRecording';
+            // axios.post(url, Qs.stringify({
+            //     // "userId": userId,
+            //     "title": title,
+            //     "content": content,
+            //     "tagId": tagId,
+            //     "isPublished": isPublished,
+            // })).then(function (res) {
+            //     console.log(res);
+            // });
         }else{ // 编辑
-            url = '/api/article/editRecording';
-            axios.post(url, Qs.stringify({
-                "articleId": articleId,
-                // "userId": userId,
+            let data = Qs.stringify({
+                 "articleId": articleId,
                 "title": title,
                 "content": content,
                 "tagId": tagId,
                 "isPublished": isPublished,
-            })).then(function (res) {
-                console.log(res);
-            });
+            })
+            let res = await editRecordingFunc(data);
+             console.log(res);
+            // url = '/api/article/editRecording';
+            // axios.post(url, Qs.stringify({
+            //     "articleId": articleId,
+            //     // "userId": userId,
+            //     "title": title,
+            //     "content": content,
+            //     "tagId": tagId,
+            //     "isPublished": isPublished,
+            // })).then(function (res) {
+            //     console.log(res);
+            // });
         }
     }
 
@@ -83,42 +103,47 @@ class Ueditor extends React.Component {
     }
 
     // 文章分类
-    showTags = ()=>{
+    showTags = async ()=>{
         const _this = this;
-        axios.get("/api/tag/showTags").then(function (res) {
-            // console.log(res);
-            var tagArr = res.data.allTags;
-            tagArr.map(function(value, index){
-                _this.state.tagInfo.push(value);
-            });
-            // console.log(_this.state.tagInfo);
+        let res = await showTagsFunc();
+        console.log(res);
+        var tagArr = res.data.allTags;
+        tagArr.map(function(value, index){
+            _this.state.tagInfo.push(value);
         });
+
+        // axios.get("/api/tag/showTags").then(function (res) {
+        //     // console.log(res);
+        //     // console.log(_this.state.tagInfo);
+        // });
     }
 
     componentWillMount(){
         this.showTags();
     }
     
-    componentDidMount(){
+    async componentDidMount(){
         console.log(this.props.articleId);
         if (this.props.articleId != null){
             var articleId = this.props.articleId;
             var _this = this;
-            axios.get("/api/article/findOneArticle?articleId=" + articleId).then(function (res) {
-                var articleInfo = res.data.allResult[0];
-                // console.log("-----articleInfo-----");
-                // console.log(articleInfo);
-                _this.setState({
-                    title: articleInfo.title,
-                    articleContent: articleInfo.content,
-                    isEdit: true,
-                    articleId: articleId,
-                    tagId: articleInfo.tagId._id,
-                    tagName: articleInfo.tagId.name,
-                });
-                // console.log(_this.state.tagId);
-                // console.log(_this.state.tagName);
+            let params = "articleId=" + articleId;
+            let res = await findOneArticleFunc(params);
+            var articleInfo = res.data.allResult[0];
+            // console.log("-----articleInfo-----");
+            // console.log(articleInfo);
+            _this.setState({
+                title: articleInfo.title,
+                articleContent: articleInfo.content,
+                isEdit: true,
+                articleId: articleId,
+                tagId: articleInfo.tagId._id,
+                tagName: articleInfo.tagId.name,
             });
+            // axios.get("/api/article/findOneArticle?articleId=" + articleId).then(function (res) {
+            //     // console.log(_this.state.tagId);
+            //     // console.log(_this.state.tagName);
+            // });
         }
     }
 
