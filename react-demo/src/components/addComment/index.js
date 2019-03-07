@@ -5,7 +5,7 @@ import {
 import moment from 'moment';
 import axios from 'axios';  
 import Qs from 'qs';
-import {getCommentFunc, doCommentFunc} from '../../api/api';
+import {getCommentFunc, doCommentFunc, doLikeFunc} from '../../api/api';
 require("./addComment.scss");
 
 const TextArea = Input.TextArea;
@@ -53,23 +53,22 @@ class AddComment extends React.Component {
     avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
   }
 
-  likeFunc = (id) => {
-    console.log(id);
-    const _this = this;
-    axios.post("/api/comment/pointComment", Qs.stringify({
+  //评论点赞
+  likeFunc = async (id) => {
+    let data = {
       "commentId": id,
-      "userId": _this.state.userId,
-    })).then(function (res) {
-      console.log(res);
-    });
+    };
+    let res = await doLikeFunc(data);
+    console.log(res);
   }
+
   //回复
   replyFunc = (id) => {
     this.setState({
       isReplyId: id,
       isReplyVisible: true
     });
-    console.log(id);
+    // console.log(id);
     
   }
   //发表评论
@@ -82,12 +81,12 @@ class AddComment extends React.Component {
       submitting: true,
     });
 
-    let formData = Qs.stringify({
+    let formData = {
       "commentText": commentText,
       "articleId":  this.props.articleId,
-    });
+    };
     let res = await doCommentFunc(formData);
-    console.log(res);
+    // console.log(res);
 
     setTimeout(() => {
       this.setState({
@@ -112,12 +111,12 @@ class AddComment extends React.Component {
     if (!replyText) {
       return;
     }
-    let formData = Qs.stringify({
+    let formData = {
       "commentText": replyText,
       "articleId": this.props.articleId,
       "parentId": parentId,
       "toUserId": toUserId,
-    });
+    };
     let res = await doCommentFunc(formData);
     if(res.success){
       alert("留言成功～");
@@ -125,14 +124,14 @@ class AddComment extends React.Component {
   }
 
   handleChange = (e) => {
-    console.log(e.target.value);
+    // console.log(e.target.value);
     this.setState({
       value: e.target.value,
     });
   }
   
   replyChange = (e) => {
-    console.log(e.target.value);
+    // console.log(e.target.value);
     this.setState({
       replyValue: e.target.value,
     });
@@ -161,7 +160,7 @@ class AddComment extends React.Component {
   }
 
   CommentsList = (value, index)=>{
-    console.log(value);
+    // console.log(value);
     const _this = this;
     let [author, title] = [null, null];
     let avatar = "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png";
@@ -195,14 +194,13 @@ class AddComment extends React.Component {
               <div className="likeBtn">
                 <Tooltip onClick = {
                   () => {
-                    // _this.likeFunc(value._id);
+                    _this.likeFunc(value._id);
                   }
                 }>
                   <Icon type="like" theme={'liked' === 'outlined' ? 'filled' : 'outlined'}/>
                   {value.likeNum}
                 </Tooltip>
               </div>
-              
               {
                 this.state.isReplyVisible && this.state.isReplyId == value._id ?
                   <div className="replyEditor">

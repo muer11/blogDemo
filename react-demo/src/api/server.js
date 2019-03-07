@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { message } from 'antd'; 
 
 //取消请求
 let CancelToken = axios.CancelToken
@@ -11,8 +12,9 @@ axios.create({
 
 //开始请求设置，发起拦截处理
 axios.interceptors.request.use(config => {
-    console.log("config:");
-    console.log(config);
+    // console.log("config:");
+    // console.log(config);
+
     //得到参数中的requestname字段，用于决定下次发起请求，取消相应的  相同字段的请求
     //post和get请求方式的不同，使用三木运算处理
     // let requestName = config.method === 'post' ? config.data.requestName : config.params.requestName
@@ -35,16 +37,17 @@ axios.interceptors.request.use(config => {
 axios.interceptors.response.use(
     response => {
         const res = response.data;
-        console.log(res);
+        // console.log(res);
         //这里根据后台返回来设置
         if (res.success) {
-            // console.log(res);
-            // console.log("res.success:" + res.success);
+            console.log(res);
+            console.log("res.success:" + res.success);
             // return "1111";
             return res;
         } else {
-            console.log("error:" + res.msg);
-            // return Promise.reject(error);
+            // console.log("error:" + res.msg);
+            message.warning(res.msg);
+            return Promise.reject(res.msg);
         }
     }
     // ,

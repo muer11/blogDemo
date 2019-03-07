@@ -49,13 +49,13 @@ class Ueditor extends React.Component {
         const tagId = this.state.tagId;
         
         if (!this.state.isEdit) { // 非编辑
-            let data = Qs.stringify({
+            let data = {
                 // "userId": userId,
                 "title": title,
                 "content": content,
                 "tagId": tagId,
                 "isPublished": isPublished,
-            })
+            };
             let res = await doRecordingFunc(data);
             console.log(res);
             // url = '/api/article/doRecording';
@@ -69,13 +69,13 @@ class Ueditor extends React.Component {
             //     console.log(res);
             // });
         }else{ // 编辑
-            let data = Qs.stringify({
-                 "articleId": articleId,
+            let data = {
+                "articleId": articleId,
                 "title": title,
                 "content": content,
                 "tagId": tagId,
                 "isPublished": isPublished,
-            })
+            };
             let res = await editRecordingFunc(data);
              console.log(res);
             // url = '/api/article/editRecording';

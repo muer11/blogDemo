@@ -51,7 +51,7 @@ app.post("/*", function (req, res, next) {
         res.json({
             success: false,
             code: 100,
-            msg: "账号未登录",
+            msg: "请先登录！",
             data: null
         });
         return false;
@@ -64,11 +64,13 @@ const userRouter = require("./routers/user");
 const tagRouter = require("./routers/tag");
 const articleRouter = require("./routers/article");
 const commentRouter = require("./routers/comment");
+const likeRouter = require("./routers/like");
 app.use("/counters", countersRouter);
 app.use("/user", userRouter);
 app.use("/tag", tagRouter);
 app.use("/article", articleRouter);
 app.use("/comment", commentRouter);
+app.use("/like", likeRouter);
 
 app.all('*', function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");

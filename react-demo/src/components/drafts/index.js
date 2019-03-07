@@ -28,7 +28,7 @@ class ManageList extends React.Component{
 
     // 文章分类
     handleTypeChange = (value) => {
-        console.log(`selected ${value}`);
+        // console.log(`selected ${value}`);
         this.setState({
             type: value
         },()=>{
@@ -37,7 +37,7 @@ class ManageList extends React.Component{
     }
     // 文章排序
     handleSortChange = (value) => {
-        console.log(`selected ${value}`);
+        // console.log(`selected ${value}`);
         this.setState({
             sort: value
         }, () => {
@@ -46,18 +46,18 @@ class ManageList extends React.Component{
     }
     // 编辑文章
     editArticle = (articleId) => {
-        console.log(articleId);
+        // console.log(articleId);
         if (this.props.editArticle){
             this.props.editArticle(articleId);
         }
     }
 
     deleteArticle = async (articleId) => {
-        let data = Qs.stringify({
+        let data = {
             "articleId": articleId
-        });
+        };
         let res = await delArticleFunc(data);
-        console.log(res);
+        // console.log(res);
         // axios.post("/api/article/delArticle", Qs.stringify({
         //         "articleId": articleId
         //     })).then(function (res) {
@@ -77,7 +77,7 @@ class ManageList extends React.Component{
         const _this = this;
         let params = "isPublished=false&page=0&userId=" + _this.state.userId + "&tagId=" + _this.state.type + "&sort=" + _this.state.sort;
         let res = await getArticleFunc(params);
-        console.log(res);
+        // console.log(res);
         let data = res.data.allResult;
         let listInfo = [];
         const length = data.length;
@@ -117,7 +117,7 @@ class ManageList extends React.Component{
         tagArr.map(function (value, index) {
             _this.state.tagInfo.push(value);
         });
-        console.log(_this.state.tagInfo);
+        // console.log(_this.state.tagInfo);
         // axios.get("/api/tag/showTags?userId=" + _this.state.userId).then(function (res) {
         // });
     }

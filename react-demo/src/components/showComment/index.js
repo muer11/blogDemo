@@ -31,11 +31,11 @@ class ShowComment extends React.Component {
   }
 
   async componentWillMount(){
-    let data = Qs.stringify({
+    let data = {
       articleId: this.props.articleId
-    });
+    };
     let res = await getCommentFunc(data);
-    console.log(res);
+    // console.log(res);
     // axios.post("/api/comment/getComment", Qs.stringify({
     //   articleId: this.props.articleId
     // })).then(function(res){

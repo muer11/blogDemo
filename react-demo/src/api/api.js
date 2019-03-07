@@ -1,3 +1,4 @@
+import Qs from 'qs';
 import server from './server';
 import url from './serviceAPI.config';
 
@@ -17,15 +18,15 @@ function postMethod(apiUrl, data) {
         method: 'post',
         dataType: "json",
         contentType: "application/x-www-form-urlencoded;charset=UTF-8",
-        data: data
+        data: Qs.stringify(data)
     }
 }
+
 //user
 let isLoginUrl = url.isLoginUrl;
 let logoutUrl = url.logoutUrl;
 let loginUrl = url.loginUrl;
 let registerUrl = url.registerUrl;
-//user
 export function isLoginFunc(){
     return server(
         getMethod(isLoginUrl)
@@ -51,7 +52,6 @@ export function registerFunc(data) {
 let showTagsUrl = url.showTagsUrl;
 let addTagUrl = url.addTagUrl;
 let delTagUrl = url.delTagUrl;
-//tag
 export function showTagsFunc() {
     return server(
         getMethod(showTagsUrl)
@@ -75,8 +75,6 @@ let getArticleUrl = url.getArticleUrl;
 let getTagArticleUrl = url.getTagArticleUrl;
 let findOneArticleUrl = url.findOneArticleUrl;
 let delArticleUrl = url.delArticleUrl;
-let pointArticleUrl = url.pointArticleUrl;
-//article
 export function doRecordingFunc(data) {
     return server(
         postMethod(doRecordingUrl, data)
@@ -92,9 +90,9 @@ export function getArticleFunc(params) {
         getMethod(getArticleUrl, params)
     )
 }
-export function getTagArticleFunc() {
+export function getTagArticleFunc(params) {
     return server(
-        getMethod(getTagArticleUrl)
+        getMethod(getTagArticleUrl, params)
     )
 }
 export function findOneArticleFunc(data) {
@@ -107,28 +105,31 @@ export function delArticleFunc(data) {
         postMethod(delArticleUrl, data)
     )
 }
-export function pointArticleFunc(data) {
-    return server(  
-        postMethod(pointArticleUrl, data)
-    )
-}
-  
+
 //comment
 let doCommentUrl = url.doCommentUrl;
-let pointCommentUrl = url.pointCommentUrl;
 let getCommentUrl = url.getCommentUrl;
 export function doCommentFunc(data) {
     return server(
         postMethod(doCommentUrl, data)
     )
 }
-export function pointCommentFunc(data) {
-    return server(
-        postMethod(pointCommentUrl, data)
-    )
-}
 export function getCommentFunc(data) {
     return server(
         getMethod(getCommentUrl, data)
+    )
+}
+
+//like
+let doLikeUrl = url.doLikeUrl;
+let sumLikeUrl = url.sumLikeUrl;
+export function doLikeFunc(data) {
+    return server(  
+        postMethod(doLikeUrl, data)
+    )
+}
+export function sumLikeFunc(params) {
+    return server(
+        getMethod(sumLikeUrl, params)
     )
 }

@@ -56,7 +56,7 @@ class ContentList extends React.Component{
                 // content: ''
             })
         });
-        console.log(listData);
+        // console.log(listData);
         _this.setState({
             listData: listData
         })

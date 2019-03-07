@@ -71,9 +71,9 @@ class ManageList extends React.Component{
 
     // 删除文章
     deleteArticle = async (articleId) => {
-        let data = Qs.stringify({
+        let data = {
             "articleId": articleId
-        });
+        };
         let res = await delArticleFunc(data);
         console.log("deleteArticle:");
         console.log(res);

@@ -23,16 +23,16 @@ class ModelContent extends React.Component {
   }
 
   handleOk = (e) => {
-    console.log("ok--------------")
-    console.log(e);
+    // console.log("ok--------------")
+    // console.log(e);
     this.setState({
       visible: false,
     });
   }
 
   handleCancel = (e) => {
-    console.log("close--------------")
-    console.log(e);
+    // console.log("close--------------")
+    // console.log(e);
     this.setState({
       visible: false,
     });

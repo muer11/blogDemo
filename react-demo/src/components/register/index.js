@@ -48,13 +48,13 @@ class RegistrationForm extends React.Component {
     let formData = null;
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        formData = Qs.stringify(values);
+        formData = values;
       }
     });
     if(formData != null){
       // console.log(formData)
       let data = await registerFunc(formData);
-      console.log(data);
+      // console.log(data);
       if (data.code == 0) {
         this.props.showModel(false);
       }

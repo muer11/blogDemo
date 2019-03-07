@@ -23,12 +23,15 @@ const URL = {
     getTagArticleUrl: '/api/article/getTagArticle', //获取分类文章-前台
     findOneArticleUrl: '/api/article/findOneArticle', //获取单篇文章
     delArticleUrl: '/api/article/delArticle', //删除文章
-    pointArticleUrl: '/api/article/pointArticle', //为文章点赞
-
+    
     // comment 评论
     doCommentUrl: '/api/comment/doComment', //发表评论
-    pointCommentUrl: '/api/comment/pointComment', //点赞评论
     getCommentUrl: '/api/comment/getComment', //获取评论
+    
+    // like 点赞
+    doLikeUrl: '/api/like/doLike', //为文章点赞
+    sumLikeUrl: '/api/like/sumLike', //为评论点赞
+
 };
 
 export default URL;

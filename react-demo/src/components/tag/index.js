@@ -19,12 +19,12 @@ class EditableTagGroup extends React.Component {
   handleClose = async (removedTag) => {
     const _this = this;
     const tags = _this.state.tags.filter(tag => tag !== removedTag);
-    console.log(tags);
-    let data = Qs.stringify({
+    // console.log(tags);
+    let data = {
       "name": removedTag
-    });
+    };
     let res = await delTagFunc(data);
-    console.log(res);
+    // console.log(res);
     // axios.post('/api/tag/delTag', Qs.stringify({
     //   "name": removedTag
     // })).then(function (res) {
@@ -38,7 +38,7 @@ class EditableTagGroup extends React.Component {
   }
 
   showInput = () => {
-    console.log("showInput");
+    // console.log("showInput");
     this.setState({ inputVisible: true }, () => this.input.focus());
   }
 
@@ -59,12 +59,12 @@ class EditableTagGroup extends React.Component {
       return;
     }
     // console.log(tags);
-    let data = Qs.stringify({
+    let data = {
       // "userId": this.state.userId,
       "name": inputValue
-    });
+    };
     let res = await addTagFunc(data);
-    console.log(res);
+    // console.log(res);
     // axios.post('/api/tag/addTag', Qs.stringify({
     //   // "userId": this.state.userId,
     //   "name": inputValue

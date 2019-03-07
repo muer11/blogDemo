@@ -27,7 +27,7 @@ class NormalLoginForm extends React.Component {
     let formdata = null; 
     this.props.form.validateFields((err, values) => {
       if(!err){
-        formdata = Qs.stringify(values);
+        formdata = values;
       }
     })
     let data = null;
@@ -62,8 +62,8 @@ class NormalLoginForm extends React.Component {
 
   //显示弹出框
   showModel(bool){
-    console.log("showModel------------");
-    console.log(bool);
+    // console.log("showModel------------");
+    // console.log(bool);
     this.setState({
       isModel: bool
     })
