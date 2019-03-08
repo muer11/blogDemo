@@ -27,6 +27,8 @@ let isLoginUrl = url.isLoginUrl;
 let logoutUrl = url.logoutUrl;
 let loginUrl = url.loginUrl;
 let registerUrl = url.registerUrl;
+let getUsersUrl = url.getUsersUrl;
+let deleteUserUrl = url.deleteUserUrl;
 export function isLoginFunc(){
     return server(
         getMethod(isLoginUrl)
@@ -45,6 +47,16 @@ export function loginFunc(data) {
 export function registerFunc(data) {
     return server(
         postMethod(registerUrl, data)
+    )
+}
+export function getUsersFunc() {
+    return server(
+        getMethod(getUsersUrl)
+    )
+}
+export function deleteUserFunc(data) {
+    return server(
+        postMethod(deleteUserUrl, data)
     )
 }
 

@@ -30,20 +30,71 @@ const express = require("express");
 const router = express.Router();
 const User = require("../model/user");
 
-//所有用户信息
-// router.get("/", function (req, res) {
-//     console.log("-----------test---------------");
-//     console.log(req.session);
-//     User.find({}, (err, result) => {
-//         console.log("result.............")
-//         if (err) {
-//             res.send("server or db error");
-//         }
-//         console.log(result);
-//         res.send(result);
-//     });
-//     // res.send("-----------test---------------");
-// });
+//查询所有用户信息
+router.get("/getUsers", function (req, res) {
+    User.find({}, (err, result) => {
+        if(err){
+            //服务器错误
+            res.json({
+                success: false,
+                code: 100,
+                msg: "服务器异常",
+                data: null
+            }); 
+            return;
+        }
+        let userList = [];
+        result.map((value, index)=>{
+            userList.push({
+                id: value._id,
+                username: value.username,
+                email: value.email,
+                phone: value.phone,
+                role: (value.role == 0 ? "普通用户" : "管理员"),
+                createTime: value.date.createAt
+            })
+        });
+        res.json({
+            success: true,
+            code: 000,
+            msg: "查找到所有用户",
+            data: userList
+        });
+    });
+});
+
+//查询单个用户
+router.get("/getOneUser", function(req, res){
+    
+})
+
+//删除用户
+router.post("/deleteUser", function(req, res){
+    var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+        console.log(fields);
+        User.deleteOne({
+            "_id": fields.id
+        },(err, result)=>{
+            if (err) {
+                //服务器错误
+                res.json({
+                    success: false,
+                    code: 100,
+                    msg: "服务器异常",
+                    data: null
+                });
+                return;
+            }
+            res.json({
+                success: true,
+                code: 000,
+                msg: "删除成功",
+                data: null
+            });
+        })
+    });
+})
 
 //登录状态
 router.get("/isLogin", function (req, res) {

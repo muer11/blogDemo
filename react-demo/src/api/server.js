@@ -1,4 +1,8 @@
 import axios from 'axios';
+import {
+    Router,
+    browserHistory
+} from 'react-router';
 import { message } from 'antd'; 
 
 //取消请求
@@ -45,7 +49,15 @@ axios.interceptors.response.use(
             // return "1111";
             return res;
         } else {
-            // console.log("error:" + res.msg);
+            console.log("error:" + (res.code == 102));
+            if (res.code == 102) {
+                //无接口访问权限
+                // browserHistory.push('/');
+                // this.props.history.push('/path')
+                // this.context.router.push({
+                //     pathname: "/"
+                // })
+            }
             message.warning(res.msg);
             return Promise.reject(res.msg);
         }

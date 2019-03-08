@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const formidable = require('formidable');
 var Article = require("../model/article");
-var Counter = require("../model/counter");
+var Like = require("../model/like");
 
 // 发表文章（新建）
 router.post("/doRecording", function (req, res) {
@@ -136,6 +136,7 @@ router.get("/getTagArticle", function (req, res, next) {
     var isPublished = info.isPublished;
     var page = info.page ? info.page : 0;
     var sortQuery = {};
+    let responce = res;
     switch (info.sort) {
         case "visitNum":
             sortQuery = {
@@ -161,7 +162,7 @@ router.get("/getTagArticle", function (req, res, next) {
         select: 'name'
     }).sort(sortQuery).exec(function (err, result) {
         if(err){
-            res.json({
+            responce.json({
                 success: false,
                 code: 100,
                 msg: "查不到相关数据",
@@ -169,14 +170,87 @@ router.get("/getTagArticle", function (req, res, next) {
             });
             return;
         }
-        res.json({
-            success: true,
-            code: 000,
-            msg: "成功获取文章",
-            data: {
-                "allResult": result
-            }
-        });
+        let promiseArr = [];
+        result.map((val, index) => {
+            promiseArr.push(new Promise(function (resolve, reject) {
+                Like.find({
+                    articleId: val._id
+                },(err, res)=>{
+                    if(err){
+                        responce.json({
+                            success: false,
+                            code: 100,
+                            msg: "查不到相关数据",
+                            data: null
+                        });
+                        return;
+                    }
+                    // let isLiked = false;
+                    // new Promise((rl, reject)=>{
+                        if (req.session.userid){
+                            Like.find({
+                                articleId: val._id,
+                                userId: req.session.userid
+                            }, (err, r) => {
+                                if (err) {
+                                    responce.json({
+                                        success: false,
+                                        code: 100,
+                                        msg: "查不到相关数据",
+                                        data: null
+                                    });
+                                    return;
+                                }
+                                console.log("r:-----------------");
+                                console.log(r);
+                                if(r.length > 0){
+                                    // isLiked = true;
+                                    // rl(isLiked);
+                                    resolve({
+                                        id: val._id,
+                                        title: val.title,
+                                        likeNum: res.length,
+                                        tagName: val.tagId.name,
+                                        date: val.date.createAt,
+                                        isLiked: true,
+                                    })
+                                }else{
+                                    resolve({
+                                        id: val._id,
+                                        title: val.title,
+                                        likeNum: res.length,
+                                        tagName: val.tagId.name,
+                                        date: val.date.createAt,
+                                        isLiked: false,
+                                    })
+                                }
+                            });
+                        }else{
+                            resolve({
+                                id: val._id,
+                                title: val.title,
+                                likeNum: res.length,
+                                tagName: val.tagId.name,
+                                date: val.date.createAt,
+                                isLiked: false,
+                            })
+                        }
+                    // }).then(function (isLiked) {
+                        
+                    // })
+                })
+            }));
+        })
+        Promise.all(promiseArr).then((allArticles) => {
+            responce.json({
+                success: true,
+                code: 000,
+                msg: "成功获取文章",
+                data: allArticles
+            });
+        }).catch((error)=>{
+            console.log(error);
+        })
     });
 });
 

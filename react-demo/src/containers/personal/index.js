@@ -4,6 +4,7 @@ import ManageList from '../../components/contentList/manageList';
 import EditableTagGroup from '../../components/tag/index';
 import AddArticle from '../../components/ueditor/index';
 import Drafts from '../../components/drafts/index';
+import UserList from '../../components/userList/index';
 import './index.scss';
 
 class Personal extends React.Component{
@@ -42,6 +43,8 @@ class Personal extends React.Component{
                 return <EditableTagGroup/>;
             case 'comment': // 评论管理
                 return <EditableTagGroup/>;
+            case 'userList': // 用户管理
+                return <UserList/>;
             default:
                 return null;
         }

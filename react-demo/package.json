@@ -54,6 +54,7 @@
     "react-dev-utils": "^6.1.1",
     "react-dom": "^16.6.3",
     "react-redux": "^6.0.0",
+    "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
     "react-ueditor-wrap": "^1.0.5",
     "redux": "^4.0.1",

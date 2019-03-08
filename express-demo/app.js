@@ -50,7 +50,7 @@ app.post("/*", function (req, res, next) {
     if (typeof req.session.username == "undefined" && req.url != "/user/doLogin" && req.url != "/user/doRegister") {
         res.json({
             success: false,
-            code: 100,
+            code: 102, //无接口访问权限
             msg: "请先登录！",
             data: null
         });

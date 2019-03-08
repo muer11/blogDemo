@@ -18,9 +18,9 @@ import { getTagArticleFunc } from '../../api/api';
 //   });
 // }
 
-const IconText = ({ type, text }) => (
+const IconText = ({ type, text, theme }) => (
   <span>
-    <Icon type={type} style={{ marginRight: 8 }} />
+    <Icon type={type} style={{ marginRight: 8 }} theme={theme}/>
     {text}
   </span>
 );
@@ -40,17 +40,18 @@ class ContentList extends React.Component{
         var _this = this;
         let params = "isPublished=true&tagId=" + this.state.tagId;
         let res = await getTagArticleFunc(params);
-        const data = res.data.allResult;
+        const data = res.data;
         let listData = [];
         data.map(function(value, index){
             listData.push({
-                articleId: value._id,
+                articleId: value.id,
                 title: value.title,
-                type: value.tagId.name, //类型
-                date: new Date(value.date.updateAt).toLocaleString(),
+                type: value.tagName, //类型
+                date: new Date(value.date).toLocaleString(),
                 likeNum: value.likeNum, //点赞数
-                replyNum: value.replyNum ? value.replyNum : 0, //点赞数
-                message: value.content, //评论数
+                replyNum: value.replyNum ? value.replyNum : 0, //评论数
+                isLike: value.isLiked,
+                // message: value.content, //评论数
                 // avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
                 // description: '121Ant Design, a design language for background applications, is refined by Ant UED Team.',
                 // content: ''
@@ -60,6 +61,7 @@ class ContentList extends React.Component{
         _this.setState({
             listData: listData
         })
+        console.log(listData);
         // axios.get("/api/article/getTagArticle?isPublished=true&tagId=" + this.state.tagId).then(function (res) {
         // })
     }
@@ -81,8 +83,20 @@ class ContentList extends React.Component{
                 // footer={<div><b>ant design</b> footer part</div>}
                 renderItem={item => (
                     <List.Item
-                        key={item.title}
-                        actions={[<IconText type="null" text={item.type} />, <IconText type="like-o" text={item.likeNum} />, <IconText type="message" text={item.replyNum} />, <IconText type="time" text={item.date} />]}
+                        key={item.title} 
+                        actions={
+                            item.isLike ? ([
+                                <IconText type="null" text={item.type} />, 
+                                <IconText type="like" text={item.likeNum} theme="filled"/>, 
+                                <IconText type="message" text={item.replyNum} />, 
+                                <IconText type="time" text={item.date} />
+                            ]): ([
+                                <IconText type="null" text={item.type} />, 
+                                <IconText type="like-o" text={item.likeNum} />, 
+                                <IconText type="message" text={item.replyNum} />, 
+                                <IconText type="time" text={item.date} />
+                            ]) 
+                        }
                         // extra={<img width={272} alt="logo" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" />}
                     >
                         <List.Item.Meta

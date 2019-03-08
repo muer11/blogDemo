@@ -3,10 +3,10 @@ const express = require("express");
 const router = express.Router();
 const Like = require("../model/like");
 
+//点赞
 router.post("/doLike", function (req, res) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, result) {
-        // console.log(result);
         var articleId = result.articleId ? result.articleId : null;
         var commentId = result.commentId ? result.commentId : null;
         var userId = req.session.userid;
@@ -22,9 +22,6 @@ router.post("/doLike", function (req, res) {
                 });
                 return;
             }
-            console.log("doLike result:-----------------------");
-            console.log(result);
-            
             if(result.length == 0){ 
                 // 未点赞的则新增点赞记录
                 Like.create({
@@ -49,8 +46,6 @@ router.post("/doLike", function (req, res) {
                             isLike: true
                         }
                     });
-                    console.log("createLike result:-----------------------");
-                    console.log(result);
                 })
             }else{
                 //已点赞的便取消点赞
@@ -74,13 +69,13 @@ router.post("/doLike", function (req, res) {
                             isLike: false
                         }
                     });
-                    console.log("cancelLike result:-----------------------");
-                    console.log(result);
                 })
             }
         });
     });
 });
+
+//单个文章或评论的点赞总数
 router.get("/sumLike", function (req, res) {
     console.log(req.query);
     var articleId = req.query.articleId ? req.query.articleId : null;
@@ -93,16 +88,15 @@ router.get("/sumLike", function (req, res) {
             res.json({
                 success: false,
                 code: 100,
-                msg: "获取点赞数失败",
+                msg: "获取点赞总数失败",
                 data: null
             });
             return;
         }
-        console.log("sumLike--------------");
-        console.log(result.length);
-        // var isLike = false;
         var allResult = result.length;
+       
         if (userId){
+            //用户已登录，则判断其是否已点赞
             Like.find({
                 articleId, commentId, userId
             }, (err, result) => {
@@ -115,8 +109,6 @@ router.get("/sumLike", function (req, res) {
                     });
                     return;
                 }
-                console.log("isLike--------------");
-                console.log(result);
                 if(result.length > 0){
                     res.json({
                         success: true,

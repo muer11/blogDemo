@@ -10,6 +10,8 @@ const URL = {
     logoutUrl: '/api/user/logout', //退出登录
     isLoginUrl: '/api/user/isLogin', //判断用户是否已登录
     registerUrl: '/api/user/doRegister', //注册
+    getUsersUrl: '/api/user/getUsers', //获取所有用户新信息
+    deleteUserUrl: '/api/user/deleteUser', //删除用户
 
     // tag 文章分类 
     showTagsUrl: '/api/tag/showTags', //显示标签

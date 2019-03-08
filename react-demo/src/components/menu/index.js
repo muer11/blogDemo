@@ -37,7 +37,7 @@ class AdminMenu extends React.Component {
         itemName = 'comment';
         break;
       case 'user':
-        itemName = 'user';
+        itemName = 'userList';
         break;
       default: 
         break;
