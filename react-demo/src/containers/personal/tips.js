@@ -1,8 +1,27 @@
 import React from 'react';
 import axios from 'axios';
 import { Avatar } from 'antd';
+import Login from "../../components/login"
 import { logoutFunc } from './../../api/api';
-require('./tips.scss');
+// import {connect} from "react-redux";
+// import {showUser} from "../../redux/actions/user-actions";
+// require('./tips.scss');
+
+// const mapStateToProps =  state => {
+//     return {
+        
+//     }
+// }
+// const mapDispatchToProps =  dispatch => {
+//     return {
+        
+//     }
+// }
+
+// const mapStateToProps = connect(
+//     mapStateToProps,
+//     mapDispatchToProps
+// )(Login);
 
 class PersonalTips extends React.Component{
     state = {

@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 import registerServiceWorker from './registerServiceWorker ';
-import reducers from './reducer';
+import reducers from './redux';
 // import './config'; 
 import "./api/api";
 import App from './App';
@@ -25,4 +25,6 @@ ReactDOM.render((
         </BrowserRouter>
     </Provider>
 ), document.getElementById('root'));
+
+console.log("init state:", store.getState());
 

@@ -9,6 +9,9 @@ import Register from '../register/index';
 import ModelContent from '../modal/index';
 import WrappedChangePasswordForm from '../changePassword/index';
 import { loginFunc } from './../../api/api';
+import {connect} from "react-redux";
+import {addUser} from "../../redux/actions/user-actions";
+import PerTips from "../../containers/personal/tips"; 
 require('./login.scss');
 
 const FormItem = Form.Item;
@@ -18,6 +21,10 @@ class NormalLoginForm extends React.Component {
     promptMsg: "",
     show: false,
     isModel: false,
+  }
+
+  initState = state =>{
+    return 
   }
 
   //登录提交
@@ -30,21 +37,41 @@ class NormalLoginForm extends React.Component {
         formdata = values;
       }
     })
-    let data = null;
+    // let data = null;
     if (formdata != null) {
       //异常捕获
       try{
-        data = await loginFunc(formdata);
-        if(data.success){
-          if(data.code === 0){
-            this.props.callback(data);
+        let res = await loginFunc(formdata);
+        if(res.success){
+          if(res.code === 0){
+            this.props.callback(res);
           }
           this.setState({
-            promptMsg: data.msg,
+            promptMsg: res.msg,
             show: true,
-          })
+          });
+          
+          // const mapStateToProps = (state) => {
+          //   return {
+          //     data: [{...state.user},data.data],
+          //     show: true,
+          //   }
+          // }
+          
+          // const mapDispatchToProps = (dispatch) => {
+          //   return {
+          //     onClick: () => {
+          //       // dispatch(setVisibilityFilter(ownProps.filter))
+          //       console.log(1111);
+          //     }
+          //   }
+          // } 
+          // connect(
+          //   mapStateToProps,
+          //   mapDispatchToProps
+          // )(PerTips)
         }else{
-          console.log(data.msg);
+          console.log(res.msg);
         }
       }catch(err){
         console.log("login error:"+err);

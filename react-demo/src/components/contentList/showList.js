@@ -6,6 +6,7 @@ import Article from '../article/index';
 import './contentList.scss';
 import { getTagArticleFunc } from '../../api/api';
 
+
 // const listData = [];
 // const href = {Article};
 // for (let i = 0; i < 23; i++) {
@@ -60,7 +61,8 @@ class ContentList extends React.Component{
         // console.log(listData);
         _this.setState({
             listData: listData
-        })
+        });
+        
         console.log(listData);
         // axios.get("/api/article/getTagArticle?isPublished=true&tagId=" + this.state.tagId).then(function (res) {
         // })
