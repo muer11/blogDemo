@@ -2,6 +2,7 @@ import {
     ADD_ARTICLE,
     DELETE_ARTICLE,
     UPDATE_ARTICLE,
+    SHOW_ARTICLE,
 } from "../actions/article-actions";
 
 const initState = {
@@ -30,6 +31,11 @@ export default function(state=initState, action){
             return{
                 ...state,
                 article: state.article.map(item=>item.id === action.payload.id ? action.payload : item)
+            }
+        case SHOW_ARTICLE:
+            return{
+                ...state,
+                article: [...state.article, action.payload]
             }
         default:
             return state === undefined ? [] : state;

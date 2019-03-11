@@ -1,12 +1,33 @@
 import React from 'react';
 import {Tabs} from 'antd';
-import axios from 'axios';
+// import axios from 'axios';
+import {showArticle} from "../../redux/actions/article-actions";
 import ContentList from '../contentList/showList';
 import Article from '../article/index';
 import { showTagsFunc } from './../../api/api';
 require('./tabsNav.scss');
 
 const TabPane = Tabs.TabPane;
+
+// const mapStateToProps = (state, ownProps) => {
+//     return {
+//         tagId: ownProps.filter === state.article.tagId
+//     }
+// }
+
+// const mapDispatchToProps = (dispatch, ownProps) => {
+//     return {
+//         onClick: () => {
+
+//             dispatch(showArticle(ownProps.filter))
+//         }
+//     }
+// }
+
+// const TabsNav = connect(
+//     mapStateToProps,
+//     mapDispatchToProps
+// )(ContentList)
 
 class TabsNav extends React.Component {
     state = { 
@@ -30,6 +51,11 @@ class TabsNav extends React.Component {
     }
 
     // 动态显示type类下的文章内容
+    // mapStateToProps = (state, ownProps) => {
+    //     return {
+    //         tagId: ownProps.filter === state.article.tagId
+    //     }
+    // }
     showList(key) {
         let isList = true;
         let tagInfo = this.state.tagInfo;
