@@ -2,7 +2,8 @@ import React from 'react';
 import { Layout } from 'antd';
 import axios from 'axios';
 import Slider from '../../components/slider';
-import TabsNav from '../../components/tabsNav';
+import TagList from '../tagList';
+// import TabsNav from '../../components/tabsNav';
 import WrappedNormalLoginForm from '../../components/login';
 import ContentList from '../../components/contentList/showList';
 import PersonalTips from '../personal/tips';
@@ -105,7 +106,8 @@ class IndexPage extends React.Component {
                 </Header>
                 <Layout>
                     <Content>
-                        <TabsNav />
+                        <TagList/>
+                        {/* <TabsNav /> */}
                         {/* <ContentList /> */}
                     </Content>
                     <Sider>

@@ -28,10 +28,13 @@ export function updateTag(data){
     }
 }
 export function listTag(data){
+    console.log("action.listTags");
+    console.log(data);
     return {
         type: LIST_TAG,
-        payload: {
+        tags: data
+        // payload: {
 
-        }
+        // }
     }
 }

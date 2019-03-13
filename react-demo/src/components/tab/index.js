@@ -3,24 +3,25 @@ import PropTypes from 'prop-types';
 import {Tabs} from 'antd';
 
 const TabPane = Tabs.TabPane;
-const Tab = ({tagInfo}) => {
-    let TabPane = tagInfo.map((item, index) => {
-         (
-            <TabPane tab={item.name} key={index}>
-                {item.content}
-            </TabPane>
-        )
-    })
+const Tab = ({tags, listTags}) => {
+    console.log("tags:");
+    console.log(tags);
+
     return (
-        <Tabs defaultActiveKey="0" onChange={this.showList.bind(this)}>
-            {this.TabPane}
-        </Tabs>
-    )
-        
+        <div>
+            <Tabs defaultActiveKey="0" onChange={listTags}>
+                {tags.map(
+                    (tag, index) => {
+                        return (<TabPane tab={tag.name} key={index}>Content of Tab Pane {index}</TabPane>)
+                    })
+                }
+            </Tabs>
+        </div>
+    )  
 }
 
 Tab.PropTypes = {
-    tagInfo: PropTypes.object.isRequired,
+    tags: PropTypes.object.isRequired,
 }
 
 export default Tab;

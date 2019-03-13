@@ -4,6 +4,7 @@ import commentReducer from "./reducers/comment-reducers";
 import likeReducer from "./reducers/like-reducers";
 import tagReducer from "./reducers/tag-reducers";
 import userReducer from "./reducers/user-reducers";
+import fetchReducer from "./reducers/fetch-reducers";
 
 const allReducers = {
     article: articleReducer,
@@ -11,6 +12,7 @@ const allReducers = {
     likes: likeReducer,
     tags: tagReducer,
     user: userReducer,
+    fetch: fetchReducer,
 }
 const rootReducer = combineReducers(allReducers);
 
