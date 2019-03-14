@@ -1,22 +1,19 @@
 
 import React from 'react';
-import {
-  Form, Icon, Input, Button, Checkbox,
-} from 'antd';
-import axios from 'axios';
-import Qs from 'qs';
-import Register from '../register/index';
-import ModelContent from '../modal/index';
-import WrappedChangePasswordForm from '../changePassword/index';
+import {Form, Icon, Input, Button, Checkbox} from 'antd';
+import Register from '../register';
+import ModelContent from '../../components/modal';
+// import WrappedChangePasswordForm from '../changePassword/index';
 import { loginFunc } from './../../api/api';
 import {connect} from "react-redux";
-import {addUser} from "../../redux/actions/user-actions";
+import PropTypes from 'prop-types'
+import {userFetchPostsIfNeeded} from "../../redux/actions/user-actions";
 import PerTips from "../../containers/personal/tips"; 
 require('./login.scss');
 
 const FormItem = Form.Item;
 
-class NormalLoginForm extends React.Component {
+class LoginForm extends React.Component {
   state = {
     promptMsg: "",
     show: false,
@@ -27,7 +24,7 @@ class NormalLoginForm extends React.Component {
     return 
   }
 
-  //登录提交
+  登录提交
   handleLoginSubmit = async (e) => {
     e.preventDefault();
     // let _this = this;
@@ -37,45 +34,30 @@ class NormalLoginForm extends React.Component {
         formdata = values;
       }
     })
+    console.log("formdata");
+    console.log(formdata);
+    console.log(this.props);
+    const {dispatch} = this.props;
     // let data = null;
     if (formdata != null) {
+      dispatch(userFetchPostsIfNeeded("/api/user/doLogin", formdata))
       //异常捕获
-      try{
-        let res = await loginFunc(formdata);
-        if(res.success){
-          if(res.code === 0){
-            this.props.callback(res);
-          }
-          this.setState({
-            promptMsg: res.msg,
-            show: true,
-          });
-          
-          // const mapStateToProps = (state) => {
-          //   return {
-          //     data: [{...state.user},data.data],
-          //     show: true,
-          //   }
-          // }
-          
-          // const mapDispatchToProps = (dispatch) => {
-          //   return {
-          //     onClick: () => {
-          //       // dispatch(setVisibilityFilter(ownProps.filter))
-          //       console.log(1111);
-          //     }
-          //   }
-          // } 
-          // connect(
-          //   mapStateToProps,
-          //   mapDispatchToProps
-          // )(PerTips)
-        }else{
-          console.log(res.msg);
-        }
-      }catch(err){
-        console.log("login error:"+err);
-      }
+      // try{
+      //   let res = await loginFunc(formdata);
+      //   if(res.success){
+      //     if(res.code === 0){
+      //       this.props.callback(res);
+      //     }
+      //     this.setState({
+      //       promptMsg: res.msg,
+      //       show: true,
+      //     });
+      //   }else{
+      //     console.log(res.msg);
+      //   }
+      // }catch(err){
+      //   console.log("login error:"+err);
+      // }
     }
   }
   //及时关闭登录失败提示语
@@ -98,6 +80,9 @@ class NormalLoginForm extends React.Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
+    console.log("render");
+    console.log(this.props)
+    // const {handleLoginSubmit} = this.props;
     return (
       <div>
         <Form onSubmit={this.handleLoginSubmit} className="login-form">
@@ -124,7 +109,7 @@ class NormalLoginForm extends React.Component {
             })(
               <Checkbox>记住密码</Checkbox>
             )}
-            <ModelContent tips="修改密码" name='修改密码'><WrappedChangePasswordForm /></ModelContent>
+            {/* <ModelContent tips="修改密码" name='修改密码'><WrappedChangePasswordForm /></ModelContent> */}
             <Button type="primary" htmlType="submit" className="login-form-button">
               登录
             </Button>
@@ -138,6 +123,36 @@ class NormalLoginForm extends React.Component {
   }
 }
 
-const WrappedNormalLoginForm = Form.create()(NormalLoginForm);
+const Login = Form.create()(LoginForm);
 
-export default WrappedNormalLoginForm;
+const mapStateToProps = state => {
+    console.log("mapStateToProps state")
+    console.log(state)
+    return {
+        // articleList: state.article.articleList
+    }
+}
+
+// const mapDispatchToProps = dispatch => {  
+//     return {
+//         handleLoginSubmit: e => {
+//           e.preventDefault();
+//           console.log(e);
+//           let formdata = null;
+//           // this.props.form.validateFields((err, values) => {
+//           //   if(!err){
+//           //     formdata = values;
+//           //   }
+//           // })
+//           // console.log(formdata);
+//             // dispatch(listTag(id))
+//         } 
+//     }
+// }
+
+Login.PropTypes = {
+    handleLoginSubmit: PropTypes.func.isRequired,
+    dispatch: PropTypes.func.isRequired
+}
+
+export default connect(mapStateToProps)(Login);

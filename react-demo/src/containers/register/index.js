@@ -275,6 +275,6 @@ class RegistrationForm extends React.Component {
   }
 }
 
-const WrappedRegistrationForm = Form.create()(RegistrationForm);
+const Register = Form.create()(RegistrationForm);
 
-export default WrappedRegistrationForm;
+export default Register;

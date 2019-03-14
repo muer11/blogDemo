@@ -3,11 +3,13 @@ import {
     DELETE_TAG,
     UPDATE_TAG,
     LIST_TAG,
-} from "../actions/tag-actions";
-import {
     REQUEST_POSTS,
     RECEIVE_POSTS
-} from "../actions/fetch-actions";
+} from "../actions/tag-actions";
+// import {
+//     REQUEST_POSTS,
+//     RECEIVE_POSTS
+// } from "../actions/fetch-actions";
 
 // const initState = {
 //     tags: [{
@@ -34,8 +36,8 @@ export default function (state, action) {
                 tag: state.tag.map(item => item.id === action.payload.id ? action.payload : item)
             }
         case LIST_TAG:
-            console.log("action.listTags");
-            console.log(action.listTags);
+            // console.log("action.listTags");
+            // console.log(action.listTags);
             return {
                 ...state,
                 tags: [...state.tags, action.listTags]

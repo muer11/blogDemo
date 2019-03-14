@@ -3,18 +3,19 @@ import {
     DELETE_USER,
     UPDATE_USER,
     SHOW_USER,
+    LOGIN_USER,
 } from "../actions/user-actions";
 
-const initState = {
-    user: [
-        {
-            id: 1,
-            name: "muer",
-        }
-    ] 
-}
+// const initState = {
+//     user: [
+//         {
+//             id: 1,
+//             name: "muer",
+//         }
+//     ] 
+// }
 
-export default function(state=initState, action){
+export default function(state, action){
     switch(action.type){
         case ADD_USER:
             return{
@@ -35,6 +36,13 @@ export default function(state=initState, action){
             return{
                 ...state,
                 user:[...state.user, action.payload]
+            }
+        case LOGIN_USER:
+            console.log("action");
+            console.log(action);
+            return{
+                ...state,
+                currentUser: action.currentUser
             }
         default:
             return state === undefined ? [] : state;

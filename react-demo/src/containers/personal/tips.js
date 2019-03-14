@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { Avatar } from 'antd';
-import Login from "../../components/login"
+// import Login from "../../components/login"
 import { logoutFunc } from './../../api/api';
 // import {connect} from "react-redux";
 // import {showUser} from "../../redux/actions/user-actions";

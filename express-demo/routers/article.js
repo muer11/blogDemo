@@ -76,56 +76,59 @@ router.post("/editRecording", function (req, res) {
 });
 
 //获取所有文章
-router.get("/getArticle", function (req, res) {
-    var info = req.query;
-    var userId = req.session.userid;
-    var tagId = ((info.tagId && info.tagId !== "all") ? info.tagId : {
-        $ne: null
-    });
-    var isPublished = info.isPublished;
-    var page = info.page;
-    var sortQuery = {};
-    switch (info.sort) {
-        case "visitNum":
-            sortQuery = {
-                "visitNum": -1
-            }
-            break;
-        case "likeNum":
-            sortQuery = {
-                "likeNum": -1
-            }
-            break;
-        default:
-            sortQuery = {
-                "date": -1
-            }
-            break;
-    }
-    Article.find({
-        "userId": userId,
-        "tagId": tagId,
-        "isPublished": isPublished,
-    }).sort(sortQuery).exec(function (err, result) {
-        if(err){
-            res.json({
-                success: false,
-                code: 100,
-                msg: "查不到相关数据",
-                data: null
-            });
-            return;
-        }
-        res.json({
-            success: true,
-            code: 000,
-            msg: "成功获取文章",
-            data: {
-                "allResult": result
-            }
-        });
-    });
-});
+// router.get("/getArticle", function (req, res) {
+//     var info = req.query;
+//     var userId = req.session.userid;
+//     var tagId = ((info.tagId && info.tagId !== "all") ? info.tagId : {
+//         $ne: null
+//     });
+//     var isPublished = info.isPublished;
+//     var page = info.page;
+//     var sortQuery = {};
+//     switch (info.sort) {
+//         case "visitNum":
+//             sortQuery = {
+//                 "visitNum": -1
+//             }
+//             break;
+//         case "likeNum":
+//             sortQuery = {
+//                 "likeNum": -1
+//             }
+//             break;
+//         default:
+//             sortQuery = {
+//                 "date": -1
+//             }
+//             break;
+//     }
+//     Article.find({
+//         "userId": userId,
+//         "tagId": tagId,
+//         "isPublished": isPublished,
+//     }).populate({
+//         path: "tagId",
+//         select: 'name'
+//     }).sort(sortQuery).exec(function (err, result) {
+//         if(err){
+//             res.json({
+//                 success: false,
+//                 code: 100,
+//                 msg: "查不到相关数据",
+//                 data: null
+//             });
+//             return;
+//         }
+//         res.json({
+//             success: true,
+//             code: 000,
+//             msg: "成功获取文章",
+//             data: {
+//                 "allResult": result
+//             }
+//         });
+//     });
+// });
 
 //获取分类文章-前台
 router.get("/getTagArticle", function (req, res, next) {
@@ -170,6 +173,8 @@ router.get("/getTagArticle", function (req, res, next) {
             });
             return;
         }
+        console.log("getTagArticle result");
+        console.log(result);
         let promiseArr = [];
         result.map((val, index) => {
             promiseArr.push(new Promise(function (resolve, reject) {

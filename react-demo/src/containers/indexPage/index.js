@@ -3,8 +3,9 @@ import { Layout } from 'antd';
 import axios from 'axios';
 import Slider from '../../components/slider';
 import TagList from '../tagList';
+import ArticleList from '../articleList';
 // import TabsNav from '../../components/tabsNav';
-import WrappedNormalLoginForm from '../../components/login';
+import Login from '../login';
 import ContentList from '../../components/contentList/showList';
 import PersonalTips from '../personal/tips';
 import {isLoginFunc} from './../../api/api';
@@ -97,7 +98,7 @@ class IndexPage extends React.Component {
         if(this.state.login){
             formInfo = <PersonalTips name={this.state.username} role={this.state.role} logoutCallback={this.logoutCallback.bind(this)}/>;
         }else{
-            formInfo = <WrappedNormalLoginForm callback={this.callback.bind(this)} />;
+            formInfo = <Login callback={this.callback.bind(this)} />;
         }
         return (
             <Layout>
@@ -107,6 +108,7 @@ class IndexPage extends React.Component {
                 <Layout>
                     <Content>
                         <TagList/>
+                        {/* <ArticleList /> */}
                         {/* <TabsNav /> */}
                         {/* <ContentList /> */}
                     </Content>

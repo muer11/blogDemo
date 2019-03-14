@@ -2,10 +2,10 @@ import React, {Component} from "react";
 import PropTypes from 'prop-types'
 import {connect} from "react-redux";
 import {listTag} from "../../redux/actions/tag-actions";
-import {fetchPostsIfNeeded} from "../../redux/actions/fetch-actions";
+import {fetchPostsIfNeeded} from "../../redux/actions/tag-actions";
+import {articleFetchPostsIfNeeded} from "../../redux/actions/article-actions";
 import { showTagsFunc } from './../../api/api';
 import Tab from "../../components/tab";
-
 
 class TagList extends Component{
     constructor(props){
@@ -13,15 +13,26 @@ class TagList extends Component{
     }
 
     componentDidMount(){
-        const {dispatch, tags} = this.props;
+        const {tags,dispatch} = this.props;
+        // console.log("this.props");
+        // console.log(this.props);
         dispatch(fetchPostsIfNeeded(tags));
+        dispatch(articleFetchPostsIfNeeded());
+    }
+
+    listTagArticles = (key)=>{
+        // console.log("listTagArticles func");
+        // console.log(this.props);
+        // console.log(key);
+        const {tags,dispatch} = this.props;
+        dispatch(articleFetchPostsIfNeeded("tagId="+key));
     }
 
     render(){
-        const {tags} = this.props;
+        const {tags,listTagArticles} = this.props;
         // console.log("render tags");
         // console.log(tags.tags);
-        return tags.tags ? (<div>{<Tab tags = {tags.tags}/>}</div>) : null
+        return tags ? (<div>{<Tab tags = {tags} listTagArticles={this.listTagArticles} />}</div>) : null
     }
 
 }
@@ -40,17 +51,20 @@ class TagList extends Component{
 // }
 
 const mapStateToProps = state => {
-    console.log("mapStateToProps state")
-    console.log(state)
+    // console.log("mapStateToProps state")
+    // console.log(state)
     return {
-        tags: state.tags
+        tags: state.tags.tags
     }
 }
 
 // const mapDispatchToProps = dispatch => {  
 //     return {
-//         onClick : id =>{
-//             dispatch(listTag(id))
+//         listTagArticles: (n) => {
+//             console.log("mapDispatchToProps")
+//             console.log(n)
+//             // dispatch(listTag(n))
+//             dispatch(fetchPostsIfNeeded(this.props.tags));
 //         } 
 //     }
 // }
@@ -60,8 +74,9 @@ const mapStateToProps = state => {
     // mapDispatchToProps
 // )(Tab);
 TagList.PropTypes = {
+    dispatch: PropTypes.func.isRequired,
     tags: PropTypes.array.isRequired,
-    dispatch: PropTypes.func.isRequired
+    // listTagArticles: PropTypes.func.isRequired
 }
 
 export default connect(mapStateToProps)(TagList);

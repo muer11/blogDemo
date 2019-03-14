@@ -25,6 +25,7 @@
 // UNKNOWN_IP("1099", "非法IP请求"),
 // SYSTEM_ERROR("9999", "系统异常");
 
+const jwt = require('jsonwebtoken'); //用来生成token
 const formidable = require('formidable');
 const express = require("express");
 const router = express.Router();
@@ -206,13 +207,19 @@ router.post("/doLogin", function (req, res, result) {
                 req.session.username = username;
                 req.session.role = role;
                 req.session.userid = userid;
+                let content ={name:username}; // 要生成token的主题信息
+                let secretOrPrivateKey="jwt";// 这是加密的key（密钥）
+                let token = jwt.sign(content, secretOrPrivateKey, {
+                    expiresIn: 60*60*1  // 1小时过期
+                });
                 res.json({
                     success: true,
                     code: 000,
                     msg: "登陆成功",
                     data: {
                         name: username,
-                        role: role
+                        role: role,
+                        token: token
                     }
                 });
                 return;

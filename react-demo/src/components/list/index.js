@@ -10,10 +10,23 @@ const IconText = ({ type, text, theme }) => (
   </span>
 );
 
-const Lists = ({tags, listTags}) => {
-    console.log("tags:");
-    console.log(tags);
-
+const Lists = ({articleList, listTags}) => {
+    // console.log("articleList:");
+    // console.log(articleList);
+    let listData = [];
+    articleList.map(function (value, index) {
+        listData.push({
+            articleId: value._id,
+            title: value.title,
+            type: value.tagName, //类型
+            date: new Date(value.date).toLocaleString(),
+            likeNum: value.likeNum, //点赞数
+            replyNum: value.replyNum ? value.replyNum : 0, //评论数
+            isLike: value.isLiked,
+        })
+    });
+    // console.log("listData:")
+    // console.log(listData)
     return (
         <List
             itemLayout="vertical"
@@ -24,7 +37,7 @@ const Lists = ({tags, listTags}) => {
                 },
                 pageSize: 6,
             }}
-            dataSource={this.state.listData}
+            dataSource={listData}
             renderItem={item => (
                 <List.Item
                     key={item.title} 
@@ -43,7 +56,10 @@ const Lists = ({tags, listTags}) => {
                     }
                 >
                     <List.Item.Meta
-                        title={<a onClick={()=>{this.showArticle(item.articleId)}}>{item.title}</a>} 
+                        title={<a onClick={()=>{
+                            // this.showArticle(item.articleId)
+                            console.log(item.articleId)
+                        }}>{item.title}</a>} 
                     />
                 </List.Item>
             )}
