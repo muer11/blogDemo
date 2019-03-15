@@ -204,14 +204,15 @@ router.post("/doLogin", function (req, res, result) {
             //数据库中的密码进行比对
             if(password == dbpassword){
                 //登陆成功
-                req.session.username = username;
-                req.session.role = role;
-                req.session.userid = userid;
                 let content ={name:username}; // 要生成token的主题信息
                 let secretOrPrivateKey="jwt";// 这是加密的key（密钥）
                 let token = jwt.sign(content, secretOrPrivateKey, {
                     expiresIn: 60*60*1  // 1小时过期
                 });
+                req.session.username = username;
+                req.session.role = role;
+                req.session.userid = userid;
+                req.session.token = token;
                 res.json({
                     success: true,
                     code: 000,

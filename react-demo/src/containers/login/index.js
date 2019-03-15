@@ -4,11 +4,11 @@ import {Form, Icon, Input, Button, Checkbox} from 'antd';
 import Register from '../register';
 import ModelContent from '../../components/modal';
 // import WrappedChangePasswordForm from '../changePassword/index';
-import { loginFunc } from './../../api/api';
+// import { loginFunc } from './../../api/api';
 import {connect} from "react-redux";
-import PropTypes from 'prop-types'
-import {userFetchPostsIfNeeded} from "../../redux/actions/user-actions";
-import PerTips from "../../containers/personal/tips"; 
+import PropTypes from 'prop-types';
+import {loginUser} from "../../redux/actions/user-actions";
+// import PerTips from "../../containers/tip/tip"; 
 require('./login.scss');
 
 const FormItem = Form.Item;
@@ -24,7 +24,7 @@ class LoginForm extends React.Component {
     return 
   }
 
-  登录提交
+  //登录提交
   handleLoginSubmit = async (e) => {
     e.preventDefault();
     // let _this = this;
@@ -34,30 +34,13 @@ class LoginForm extends React.Component {
         formdata = values;
       }
     })
-    console.log("formdata");
-    console.log(formdata);
-    console.log(this.props);
+    // console.log("formdata");
+    // console.log(formdata);
+    // console.log(this.props);
     const {dispatch} = this.props;
     // let data = null;
     if (formdata != null) {
-      dispatch(userFetchPostsIfNeeded("/api/user/doLogin", formdata))
-      //异常捕获
-      // try{
-      //   let res = await loginFunc(formdata);
-      //   if(res.success){
-      //     if(res.code === 0){
-      //       this.props.callback(res);
-      //     }
-      //     this.setState({
-      //       promptMsg: res.msg,
-      //       show: true,
-      //     });
-      //   }else{
-      //     console.log(res.msg);
-      //   }
-      // }catch(err){
-      //   console.log("login error:"+err);
-      // }
+      dispatch(loginUser(formdata));
     }
   }
   //及时关闭登录失败提示语

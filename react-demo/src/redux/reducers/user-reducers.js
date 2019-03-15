@@ -4,8 +4,9 @@ import {
     UPDATE_USER,
     SHOW_USER,
     LOGIN_USER,
+    LOGOUT_USER,
 } from "../actions/user-actions";
-
+import cookie from 'react-cookies';
 // const initState = {
 //     user: [
 //         {
@@ -18,9 +19,10 @@ import {
 export default function(state, action){
     switch(action.type){
         case ADD_USER:
+            console.log(state);
             return{
                 ...state,
-                user:[...state.user, action.payload]
+                // user:[...state.user]
             }
         case DELETE_USER:
             return{
@@ -40,9 +42,18 @@ export default function(state, action){
         case LOGIN_USER:
             console.log("action");
             console.log(action);
+            cookie.save("token",action.currentUser.token)
             return{
                 ...state,
-                currentUser: action.currentUser
+                currentUser: action.currentUser,
+            }
+        case LOGOUT_USER:
+            console.log("action");
+            console.log(action);
+            cookie.remove("token")
+            return{
+                ...state,
+                currentUser: action.currentUser,
             }
         default:
             return state === undefined ? [] : state;

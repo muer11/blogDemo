@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from 'prop-types';
 import {List,Icon} from 'antd';
+import {Link} from 'react-router';
 
 // const TabPane = Tabs.TabPane;
 const IconText = ({ type, text, theme }) => (
@@ -56,10 +57,12 @@ const Lists = ({articleList, listTags}) => {
                     }
                 >
                     <List.Item.Meta
-                        title={<a onClick={()=>{
-                            // this.showArticle(item.articleId)
-                            console.log(item.articleId)
-                        }}>{item.title}</a>} 
+                        title={<Link to="/article" 
+                        // onClick={()=>{
+                        //     // this.showArticle(item.articleId)
+                        //     console.log(item.articleId)
+                        // }}
+                        >{item.title}</Link>} 
                     />
                 </List.Item>
             )}
