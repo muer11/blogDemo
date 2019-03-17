@@ -12,12 +12,12 @@ const IconText = ({ type, text, theme }) => (
 );
 
 const Lists = ({articleList, listTags}) => {
-    // console.log("articleList:");
-    // console.log(articleList);
+    console.log("articleList:");
+    console.log(articleList);
     let listData = [];
     articleList.map(function (value, index) {
         listData.push({
-            articleId: value._id,
+            articleId: value.id,
             title: value.title,
             type: value.tagName, //类型
             date: new Date(value.date).toLocaleString(),
@@ -57,12 +57,7 @@ const Lists = ({articleList, listTags}) => {
                     }
                 >
                     <List.Item.Meta
-                        title={<Link to="/article" 
-                        // onClick={()=>{
-                        //     // this.showArticle(item.articleId)
-                        //     console.log(item.articleId)
-                        // }}
-                        >{item.title}</Link>} 
+                        title={<Link to={"/article?id="+item.articleId} >{item.title}</Link>} 
                     />
                 </List.Item>
             )}

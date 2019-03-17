@@ -37,12 +37,31 @@ router.post("/doComment", function (req, res, result) {
                 return;
             }
             // res.send("1");
-            res.json({
-                success: true,
-                code: 000,
-                msg: "留言成功",
-                data: null
+            
+            Comment.find({
+                "_id": result._id
+            }).populate({
+                path: "commentUserId",
+                select: 'username'
+            }).exec(function (err, r) {
+                if(err){
+                    res.json({
+                        success: false,
+                        code: 100,
+                        msg: "无法获取相关数据",
+                        data: null
+                    });
+                    return;
+                }
+                // console.log(r);
+                res.json({
+                    success: true,
+                    code: 000,
+                    msg: "留言成功",
+                    data: r
+                });
             });
+            
         });
     });
 });
@@ -105,9 +124,7 @@ router.get("/getComment", function (req, res, next) {
             success: true,
             code: 000,
             msg: "获取评论成功",
-            data: {
-                "allResult": commentInfo
-            }
+            data: commentInfo
         });
     });  
 });

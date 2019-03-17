@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import {connect} from "react-redux";
 import {listTag} from "../../redux/actions/tag-actions";
 import {fetchPostsIfNeeded} from "../../redux/actions/tag-actions";
-import {articleFetchPostsIfNeeded} from "../../redux/actions/article-actions";
+import {listArticle} from "../../redux/actions/article-actions";
 import { showTagsFunc } from './../../api/api';
 import Tab from "../../components/tab";
 
@@ -17,7 +17,7 @@ class TagList extends Component{
         // console.log("this.props");
         // console.log(this.props);
         dispatch(fetchPostsIfNeeded(tags));
-        dispatch(articleFetchPostsIfNeeded());
+        dispatch(listArticle());
     }
 
     listTagArticles = (key)=>{
@@ -25,7 +25,7 @@ class TagList extends Component{
         // console.log(this.props);
         // console.log(key);
         const {tags,dispatch} = this.props;
-        dispatch(articleFetchPostsIfNeeded("tagId="+key));
+        dispatch(listArticle("tagId="+key));
     }
 
     render(){

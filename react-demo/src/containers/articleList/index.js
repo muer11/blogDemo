@@ -1,8 +1,8 @@
 import React, {Component} from "react";
 import PropTypes from 'prop-types'
 import {connect} from "react-redux";
+// import {listArticle} from "../../redux/actions/article-actions";
 import {listArticle} from "../../redux/actions/article-actions";
-import {articleFetchPostsIfNeeded} from "../../redux/actions/article-actions";
 import Lists from "../../components/list";
 
 class ArticleList extends Component {

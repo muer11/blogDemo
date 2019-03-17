@@ -26,5 +26,5 @@ ReactDOM.render((
     </Provider>
 ), document.getElementById('root'));
 
-console.log("init state:", store.getState());
+// console.log("init state:", store.getState());
 

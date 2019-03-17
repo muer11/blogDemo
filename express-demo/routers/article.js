@@ -290,9 +290,7 @@ router.get("/findOneArticle", function (req, res) {
             success: true,
             code: 000,
             msg: "成功获取文章",
-            data: {
-                "allResult": result
-            }
+            data: result
         });
     });
 });

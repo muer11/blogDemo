@@ -3,6 +3,7 @@ import {
     DELETE_ARTICLE,
     UPDATE_ARTICLE,
     LIST_ARTICLE,
+    SHOW_ARTICLE,
     REQUEST_POSTS,
     RECEIVE_POSTS
 } from "../actions/article-actions";
@@ -35,12 +36,20 @@ export default function(state, action){
                 article: state.article.map(item=>item.id === action.payload.id ? action.payload : item)
             }
         case LIST_ARTICLE:
-            console.log("article action");
-            console.log(action);
-            console.log(action.articleList);
+            // console.log("article action");
+            // console.log(action);
+            // console.log(action.articleList);
             return{
                 ...state,
                 articleList: action.articleList
+            }
+        case SHOW_ARTICLE:
+            // console.log("article action");
+            // console.log(action);
+            // console.log(action.articleDetail);
+            return{
+                ...state,
+                articleDetail: action.articleDetail
             }
         default:
             return state === undefined ? [] : state;
