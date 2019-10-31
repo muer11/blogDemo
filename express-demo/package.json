@@ -16,7 +16,7 @@
     "jsonwebtoken": "^8.5.0",
     "moment": "^2.17.1",
     "mongodb": "^2.2.16",
-    "mongoose": "^5.4.4",
+    "mongoose": "^5.7.5",
     "morgan": "^1.5.3",
     "nedb-session-store": "^1.1.2",
     "serve-favicon": "^2.2.1",
