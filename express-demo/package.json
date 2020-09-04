@@ -15,7 +15,7 @@
     "http-proxy-middleware": "^0.19.1",
     "jsonwebtoken": "^8.5.0",
     "moment": "^2.17.1",
-    "mongodb": "^2.2.16",
+    "mongodb": "^3.1.13",
     "mongoose": "^5.4.4",
     "morgan": "^1.5.3",
     "nedb-session-store": "^1.1.2",
